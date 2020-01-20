@@ -211,6 +211,8 @@ class MainActivity : AppCompatActivity(),
         rvTools.visibility = View.VISIBLE
         rvTools.animation = AnimUtil.slideUp(this)
         lnAddImage.visibility = View.INVISIBLE
+        rvTools.visibility = View.VISIBLE
+        rvTools.animation = AnimUtil.slideUp(this)
     }
 
     private fun showTools() {
