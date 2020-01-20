@@ -183,10 +183,15 @@ class MainActivity : AppCompatActivity(),
             }
         }
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST){
-            data?.let {
+            data?.let {data ->
                 val photo = data?.extras!!.get("data") as Bitmap?
-                var bitmap = BitmapDrawable(photo)
-                motionView.setBackgroundDrawable(bitmap)
+                try {
+                    if (photo != null) {
+                        addImage(photo)
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -197,6 +202,10 @@ class MainActivity : AppCompatActivity(),
         inputMethodManager.hideSoftInputFromWindow(v.applicationWindowToken, 0)
     }
 
+    private fun addImage(imgResId: Bitmap) {
+        //imgEdit.setImageBitmap(imgResId)
+        lnAddImage.visibility = View.INVISIBLE
+    }
     private fun setMotionViewSize(uri: Uri, bitmap: Bitmap) {
         val width = dummyView.width
         val height = dummyView.height
