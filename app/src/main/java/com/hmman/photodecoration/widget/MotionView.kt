@@ -23,6 +23,7 @@ import com.hmman.photodecoration.multitouch.RotateGestureDetector
 import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.MotionEntity
 import java.io.IOException
+import java.lang.Exception
 import java.util.*
 
 class MotionView : FrameLayout {
@@ -161,15 +162,20 @@ class MotionView : FrameLayout {
         }
     }
 
-    fun getFinalBitmap () : Bitmap {
+    fun getFinalBitmap () : Bitmap? {
         selectEntity(null, false)
 
-        val inputStream = context.contentResolver.openInputStream(PhotoUtils.photoUri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        val finalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-        val canvas = Canvas(finalBitmap)
-        drawAllRealEntities(canvas)
-        return finalBitmap
+        try {
+            val inputStream = context.contentResolver.openInputStream(PhotoUtils.photoUri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            val finalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+            val canvas = Canvas(finalBitmap)
+            drawAllRealEntities(canvas)
+            return finalBitmap
+        } catch (e: Exception) {
+
+        }
+        return null
     }
 
     private fun updateUI() {

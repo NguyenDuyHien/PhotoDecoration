@@ -141,22 +141,23 @@ class MainActivity : AppCompatActivity(),
 
     private fun savePhoto() {
         val finalBitmap = motionView.getFinalBitmap()
+        finalBitmap?.let {
+            val root = Environment.getExternalStorageDirectory().absolutePath
+            val myDir = File("$root/PhotoDecoration")
+            myDir.mkdirs()
 
-        val root = Environment.getExternalStorageDirectory().absolutePath
-        val myDir = File("$root/PhotoDecoration")
-        myDir.mkdirs()
-
-        val fname = "Photo.jpg"
-        val file = File(myDir, fname)
-        if (file.exists()) file.delete()
-        try {
-            val out = FileOutputStream(file)
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-            out.flush()
-            out.close()
-            Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
-        } catch (e: Exception) {
-            e.printStackTrace()
+            val fname = "Photo.jpg"
+            val file = File(myDir, fname)
+            if (file.exists()) file.delete()
+            try {
+                val out = FileOutputStream(file)
+                it.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                out.flush()
+                out.close()
+                Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
