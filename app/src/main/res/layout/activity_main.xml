@@ -195,19 +195,6 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:listitem="@layout/item_tool" />
 
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Input text"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/cardView"
-        app:layout_constraintStart_toEndOf="@+id/appCompatImageButton" />
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnPreview"
         android:layout_width="wrap_content"

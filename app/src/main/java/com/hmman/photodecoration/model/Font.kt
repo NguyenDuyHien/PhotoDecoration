@@ -3,7 +3,7 @@ package com.hmman.photodecoration.model
 import android.graphics.Color
 
 data class Font(
-    var color: Int = Color.DKGRAY,
+    var color: Int? = null,
     var typeface: String? = null,
     var size: Float = 0f
 ) {
