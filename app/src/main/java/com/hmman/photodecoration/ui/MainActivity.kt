@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var fontProvider: FontProvider
     private val PICK_IMAGE = 100
+    private val CAMERA_REQUEST = 111
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
 
@@ -72,6 +74,10 @@ class MainActivity : AppCompatActivity(),
         btnReset.setOnClickListener {
             motionView.reset()
 
+        }
+
+        btnCamera.setOnClickListener{
+            openCamera()
         }
 
         btnPreview.setOnClickListener {
@@ -111,6 +117,11 @@ class MainActivity : AppCompatActivity(),
 
     }
 
+    private fun openCamera(){
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, CAMERA_REQUEST)
+    }
+
     private fun openGallery() {
         val gallery =
             Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
@@ -131,6 +142,13 @@ class MainActivity : AppCompatActivity(),
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
+            }
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST){
+            data?.let {
+                val photo = data?.extras!!.get("data") as Bitmap?
+                var bitmap = BitmapDrawable(photo)
+                motionView.setBackgroundDrawable(bitmap)
             }
         }
     }
