@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
 import com.hmman.photodecoration.R
+import com.hmman.photodecoration.util.Constants
 
 class EditDialog : DialogFragment() {
 
@@ -19,7 +20,7 @@ class EditDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         var view: View = inflater.inflate(R.layout.edit_dialog, container, false)
-        val content = arguments?.getString("content")
+        val content = arguments?.getString(Constants.TEXT_CONTENT)
         val edtContent = view.findViewById<AppCompatEditText>(R.id.edtContent)
         edtContent.setText(content)
         return view

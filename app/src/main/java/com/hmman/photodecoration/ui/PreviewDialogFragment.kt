@@ -10,6 +10,7 @@ import android.view.Window
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
 import com.hmman.photodecoration.R
+import com.hmman.photodecoration.util.Constants
 
 class PreviewDialogFragment : DialogFragment() {
 
@@ -23,7 +24,7 @@ class PreviewDialogFragment : DialogFragment() {
     ): View {
         var view: View = inflater.inflate(R.layout.preview_dialog, container, false)
         var imgView = view.findViewById<AppCompatImageView>(R.id.imgResult2)
-        val bitmap = arguments?.getParcelable<Bitmap>("bitmap")
+        val bitmap = arguments?.getParcelable<Bitmap>(Constants.PREVIEW_BITMAP)
         imgView.setImageBitmap(bitmap)
         imgView.visibility = View.VISIBLE
         return view

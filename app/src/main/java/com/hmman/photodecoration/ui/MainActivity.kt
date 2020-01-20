@@ -22,6 +22,7 @@ import com.hmman.photodecoration.adapter.ToolsAdapter
 import com.hmman.photodecoration.model.Font
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
+import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.widget.MotionView
 import com.hmman.photodecoration.widget.entity.ImageEntity
@@ -216,7 +217,7 @@ class MainActivity : AppCompatActivity(),
     private fun showDialog(bitmap: Bitmap) {
         val fragmentManager = supportFragmentManager
         val data = Bundle()
-        data.putParcelable("bitmap", bitmap)
+        data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
         val newFragment = PreviewDialogFragment()
         newFragment.arguments = data
         newFragment.show(fragmentManager, "dialog")
@@ -225,7 +226,7 @@ class MainActivity : AppCompatActivity(),
     private fun showEditText(text: String){
         val fragmentManager = supportFragmentManager
         val data = Bundle()
-        data.putString("content", text)
+        data.putString(Constants.TEXT_CONTENT, text)
         val editFragment = EditDialog()
         editFragment.arguments = data
         editFragment.show(fragmentManager, "edit")
@@ -280,6 +281,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStickerSelected(sticker: Int) {
         addSticker(sticker)
-//        stickerDialog.dismiss()
+        stickerDialog.dismiss()
     }
 }
