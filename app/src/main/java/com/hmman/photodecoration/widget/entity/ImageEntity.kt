@@ -6,6 +6,8 @@ import android.graphics.Paint
 import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import com.hmman.photodecoration.model.Layer
+import com.hmman.photodecoration.util.PhotoUtils
+import kotlin.math.min
 
 class ImageEntity(
     @NonNull layer: Layer,
@@ -18,10 +20,12 @@ class ImageEntity(
         val width = bitmap.width.toFloat()
         val height = bitmap.height.toFloat()
         val widthAspect = 1F * canvasWidth/width
-        val heightAspect =1F * canvasHeight/height
+        val heightAspect = 1F * canvasHeight/height
+        val realWidthAspect = 1F * PhotoUtils.width/width
+        val realHeightAspect = 1F * PhotoUtils.height/height
 
-
-        holyScale = Math.min(widthAspect, heightAspect)
+        holyScale = min(widthAspect, heightAspect)
+        realHolyScale = min(realWidthAspect, realHeightAspect)
 
         srcPoints[0] = 0f
         srcPoints[1] = 0f
@@ -36,6 +40,10 @@ class ImageEntity(
 
     override fun drawContent(canvas: Canvas, drawingPaint: Paint?) {
         canvas.drawBitmap(bitmap, matrix, drawingPaint)
+    }
+
+    override fun drawRealContent(canvas: Canvas, drawingPaint: Paint?) {
+        canvas.drawBitmap(bitmap, realMatrix, drawingPaint)
     }
 
     override val width: Int
