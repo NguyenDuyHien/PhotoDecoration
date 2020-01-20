@@ -23,6 +23,12 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -38,6 +44,9 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0-beta04'
     implementation 'androidx.fragment:fragment-ktx:1.2.0-alpha04'
     implementation 'com.google.android.material:material:1.1.0-alpha10'
+
+    // color picker
+    implementation 'com.github.QuadFlask:colorpicker:0.0.15'
 
     //For dimension
     implementation 'com.intuit.sdp:sdp-android:1.0.6'

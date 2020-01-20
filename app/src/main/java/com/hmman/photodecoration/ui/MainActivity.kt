@@ -1,7 +1,6 @@
 package com.hmman.photodecoration.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -10,10 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -26,8 +22,9 @@ import com.hmman.photodecoration.model.Font
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.ui.dialog.DialogSticker
-import com.hmman.photodecoration.ui.dialog.EditDialog
+import com.hmman.photodecoration.ui.dialog.EditDialogFragment
 import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
+import com.hmman.photodecoration.util.AnimUtil
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
@@ -66,6 +63,7 @@ class MainActivity : AppCompatActivity(),
     private fun initListener() {
         fontProvider = FontProvider(resources)
         motionView.setMotionViewCallback(this)
+
 
         showTools()
 
@@ -109,27 +107,6 @@ class MainActivity : AppCompatActivity(),
         btnSave.setOnClickListener {
             savePhoto()
         }
-
-        editText.setOnKeyListener(View.OnKeyListener { v, i, keyEvent ->
-            if ((keyEvent.action == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER) && !editText.text.isNullOrEmpty()) {
-                hideKeyboard(v)
-                val textLayer = addText(editText.text.toString())
-                val textEntity = TextEntity(textLayer, motionView.width, motionView.height, fontProvider)
-                motionView.addEntityAndPosition(textEntity)
-
-                val center: PointF = textEntity.absoluteCenter()
-                center.y = center.y * 0.5f
-                textEntity.moveCenterTo(center)
-
-                motionView.invalidate()
-
-                startTextEntityEditing()
-                editText.visibility = EditText.INVISIBLE
-                editText.setText("")
-                return@OnKeyListener true
-            }
-            false
-        })
 
     }
 
@@ -183,10 +160,11 @@ class MainActivity : AppCompatActivity(),
         }
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST){
             data?.let {data ->
-                val photo = data?.extras!!.get("data") as Bitmap?
+                val bitmap = data?.extras!!.get("data") as Bitmap?
                 try {
-                    if (photo != null) {
-                        addImage(photo)
+                    if (bitmap != null) {
+//                        addImage(photo)
+                        setMotionViewSize(null, bitmap!!)
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -195,18 +173,11 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun hideKeyboard(v: View) {
-        val inputMethodManager: InputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(v.applicationWindowToken, 0)
-    }
-
-    private fun addImage(imgResId: Bitmap) {
-        //imgEdit.setImageBitmap(imgResId)
+    private fun addImage(bitmap: Bitmap) {
         lnAddImage.visibility = View.INVISIBLE
     }
 
-    private fun setMotionViewSize(uri: Uri, bitmap: Bitmap) {
+    private fun setMotionViewSize(uri: Uri?, bitmap: Bitmap) {
         val width = dummyView.width
         val height = dummyView.height
         val photoWidth = bitmap.width
@@ -232,10 +203,14 @@ class MainActivity : AppCompatActivity(),
         motionView.invalidate()
 
         // set photo info
-        PhotoUtils.photoUri = uri
+        if (uri != null) PhotoUtils.photoUri = uri
         PhotoUtils.photoRatio = ratio
         PhotoUtils.width = photoWidth
         PhotoUtils.height = photoHeight
+
+        rvTools.visibility = View.VISIBLE
+        rvTools.animation = AnimUtil.slideUp(this)
+        lnAddImage.visibility = View.INVISIBLE
     }
 
     private fun showTools() {
@@ -249,8 +224,7 @@ class MainActivity : AppCompatActivity(),
     override fun onToolSelected(toolType: ToolsAdapter.ToolType) {
         when (toolType) {
             ToolsAdapter.ToolType.TEXT -> {
-                editText.visibility = EditText.VISIBLE
-//                showEditText("")
+                showEditText("")
             }
             ToolsAdapter.ToolType.STICKER -> {
                 stickerDialog.show()
@@ -259,10 +233,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun addText(text: String): TextLayer {
-        val textLayer = createTextLayer(text)!!
+    private fun addText(text: String, colorCode: Int): TextLayer {
+        val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
             TextEntity(textLayer, motionView.width, motionView.height, fontProvider)
+
+        motionView.addEntityAndPosition(textEntity)
 
         val center: PointF = textEntity.absoluteCenter()
         center.y = center.y * 0.5f
@@ -270,27 +246,36 @@ class MainActivity : AppCompatActivity(),
 
         motionView.invalidate()
 
-        startTextEntityEditing()
         return textLayer
     }
 
     private fun addSticker(stickerResId: Int) {
         motionView.post {
             val layer = Layer()
-            val sticker = BitmapFactory.decodeResource(resources, stickerResId)
+            val pica = BitmapFactory.decodeResource(resources, stickerResId)
             val entity =
-                ImageEntity(layer, sticker, motionView.width, motionView.height)
+                ImageEntity(layer, pica, motionView.width, motionView.height)
             motionView.addEntityAndPosition(entity)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun startTextEntityEditing() {
-//        val textEntity: TextEntity = currentTextEntity()!!
-//        if (textEntity != null) {
-//            val fragment: TextEditorDialogFragment =
-//                TextEditorDialogFragment.getInstance(textEntity.getLayer().getText())
-//            fragment.show(fragmentManager, TextEditorDialogFragment::class.java.getName())
-//        }
+        val textEntity: TextEntity = currentTextEntity()!!
+        if (textEntity != null) {
+            val editDialog = EditDialogFragment.show(this,
+                textEntity.getLayer().text!!,
+                textEntity.getLayer().font!!.color!!)
+            editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
+                @RequiresApi(Build.VERSION_CODES.M)
+                override fun onDone(inputText: String, colorCode: Int) {
+                    textEntity.getLayer().text = inputText
+                    textEntity.getLayer().font!!.color = colorCode
+                    textEntity.updateEntity(true)
+                    motionView.invalidate()
+                }
+            })
+        }
     }
 
     @Nullable
@@ -309,22 +294,23 @@ class MainActivity : AppCompatActivity(),
         val newFragment =
             PreviewDialogFragment()
         newFragment.arguments = data
-        newFragment.show(fragmentManager, "dialog")
+        newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
     }
 
     private fun showEditText(text: String){
-        val fragmentManager = supportFragmentManager
-        val data = Bundle()
-        data.putString(Constants.TEXT_CONTENT, text)
-        val editFragment = EditDialog()
-        editFragment.arguments = data
-        editFragment.show(fragmentManager, "edit")
+        val editDialog: EditDialogFragment = EditDialogFragment.show(this)
+        editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
+            @RequiresApi(Build.VERSION_CODES.M)
+            override fun onDone(inputText: String, colorCode: Int) {
+                addText(inputText, colorCode)
+            }
+        })
     }
 
-    private fun createTextLayer(text: String): TextLayer? {
+    private fun createTextLayer(text: String, colorCode: Int): TextLayer? {
         val textLayer = TextLayer()
         var font = Font()
-        font.color = Color.DKGRAY
+        font.color = colorCode
         font.size = TextLayer.Limits.INITIAL_FONT_SIZE
         font.typeface = fontProvider.getDefaultFontName()
         textLayer.font = font
@@ -360,8 +346,9 @@ class MainActivity : AppCompatActivity(),
         actionTool.visibility = View.VISIBLE
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onEntityDoubleTap(entity: MotionEntity?) {
-        //Nothing
+        startTextEntityEditing()
     }
 
     override fun onEntityUnselected() {
