@@ -8,6 +8,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.util.MathUtils
+import com.hmman.photodecoration.util.PhotoUtils
 
 abstract class MotionEntity(
     val layer: Layer,
@@ -15,8 +16,10 @@ abstract class MotionEntity(
 ) {
 
     protected val matrix = Matrix()
+    protected val realMatrix = Matrix()
     private var isSelected = false
     protected var holyScale = 0f
+    protected var realHolyScale = 0f
     private val destPoints = FloatArray(10) // x0, y0, x1, y1, x2, y2, x3, y3, x0, y0
     protected val srcPoints = FloatArray(10)
 
@@ -49,6 +52,27 @@ abstract class MotionEntity(
         matrix.preRotate(rotationInDegree, centerX, centerY)
         matrix.preTranslate(topLeftX, topLeftY)
         matrix.preScale(holyScale, holyScale)
+    }
+
+    protected open fun updateRealMatrix() {
+        realMatrix.reset()
+        val topLeftX: Float = layer.x * PhotoUtils.width
+        val topLeftY: Float = layer.y * PhotoUtils.height
+        val centerX: Float = topLeftX + width * realHolyScale * 0.5f
+        val centerY: Float = topLeftY + height * realHolyScale * 0.5f
+
+        var rotationInDegree: Float = layer.rotationInDegrees
+        var scaleX: Float = layer.scale
+        val scaleY: Float = layer.scale
+        if (layer.isFlipped) {
+            rotationInDegree *= -1.0f
+            scaleX *= -1.0f
+        }
+
+        realMatrix.preScale(scaleX, scaleY, centerX, centerY)
+        realMatrix.preRotate(rotationInDegree, centerX, centerY)
+        realMatrix.preTranslate(topLeftX, topLeftY)
+        realMatrix.preScale(realHolyScale, realHolyScale)
     }
 
     fun absoluteCenterX(): Float {
@@ -119,6 +143,21 @@ abstract class MotionEntity(
         canvas.restore()
     }
 
+    fun drawReal(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?) {
+        updateRealMatrix()
+        canvas.save()
+        drawRealContent(canvas, drawingPaint)
+        if (isSelected()) {
+            val storedAlpha = borderPaint.alpha
+            if (drawingPaint != null) {
+                borderPaint.alpha = drawingPaint.alpha
+            }
+            drawSelectedBg(canvas)
+            borderPaint.alpha = storedAlpha
+        }
+        canvas.restore()
+    }
+
     private fun drawSelectedBg(canvas: Canvas) {
         matrix.mapPoints(destPoints, srcPoints)
         canvas.drawLines(destPoints, 0, 8, borderPaint)
@@ -130,6 +169,7 @@ abstract class MotionEntity(
     }
 
     protected abstract fun drawContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)
+    protected abstract fun drawRealContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)
     abstract val width: Int
     abstract val height: Int
 

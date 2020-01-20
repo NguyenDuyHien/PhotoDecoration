@@ -12,9 +12,9 @@ import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
-import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.util.FontProvider
+import com.hmman.photodecoration.util.PhotoUtils
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,6 +32,7 @@ class TextEntity(
 
     init {
         updateEntity(false)
+        updateRealEntity(false)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -61,6 +62,33 @@ class TextEntity(
         srcPoints[7] = height
         srcPoints[8] = 0f
 
+        if (moveToPreviousCenter) { // move to previous center
+            moveCenterTo(oldCenter)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun updateRealEntity(moveToPreviousCenter: Boolean) { // save previous center
+        val oldCenter = absoluteCenter()
+
+        val width = bitmap!!.width.toFloat()
+        val height = bitmap!!.height.toFloat()
+        val widthAspect: Float = 1.0f * PhotoUtils.width / width
+
+        // for text we always match text width with parent width
+        realHolyScale = widthAspect
+
+        // initial position of the entity
+        srcPoints[0] = 0f
+        srcPoints[1] = 0f
+        srcPoints[2] = width
+        srcPoints[3] = 0f
+        srcPoints[4] = width
+        srcPoints[5] = height
+        srcPoints[6] = 0f
+        srcPoints[7] = height
+        srcPoints[8] = 0f
+        srcPoints[8] = 0f
         if (moveToPreviousCenter) { // move to previous center
             moveCenterTo(oldCenter)
         }
@@ -123,13 +151,23 @@ class TextEntity(
         }
     }
 
+    override fun drawRealContent(canvas: Canvas, drawingPaint: Paint?) {
+        if (bitmap != null) {
+            canvas.drawBitmap(bitmap!!, realMatrix, drawingPaint)
+        }
+    }
+
     override fun release() {
         if (bitmap != null && !bitmap!!.isRecycled) {
             bitmap!!.recycle()
         }
     }
 
+    fun updateEntity() {
+        updateEntity(true)
+        updateRealEntity(true)
+    }
+
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
     override val height: Int = if (bitmap != null) bitmap!!.height else 0
-
 }

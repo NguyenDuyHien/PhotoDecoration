@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.*
 import android.os.Build
+import android.provider.MediaStore
 import android.util.AttributeSet
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -19,8 +20,9 @@ import androidx.core.view.GestureDetectorCompat
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
+import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.MotionEntity
-import com.hmman.photodecoration.widget.entity.TextEntity
+import java.io.IOException
 import java.util.*
 
 class MotionView : FrameLayout {
@@ -153,17 +155,22 @@ class MotionView : FrameLayout {
         }
     }
 
-    val thumbnailImage: Bitmap
-        get() {
-            selectEntity(null, false)
-            val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            // IMPORTANT: always create white background, cos if the image is saved in JPEG format,
-            // which doesn't have transparent pixels, the background will be black
-            bmp.eraseColor(Color.WHITE)
-            val canvas = Canvas(bmp)
-            drawAllEntities(canvas)
-            return bmp
+    private fun drawAllRealEntities(canvas: Canvas) {
+        for (i in entities.indices) {
+            entities[i].drawReal(canvas, null)
         }
+    }
+
+    fun getFinalBitmap () : Bitmap {
+        selectEntity(null, false)
+
+        val inputStream = context.contentResolver.openInputStream(PhotoUtils.photoUri)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
+        val finalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val canvas = Canvas(finalBitmap)
+        drawAllRealEntities(canvas)
+        return finalBitmap
+    }
 
     private fun updateUI() {
         invalidate()
