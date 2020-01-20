@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity(),
         fontProvider = FontProvider(resources)
         motionView.setMotionViewCallback(this)
 
-
         showTools()
 
         btnGallery.setOnClickListener{
