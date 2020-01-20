@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(),
             data?.let { data ->
                 imageUri = data.data
                 // imageView.setImageURI(imageUri);
-                try { //c1
+                try {
                     val inputStream =
                         contentResolver.openInputStream(imageUri!!)
                     val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -153,10 +153,15 @@ class MainActivity : AppCompatActivity(),
             }
         }
         if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST){
-            data?.let {
+            data?.let {data ->
                 val photo = data?.extras!!.get("data") as Bitmap?
-                var bitmap = BitmapDrawable(photo)
-                motionView.setBackgroundDrawable(bitmap)
+                try {
+                    if (photo != null) {
+                        addImage(photo)
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -168,9 +173,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun addImage(imgResId: Bitmap) {
-//        val editingImage = AppCompatImageView(this)
-//        editingImage.setImageResource(imgResId)
-//        motionView.addView(editingImage)
         imgEdit.setImageBitmap(imgResId)
         lnAddImage.visibility = View.INVISIBLE
     }
