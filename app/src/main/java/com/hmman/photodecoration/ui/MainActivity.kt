@@ -14,7 +14,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -67,6 +66,7 @@ class MainActivity : AppCompatActivity(),
     private fun initListener() {
         fontProvider = FontProvider(resources)
         motionView.setMotionViewCallback(this)
+
 
         showTools()
 
@@ -206,6 +206,7 @@ class MainActivity : AppCompatActivity(),
         //imgEdit.setImageBitmap(imgResId)
         lnAddImage.visibility = View.INVISIBLE
     }
+
     private fun setMotionViewSize(uri: Uri, bitmap: Bitmap) {
         val width = dummyView.width
         val height = dummyView.height
