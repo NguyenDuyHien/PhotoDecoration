@@ -163,7 +163,6 @@ class MainActivity : AppCompatActivity(),
                 val bitmap = data?.extras!!.get("data") as Bitmap?
                 try {
                     if (bitmap != null) {
-//                        addImage(photo)
                         setMotionViewSize(null, bitmap!!)
                     }
                 } catch (e: IOException) {
@@ -171,10 +170,6 @@ class MainActivity : AppCompatActivity(),
                 }
             }
         }
-    }
-
-    private fun addImage(bitmap: Bitmap) {
-        lnAddImage.visibility = View.INVISIBLE
     }
 
     private fun setMotionViewSize(uri: Uri?, bitmap: Bitmap) {
