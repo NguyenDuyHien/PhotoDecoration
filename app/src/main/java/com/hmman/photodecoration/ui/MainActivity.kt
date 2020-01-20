@@ -1,7 +1,11 @@
 package com.hmman.photodecoration.ui
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -9,10 +13,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
@@ -38,7 +46,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.min
 
-
 class MainActivity : AppCompatActivity(),
     ToolsAdapter.OnItemSelected,
     MotionView.MotionViewCallback,
@@ -47,6 +54,8 @@ class MainActivity : AppCompatActivity(),
     private lateinit var fontProvider: FontProvider
     private val PICK_IMAGE = 100
     private val CAMERA_REQUEST = 111
+    private val PERMISSION_REQUEST_CODE = 999
+    private val REQUEST_PERMISSION_SETTING = 888
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
 
@@ -70,9 +79,9 @@ class MainActivity : AppCompatActivity(),
             openGallery()
         }
 
-        lnAddImage.setOnClickListener({
+        lnAddImage.setOnClickListener {
             openGallery()
-        })
+        }
 
         btnUndo.setOnClickListener {
             motionView.undo()
@@ -104,9 +113,55 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnSave.setOnClickListener {
-            savePhoto()
+            if (isStoragePermissionGranted()) {
+                savePhoto()
+            }
         }
+    }
 
+    private fun isStoragePermissionGranted() : Boolean {
+        return if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                true
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE
+                )
+                false
+            }
+        } else {
+            true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            savePhoto()
+        } else {
+            Snackbar.make(mainLayout, resources.getString(R.string.permission_denied), 1500).show()
+            if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                val dialogBuilder = AlertDialog.Builder(this)
+                dialogBuilder.setMessage(resources.getString(R.string.permission_message))
+                    .setCancelable(false)
+                    .setPositiveButton(resources.getString(R.string.ok)) { _: DialogInterface, _: Int ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", packageName, null)
+                        intent.data = uri
+                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING)
+                    }
+
+                val alert = dialogBuilder.create()
+                alert.setTitle(resources.getString(R.string.permission_req))
+                alert.show()
+            }
+        }
     }
 
     private fun openCamera(){
@@ -162,7 +217,7 @@ class MainActivity : AppCompatActivity(),
                 val bitmap = data?.extras!!.get("data") as Bitmap?
                 try {
                     if (bitmap != null) {
-                        setMotionViewSize(null, bitmap!!)
+                        setMotionViewSize(null, bitmap)
                     }
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -242,15 +297,16 @@ class MainActivity : AppCompatActivity(),
 
         motionView.invalidate()
 
+        startTextEntityEditing()
         return textLayer
     }
 
     private fun addSticker(stickerResId: Int) {
         motionView.post {
             val layer = Layer()
-            val pica = BitmapFactory.decodeResource(resources, stickerResId)
+            val sticker = BitmapFactory.decodeResource(resources, stickerResId)
             val entity =
-                ImageEntity(layer, pica, motionView.width, motionView.height)
+                ImageEntity(layer, sticker, motionView.width, motionView.height)
             motionView.addEntityAndPosition(entity)
         }
     }

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">PhotoDecoration</string>
     <string name="photo_saved">Photo saved</string>
+    <string name="permission_denied">Permission denied :"(</string>
+    <string name="permission_req">Permission require</string>
+    <string name="permission_message">Please allow storage permission to save photo!</string>
+    <string name="ok">OK</string>
 </resources>
