@@ -6,15 +6,31 @@
     android:layout_height="match_parent"
     android:background="@color/editBackground">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnPreview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Preview"
-        android:textColor="#ffffff"
-        android:backgroundTint="@color/lightBlue"
-        app:layout_constraintBottom_toTopOf="@+id/btnUndo"
-        app:layout_constraintEnd_toEndOf="@+id/containerResult" />
+    <LinearLayout
+        android:id="@+id/lnAddImage"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            app:srcCompat="@drawable/add"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_marginLeft="@dimen/_8sdp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_18sdp"
+            android:text="Add Image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         app:layout_constraintBottom_toTopOf="@id/btnSave"
@@ -33,7 +49,6 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:id="@+id/imgEdit"
-            app:srcCompat="@drawable/default_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -192,6 +207,16 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/cardView"
         app:layout_constraintStart_toEndOf="@+id/appCompatImageButton" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preview"
+        android:textColor="#ffffff"
+        android:backgroundTint="@color/lightBlue"
+        app:layout_constraintBottom_toTopOf="@+id/btnUndo"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSave"

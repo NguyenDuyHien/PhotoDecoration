@@ -1,4 +1,4 @@
-package com.hmman.photodecoration.ui
+package com.hmman.photodecoration.ui.dialog
 
 import android.app.Dialog
 import android.graphics.Bitmap

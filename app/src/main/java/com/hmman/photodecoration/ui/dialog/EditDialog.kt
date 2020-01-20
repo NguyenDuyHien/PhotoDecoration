@@ -1,13 +1,9 @@
-package com.hmman.photodecoration.ui
+package com.hmman.photodecoration.ui.dialog
 
 import android.app.Dialog
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.Constants

@@ -22,6 +22,9 @@ import com.hmman.photodecoration.adapter.ToolsAdapter
 import com.hmman.photodecoration.model.Font
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
+import com.hmman.photodecoration.ui.dialog.DialogSticker
+import com.hmman.photodecoration.ui.dialog.EditDialog
+import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.widget.MotionView
@@ -47,7 +50,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         initListener()
         eventActionTools()
-        stickerDialog = DialogSticker(this, this)
+        stickerDialog =
+            DialogSticker(this, this)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -62,6 +66,10 @@ class MainActivity : AppCompatActivity(),
             openGallery()
         }
 
+        lnAddImage.setOnClickListener({
+            openGallery()
+        })
+
         btnUndo.setOnClickListener {
             motionView.undo()
         }
@@ -72,7 +80,6 @@ class MainActivity : AppCompatActivity(),
 
         btnReset.setOnClickListener {
             motionView.reset()
-
         }
 
         btnPreview.setOnClickListener {
@@ -147,7 +154,7 @@ class MainActivity : AppCompatActivity(),
 //        editingImage.setImageResource(imgResId)
 //        motionView.addView(editingImage)
         imgEdit.setImageBitmap(imgResId)
-
+        lnAddImage.visibility = View.INVISIBLE
     }
 
     private fun showTools() {
@@ -218,7 +225,8 @@ class MainActivity : AppCompatActivity(),
         val fragmentManager = supportFragmentManager
         val data = Bundle()
         data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
-        val newFragment = PreviewDialogFragment()
+        val newFragment =
+            PreviewDialogFragment()
         newFragment.arguments = data
         newFragment.show(fragmentManager, "dialog")
     }
