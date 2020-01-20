@@ -1,6 +1,7 @@
 package com.hmman.photodecoration.ui.dialog
 
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,6 +14,9 @@ import androidx.annotation.ColorInt
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.flask.colorpicker.ColorPickerView
+import com.flask.colorpicker.builder.ColorPickerClickListener
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.Constants
 import kotlinx.android.synthetic.main.edit_dialog.*
@@ -57,17 +61,44 @@ class EditDialogFragment : DialogFragment() {
         mContent = arguments!!.getString(Constants.TEXT_CONTENT)
         edtContent.setTextColor(mColorCode!!)
         edtContent.setText(mContent)
-        edtContent.setSelection(edtContent.getText()!!.length);
+        edtContent.setSelection(edtContent.getText()!!.length)
+        btnColor.setBackgroundColor(mColorCode!!)
+
+        btnColor.setOnClickListener({
+            changeTextEntityColor(mContent!!, mColorCode!!)
+        })
 
         btnDone.setOnClickListener({
             dismiss()
             mInputMethodManager!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-            val text = edtContent.text.toString()
-            if (!TextUtils.isEmpty(text)){
-                mTextEditor!!.onDone(text, mColorCode!!)
+            mContent = edtContent.text.toString()
+            if (!TextUtils.isEmpty(mContent)){
+                mTextEditor!!.onDone(mContent!!, mColorCode!!)
             }
         })
     }
+
+    fun changeTextEntityColor(text:String, initialColor: Int){
+        ColorPickerDialogBuilder
+            .with(context)
+            .setTitle("Select Color")
+            .initialColor(initialColor!!)
+            .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+            .density(17)
+            .setPositiveButton("OK", object : ColorPickerClickListener {
+                override fun onClick(d: DialogInterface?, lastSelectedColor: Int, allColors: Array<out Int>?) {
+                    if (text != null) {
+                        mColorCode = lastSelectedColor
+                        edtContent.setTextColor(lastSelectedColor)
+                        btnColor.setBackgroundColor(lastSelectedColor)
+                    }
+                }
+            })
+            .setNegativeButton("Cancel", DialogInterface.OnClickListener{ dialog, which ->  })
+            .build()
+            .show()
+    }
+
 
     fun setOnDoneListener (textEditor: TextEditor){
         mTextEditor = textEditor
