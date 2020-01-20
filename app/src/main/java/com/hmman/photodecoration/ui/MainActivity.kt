@@ -38,6 +38,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.min
 
+
 class MainActivity : AppCompatActivity(),
     ToolsAdapter.OnItemSelected,
     MotionView.MotionViewCallback,
@@ -55,15 +56,13 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         initListener()
         eventActionTools()
-        stickerDialog =
-            DialogSticker(this, this)
+        stickerDialog = DialogSticker(this, this)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initListener() {
         fontProvider = FontProvider(resources)
         motionView.setMotionViewCallback(this)
-
 
         showTools()
 
