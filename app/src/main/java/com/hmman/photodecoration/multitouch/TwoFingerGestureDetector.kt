@@ -66,25 +66,25 @@ abstract class TwoFingerGestureDetector(
         }
 
     open fun isSloppyGesture(event: MotionEvent): Boolean { // As orientation can change, query the metrics in touch down
-        val metrics = mContext.resources.displayMetrics
-        mRightSlopEdge = metrics.widthPixels - mEdgeSlop
-        mBottomSlopEdge = metrics.heightPixels - mEdgeSlop
-        val edgeSlop = mEdgeSlop
-        val rightSlop = mRightSlopEdge
-        val bottomSlop = mBottomSlopEdge
-        val x0 = event.rawX
-        val y0 = event.rawY
-        val x1 = getRawX(event, 1)
-        val y1 = getRawY(event, 1)
-        val p0sloppy = x0 < edgeSlop || y0 < edgeSlop || x0 > rightSlop || y0 > bottomSlop
-        val p1sloppy = x1 < edgeSlop || y1 < edgeSlop || x1 > rightSlop || y1 > bottomSlop
-        if (p0sloppy && p1sloppy) {
-            return true
-        } else if (p0sloppy) {
-            return true
-        } else if (p1sloppy) {
-            return true
-        }
+//        val metrics = mContext.resources.displayMetrics
+//        mRightSlopEdge = metrics.widthPixels - mEdgeSlop
+//        mBottomSlopEdge = metrics.heightPixels - mEdgeSlop
+//        val edgeSlop = mEdgeSlop
+//        val rightSlop = mRightSlopEdge
+//        val bottomSlop = mBottomSlopEdge
+//        val x0 = event.rawX
+//        val y0 = event.rawY
+//        val x1 = getRawX(event, 1)
+//        val y1 = getRawY(event, 1)
+//        val p0sloppy = x0 < edgeSlop || y0 < edgeSlop || x0 > rightSlop || y0 > bottomSlop
+//        val p1sloppy = x1 < edgeSlop || y1 < edgeSlop || x1 > rightSlop || y1 > bottomSlop
+//        if (p0sloppy && p1sloppy) {
+//            return true
+//        } else if (p0sloppy) {
+//            return true
+//        } else if (p1sloppy) {
+//            return true
+//        }
         return false
     }
 
