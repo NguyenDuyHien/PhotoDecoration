@@ -43,7 +43,7 @@ class MotionView : FrameLayout {
     private val entities: MutableList<MotionEntity> =
         ArrayList()
     private val undoEntities: Stack<MotionEntity> = Stack()
-    private val resetEntities: MutableList<MotionEntity> = ArrayList<MotionEntity>()
+//    private val resetEntities: MutableList<MotionEntity> = ArrayList<MotionEntity>()
 
     @Nullable
     var selectedEntity: MotionEntity? = null
@@ -318,13 +318,23 @@ class MotionView : FrameLayout {
     fun undo() {
         val lastItemPosition = entities.size - 1
         val listSize = entities.size
+//        when {
+//            isReseted -> {
+//                entities.addAll(resetEntities)
+//                resetEntities.clear()
+//                updateUI()
+//                isReseted = false
+//            }
+//            listSize > 0 -> {
+//                undoEntities.push(entities.removeAt(lastItemPosition))
+//                selectEntity(null, false)
+//                updateUI()
+//            }
+//            else -> {
+//                Toast.makeText(this.context, "Nothing to Undo", Toast.LENGTH_SHORT).show();
+//            }
+//        }
         when {
-            isReseted -> {
-                entities.addAll(resetEntities)
-                resetEntities.clear()
-                updateUI()
-                isReseted = false
-            }
             listSize > 0 -> {
                 undoEntities.push(entities.removeAt(lastItemPosition))
                 selectEntity(null, false)
@@ -336,13 +346,14 @@ class MotionView : FrameLayout {
         }
     }
 
-    private var isReseted = false
+//    private var isReseted = false
     fun reset() {
-        resetEntities.addAll(entities)
+//        resetEntities.addAll(entities)
         entities.clear()
         selectEntity(null, false)
         updateUI()
-        isReseted = true
+        motionViewCallback!!.onEntityUnselected()
+//        isReseted = true
     }
 
     // gesture detectors

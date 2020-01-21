@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         initListener()
         eventActionTools()
+        enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
     }
 
@@ -104,12 +105,12 @@ class MainActivity : AppCompatActivity(),
             motionView.unselectEntity()
             val bitmap =
                 Bitmap.createBitmap(
-                    containerResult.width,
-                    containerResult.height,
+                    resultContainer.width,
+                    resultContainer.height,
                     Bitmap.Config.ARGB_8888
                 )
             val canvas = Canvas(bitmap)
-            containerResult.draw(canvas)
+            resultContainer.draw(canvas)
             showDialog(bitmap)
         }
 
@@ -202,24 +203,24 @@ class MainActivity : AppCompatActivity(),
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == PICK_IMAGE) {
-                data?.let { data ->
-                    imageUri = data.data
+                data?.let { d ->
+                    imageUri = d.data
                     try {
                         val inputStream =
                             contentResolver.openInputStream(imageUri!!)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        setMotionViewSize(imageUri, bitmap)
+                        setMotionViewSizeAndBackground(imageUri, bitmap)
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
-                data?.let { data ->
-                    val bitmap = data.extras!!.get("data") as Bitmap?
+                data?.let { d ->
+                    val bitmap = d.extras!!.get("data") as Bitmap?
                     try {
                         if (bitmap != null) {
-                            setMotionViewSize(null, bitmap)
+                            setMotionViewSizeAndBackground(null, bitmap)
                         }
                     } catch (e: IOException) {
                         e.printStackTrace()
@@ -233,12 +234,37 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setMotionViewSize(uri: Uri?, bitmap: Bitmap) {
-        rvTools.visibility = View.VISIBLE
-        rvTools.animation = AnimUtil.slideUp(this)
-        lnAddImage.visibility = View.INVISIBLE
-        rvTools.visibility = View.VISIBLE
-        rvTools.animation = AnimUtil.slideUp(this)
+    private fun enableEditMode (show: Boolean){
+        when (show){
+            true -> {
+                btnPreview.visibility = View.VISIBLE
+                btnSave.visibility = View.VISIBLE
+                btnReset.visibility = View.VISIBLE
+                btnRedo.visibility = View.VISIBLE
+                btnUndo.visibility = View.VISIBLE
+                rvTools.apply {
+                    visibility = View.VISIBLE
+                    animation = AnimUtil.slideUp(this@MainActivity)
+                }
+                lnAddImage.visibility = View.INVISIBLE
+            }
+            else -> {
+                btnPreview.visibility = View.GONE
+                btnSave.visibility = View.GONE
+                btnReset.visibility = View.GONE
+                btnRedo.visibility = View.GONE
+                btnUndo.visibility = View.GONE
+                rvTools.apply {
+                    visibility = View.GONE
+                    animation = AnimUtil.slideDown(this@MainActivity)
+                }
+                lnAddImage.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun setMotionViewSizeAndBackground(uri: Uri?, bitmap: Bitmap) {
+        enableEditMode(true)
 
         val width = dummyView.width
         val height = dummyView.height
@@ -284,7 +310,7 @@ class MainActivity : AppCompatActivity(),
     override fun onToolSelected(toolType: ToolsAdapter.ToolType) {
         when (toolType) {
             ToolsAdapter.ToolType.TEXT -> {
-                showEditText("")
+                showAddTextDialog()
             }
             ToolsAdapter.ToolType.STICKER -> {
                 stickerDialog.show()
@@ -323,20 +349,18 @@ class MainActivity : AppCompatActivity(),
     @RequiresApi(Build.VERSION_CODES.M)
     private fun startTextEntityEditing() {
         val textEntity: TextEntity = currentTextEntity()!!
-        if (textEntity != null) {
-            val editDialog = EditDialogFragment.show(this,
-                textEntity.getLayer().text!!,
-                textEntity.getLayer().font!!.color!!)
-            editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
-                @RequiresApi(Build.VERSION_CODES.M)
-                override fun onDone(inputText: String, colorCode: Int) {
-                    textEntity.getLayer().text = inputText
-                    textEntity.getLayer().font!!.color = colorCode
-                    textEntity.updateEntity(true)
-                    motionView.invalidate()
-                }
-            })
-        }
+        val editDialog = EditDialogFragment.show(this,
+            textEntity.getLayer().text!!,
+            textEntity.getLayer().font!!.color!!)
+        editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
+            @RequiresApi(Build.VERSION_CODES.M)
+            override fun onDone(text: String, colorCode: Int) {
+                textEntity.getLayer().text = text
+                textEntity.getLayer().font!!.color = colorCode
+                textEntity.updateEntity(true)
+                motionView.invalidate()
+            }
+        })
     }
 
     @Nullable
@@ -358,12 +382,12 @@ class MainActivity : AppCompatActivity(),
         newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
     }
 
-    private fun showEditText(text: String){
+    private fun showAddTextDialog(){
         val editDialog: EditDialogFragment = EditDialogFragment.show(this)
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
-            override fun onDone(inputText: String, colorCode: Int) {
-                addText(inputText, colorCode)
+            override fun onDone(text: String, colorCode: Int) {
+                addText(text, colorCode)
             }
         })
     }
