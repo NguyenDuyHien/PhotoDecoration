@@ -1,5 +1,6 @@
 package com.hmman.photodecoration.widget.entity
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -21,8 +22,8 @@ class ImageEntity(
         val height = bitmap.height.toFloat()
         val widthAspect = 1F * canvasWidth/width
         val heightAspect = 1F * canvasHeight/height
-        val realWidthAspect = 1F * PhotoUtils.width/width
-        val realHeightAspect = 1F * PhotoUtils.height/height
+        val realWidthAspect = 1F * PhotoUtils.getInstance(null).width/width
+        val realHeightAspect = 1F * PhotoUtils.getInstance(null).height/height
 
         holyScale = min(widthAspect, heightAspect)
         realHolyScale = min(realWidthAspect, realHeightAspect)

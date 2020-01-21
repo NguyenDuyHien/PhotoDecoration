@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        PhotoUtils.getInstance(this)
         initListener()
         eventActionTools()
         editTextToolEvent()
@@ -157,12 +158,15 @@ class MainActivity : AppCompatActivity(),
             if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 val dialogBuilder = AlertDialog.Builder(this)
                 dialogBuilder.setMessage(resources.getString(R.string.permission_message))
-                    .setCancelable(false)
+                    .setCancelable(true)
                     .setPositiveButton(resources.getString(R.string.ok)) { _: DialogInterface, _: Int ->
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         val uri = Uri.fromParts("package", packageName, null)
                         intent.data = uri
                         startActivityForResult(intent, REQUEST_PERMISSION_SETTING)
+                    }
+                    .setNegativeButton(resources.getString(R.string.cancel)) { dialogInterface: DialogInterface, _: Int ->
+                        dialogInterface.dismiss()
                     }
 
                 val alert = dialogBuilder.create()
@@ -216,8 +220,10 @@ class MainActivity : AppCompatActivity(),
                         val inputStream =
                             contentResolver.openInputStream(imageUri!!)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        val preventRotateBitmap = rotateImageIfRequired(bitmap, imageUri!!)
-                        preventRotateBitmap?.let { setMotionViewSizeAndBackground(imageUri, it) }
+                        val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, imageUri!!)
+                        preventRotateBitmap?.let {
+                            setMotionViewSizeAndBackground(imageUri, it)
+                        }
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
@@ -240,45 +246,6 @@ class MainActivity : AppCompatActivity(),
             if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 savePhoto()
         }
-    }
-
-    private fun rotateImage(img: Bitmap, degree: Int): Bitmap? {
-        val matrix = Matrix()
-        matrix.postRotate(degree.toFloat())
-        val rotatedImg =
-            Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
-        img.recycle()
-        return rotatedImg
-    }
-
-    @Throws(IOException::class)
-    private fun rotateImageIfRequired(img: Bitmap, selectedImage: Uri): Bitmap? {
-        val ei = ExifInterface(getRealPathFromURI(selectedImage))
-        val orientation =
-            ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-        return when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(
-                img,
-                90
-            )
-            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(
-                img,
-                180
-            )
-            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(
-                img,
-                270
-            )
-            else -> img
-        }
-    }
-
-    fun getRealPathFromURI(contentUri: Uri?): String? {
-        val proj = arrayOf(MediaStore.Audio.Media.DATA)
-        val cursor = managedQuery(contentUri, proj, null, null, null)
-        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(column_index)
     }
 
     private fun enableEditMode (show: Boolean){
@@ -339,8 +306,6 @@ class MainActivity : AppCompatActivity(),
 
         val width = dummyView.width
         val height = dummyView.height
-        Log.d("xxxx", width.toString())
-        Log.d("xxxx", height.toString())
         val photoWidth = bitmap.width
         val photoHeight = bitmap.height
 
@@ -361,13 +326,14 @@ class MainActivity : AppCompatActivity(),
         motionView.background = background
 
         // redraw motion view
+        motionView.reset()
         motionView.invalidate()
 
         // set photo info
-        if (uri != null) PhotoUtils.photoUri = uri
-        PhotoUtils.photoRatio = ratio
-        PhotoUtils.width = photoWidth
-        PhotoUtils.height = photoHeight
+        if (uri != null) PhotoUtils.getInstance(null).photoUri = uri
+        PhotoUtils.getInstance(null).photoRatio = ratio
+        PhotoUtils.getInstance(null).width = photoWidth
+        PhotoUtils.getInstance(null).height = photoHeight
     }
 
     private fun showTools() {
@@ -519,15 +485,15 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun eventActionTools(){
-        btnBringToFront.setOnClickListener({
+        btnBringToFront.setOnClickListener {
             bringToFront(motionView.selectedEntity!!)
-        })
-        btnMoveToBack.setOnClickListener({
+        }
+        btnMoveToBack.setOnClickListener {
             moveToBack()
-        })
-        btnDelete.setOnClickListener({
+        }
+        btnDelete.setOnClickListener {
             deleteEntity()
-        })
+        }
     }
 
     private fun deleteEntity(){
