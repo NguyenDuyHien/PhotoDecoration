@@ -6,6 +6,7 @@ import android.graphics.*
 import android.os.Build
 import android.provider.MediaStore
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -122,6 +123,7 @@ class MotionView : FrameLayout {
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
         if (entity != null) {
             initEntityBorder(entity)
+            initEntityClose(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
             selectEntity(entity, true)
@@ -136,7 +138,16 @@ class MotionView : FrameLayout {
         borderPaint.color = ContextCompat.getColor(context, R.color.stroke_color)
         entity.setBorderPaint(borderPaint)
     }
+    private fun initEntityClose(@NonNull entity: MotionEntity) { // init stroke
+        val strokeSize = resources.getDimensionPixelSize(R.dimen.stroke_size)
+        val borderPaint = Paint()
+        borderPaint.strokeWidth = strokeSize.toFloat()
+        borderPaint.isAntiAlias = true
+        borderPaint.color = ContextCompat.getColor(context, R.color.white)
+        entity.setClosePaint(borderPaint)
+//        }
 
+    }
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         if (selectedEntity != null) {
@@ -238,7 +249,18 @@ class MotionView : FrameLayout {
         }
         return selected
     }
+    private fun closeSelectionOnTap(e: MotionEvent): Boolean {
+        val p = PointF(e.x, e.y)
+        entities.takeIf { return@takeIf it.isNotEmpty() }?.forEach { element ->
+            if (element.pointClose(p) && selectedEntity !=null ) {
+                deletedSelectedEntity()
+                return true
+                return@forEach
+            }
+        }
+        return false
 
+    }
     private fun updateSelectionOnTap(e: MotionEvent): Boolean {
         val entity = findEntityAtPoint(e.x, e.y)
         return if (entity != null) {
@@ -384,6 +406,7 @@ class MotionView : FrameLayout {
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             updateSelectionOnTap(e)
+            closeSelectionOnTap(e)
             return true
         }
 
