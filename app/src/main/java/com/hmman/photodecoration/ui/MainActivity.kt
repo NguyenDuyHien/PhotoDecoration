@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
@@ -181,7 +182,7 @@ class MainActivity : AppCompatActivity(),
             if (file.exists()) file.delete()
             try {
                 val out = FileOutputStream(file)
-                it.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG,100, out)
                 out.flush()
                 out.close()
                 Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
@@ -199,36 +200,50 @@ class MainActivity : AppCompatActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE) {
-            data?.let { data ->
-                imageUri = data.data
-                try {
-                    val inputStream =
-                        contentResolver.openInputStream(imageUri!!)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    setMotionViewSize(imageUri!!, bitmap)
-                } catch (e: IOException) {
-                    e.printStackTrace()
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PICK_IMAGE) {
+                data?.let { data ->
+                    imageUri = data.data
+                    try {
+                        val inputStream =
+                            contentResolver.openInputStream(imageUri!!)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        setMotionViewSize(imageUri, bitmap)
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            if (requestCode == CAMERA_REQUEST) {
+                data?.let { data ->
+                    val bitmap = data.extras!!.get("data") as Bitmap?
+                    try {
+                        if (bitmap != null) {
+                            setMotionViewSize(null, bitmap)
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }
-        if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_REQUEST){
-            data?.let {data ->
-                val bitmap = data?.extras!!.get("data") as Bitmap?
-                try {
-                    if (bitmap != null) {
-                        setMotionViewSize(null, bitmap)
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
+        if (requestCode == REQUEST_PERMISSION_SETTING) {
+            if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                savePhoto()
         }
     }
 
     private fun setMotionViewSize(uri: Uri?, bitmap: Bitmap) {
+        rvTools.visibility = View.VISIBLE
+        rvTools.animation = AnimUtil.slideUp(this)
+        lnAddImage.visibility = View.INVISIBLE
+        rvTools.visibility = View.VISIBLE
+        rvTools.animation = AnimUtil.slideUp(this)
+
         val width = dummyView.width
         val height = dummyView.height
+        Log.d("xxxx", width.toString())
+        Log.d("xxxx", height.toString())
         val photoWidth = bitmap.width
         val photoHeight = bitmap.height
 
@@ -256,12 +271,6 @@ class MainActivity : AppCompatActivity(),
         PhotoUtils.photoRatio = ratio
         PhotoUtils.width = photoWidth
         PhotoUtils.height = photoHeight
-
-        rvTools.visibility = View.VISIBLE
-        rvTools.animation = AnimUtil.slideUp(this)
-        lnAddImage.visibility = View.INVISIBLE
-        rvTools.visibility = View.VISIBLE
-        rvTools.animation = AnimUtil.slideUp(this)
     }
 
     private fun showTools() {
