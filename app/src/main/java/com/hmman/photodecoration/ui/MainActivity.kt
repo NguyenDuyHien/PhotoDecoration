@@ -81,8 +81,6 @@ class MainActivity : AppCompatActivity(),
         editTextToolEvent()
         enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
-//        var bitmap = BitmapFactory.decodeResource(resources,R.drawable.sticker)
-//        Log.i("tt", "bitmap:" + bitmap.byteCount)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -444,7 +442,7 @@ class MainActivity : AppCompatActivity(),
     private fun addText(text: String, colorCode: Int): TextLayer {
         val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
-            TextEntity(textLayer, motionView.width, motionView.height, fontProvider)
+            TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.sticker_ic_close_white_18dp))
 
         motionView.addEntityAndPosition(textEntity)
 
@@ -462,7 +460,7 @@ class MainActivity : AppCompatActivity(),
             val layer = Layer()
             val sticker = BitmapFactory.decodeResource(resources, stickerResId)
             val entity =
-                ImageEntity(layer, sticker, motionView.width, motionView.height)
+                ImageEntity(layer, sticker, motionView.width, motionView.height, BitmapFactory.decodeResource(resources, R.drawable.sticker_ic_close_white_18dp))
             motionView.addEntityAndPosition(entity)
         }
     }
@@ -561,7 +559,7 @@ class MainActivity : AppCompatActivity(),
 
     private fun createTextLayer(text: String, colorCode: Int): TextLayer? {
         val textLayer = TextLayer()
-        var font = Font()
+        val font = Font()
         font.color = colorCode
         font.size = TextLayer.Limits.INITIAL_FONT_SIZE
         font.typeface = fontProvider.getDefaultFontName()

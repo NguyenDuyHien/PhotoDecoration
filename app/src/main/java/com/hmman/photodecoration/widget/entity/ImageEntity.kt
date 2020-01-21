@@ -1,6 +1,5 @@
 package com.hmman.photodecoration.widget.entity
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -14,8 +13,9 @@ class ImageEntity(
     @NonNull layer: Layer,
     @NonNull val bitmap: Bitmap,
     @IntRange(from = 1) canvasWidth: Int,
-    @IntRange(from = 1) canvasHeight: Int
-) : MotionEntity(layer, canvasWidth, canvasHeight) {
+    @IntRange(from = 1) canvasHeight: Int,
+    deleteIcon: Bitmap
+) : MotionEntity(layer, canvasWidth, canvasHeight, deleteIcon) {
 
     init {
         val width = bitmap.width.toFloat()

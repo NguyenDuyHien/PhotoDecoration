@@ -261,13 +261,9 @@ class MotionView : FrameLayout {
     }
     private fun closeSelectionOnTap(e: MotionEvent): Boolean {
         val p = PointF(e.x, e.y)
-        entities.takeIf { return@takeIf it.isNotEmpty() }?.forEach { element ->
-            Log.d("Anhtai",element.pointClose(p).toString())
-            if (element.pointClose(p) && selectedEntity !=null ) {
-                deletedSelectedEntity()
-                return true
-                return@forEach
-            }
+        if (selectedEntity != null  && selectedEntity!!.pointClose(p)) {
+            deletedSelectedEntity()
+            return true
         }
         return false
 
@@ -350,7 +346,7 @@ class MotionView : FrameLayout {
             entities.add(undoEntities.pop())
             updateUI()
         } else {
-            Toast.makeText(this.context, "Nothing to Redo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.context, "Nothing to Redo", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -380,7 +376,7 @@ class MotionView : FrameLayout {
                 updateUI()
             }
             else -> {
-                Toast.makeText(this.context, "Nothing to Undo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this.context, "Nothing to Undo", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -422,8 +418,8 @@ class MotionView : FrameLayout {
 
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            updateSelectionOnTap(e)
             closeSelectionOnTap(e)
+            updateSelectionOnTap(e)
             return true
         }
 
