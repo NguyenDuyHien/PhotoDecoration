@@ -58,7 +58,6 @@ class MainActivity : AppCompatActivity(),
     private val PERMISSION_REQUEST_CODE = 999
     private val REQUEST_PERMISSION_SETTING = 888
     var isGallery = false
-    var isSave = false
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
     private lateinit var toolsAdapter: ToolsAdapter
@@ -130,11 +129,7 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnSave.setOnClickListener {
-            isSave = true
-            if (isStoragePermissionGranted()) {
-                savePhoto()
-            }
-            !isSave
+            savePhoto()
         }
     }
 
@@ -162,10 +157,6 @@ class MainActivity : AppCompatActivity(),
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (isSave){
-                savePhoto()
-                !isSave
-            }
             if (isGallery){
                 openGallery()
                 !isGallery
@@ -261,7 +252,7 @@ class MainActivity : AppCompatActivity(),
         }
         if (requestCode == REQUEST_PERMISSION_SETTING) {
             if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-                savePhoto()
+                openGallery()
         }
     }
 
