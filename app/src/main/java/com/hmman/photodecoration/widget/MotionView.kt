@@ -252,6 +252,7 @@ class MotionView : FrameLayout {
     private fun closeSelectionOnTap(e: MotionEvent): Boolean {
         val p = PointF(e.x, e.y)
         entities.takeIf { return@takeIf it.isNotEmpty() }?.forEach { element ->
+            Log.d("Anhtai",element.pointClose(p).toString())
             if (element.pointClose(p) && selectedEntity !=null ) {
                 deletedSelectedEntity()
                 return true
@@ -267,6 +268,12 @@ class MotionView : FrameLayout {
             selectEntity(entity, true)
             true
         } else {
+            if(selectedEntity !=null){
+                val p = PointF(e.x, e.y)
+                if(selectedEntity!!.pointClose(p)){
+                    deletedSelectedEntity()
+                }
+            }
             unselectEntity()
             false
         }
