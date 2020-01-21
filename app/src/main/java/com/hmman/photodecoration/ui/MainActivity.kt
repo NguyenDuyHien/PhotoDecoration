@@ -38,7 +38,6 @@ import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.ui.dialog.DialogSticker
 import com.hmman.photodecoration.ui.dialog.EditDialogFragment
 import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
-import com.hmman.photodecoration.util.AnimUtil
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
