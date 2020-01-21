@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -210,7 +211,8 @@ class MainActivity : AppCompatActivity(),
                         val inputStream =
                             contentResolver.openInputStream(imageUri!!)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        setMotionViewSizeAndBackground(imageUri, bitmap)
+                        val preventRotateBitmap = rotateImageIfRequired(bitmap, imageUri!!)
+                        preventRotateBitmap?.let { setMotionViewSizeAndBackground(imageUri, it) }
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
@@ -233,6 +235,45 @@ class MainActivity : AppCompatActivity(),
             if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 savePhoto()
         }
+    }
+
+    private fun rotateImage(img: Bitmap, degree: Int): Bitmap? {
+        val matrix = Matrix()
+        matrix.postRotate(degree.toFloat())
+        val rotatedImg =
+            Bitmap.createBitmap(img, 0, 0, img.width, img.height, matrix, true)
+        img.recycle()
+        return rotatedImg
+    }
+
+    @Throws(IOException::class)
+    private fun rotateImageIfRequired(img: Bitmap, selectedImage: Uri): Bitmap? {
+        val ei = ExifInterface(getRealPathFromURI(selectedImage))
+        val orientation =
+            ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        return when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(
+                img,
+                90
+            )
+            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(
+                img,
+                180
+            )
+            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(
+                img,
+                270
+            )
+            else -> img
+        }
+    }
+
+    fun getRealPathFromURI(contentUri: Uri?): String? {
+        val proj = arrayOf(MediaStore.Audio.Media.DATA)
+        val cursor = managedQuery(contentUri, proj, null, null, null)
+        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(column_index)
     }
 
     private fun enableEditMode (show: Boolean){
