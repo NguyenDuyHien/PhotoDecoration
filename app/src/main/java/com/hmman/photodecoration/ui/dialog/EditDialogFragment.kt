@@ -65,7 +65,7 @@ class EditDialogFragment : DialogFragment() {
         btnColor.setBackgroundColor(mColorCode!!)
 
         btnColor.setOnClickListener({
-            changeTextEntityColor(mContent!!, mColorCode!!)
+            changeTextEntityColor(mColorCode!!)
         })
 
         btnDone.setOnClickListener({
@@ -78,23 +78,21 @@ class EditDialogFragment : DialogFragment() {
         })
     }
 
-    fun changeTextEntityColor(text:String, initialColor: Int){
+    fun changeTextEntityColor(initialColor: Int){
         ColorPickerDialogBuilder
             .with(context)
             .setTitle("Select Color")
-            .initialColor(initialColor!!)
+            .initialColor(initialColor)
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
             .density(17)
             .setPositiveButton("OK", object : ColorPickerClickListener {
                 override fun onClick(d: DialogInterface?, lastSelectedColor: Int, allColors: Array<out Int>?) {
-                    if (text != null) {
-                        mColorCode = lastSelectedColor
-                        edtContent.setTextColor(lastSelectedColor)
-                        btnColor.setBackgroundColor(lastSelectedColor)
-                    }
+                    mColorCode = lastSelectedColor
+                    edtContent.setTextColor(lastSelectedColor)
+                    btnColor.setBackgroundColor(lastSelectedColor)
                 }
             })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener{ dialog, which ->  })
+            .setNegativeButton("Cancel", DialogInterface.OnClickListener{ _, _ ->  })
             .build()
             .show()
     }
