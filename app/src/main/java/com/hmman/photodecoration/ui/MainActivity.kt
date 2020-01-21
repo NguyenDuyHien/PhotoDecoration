@@ -204,8 +204,8 @@ class MainActivity : AppCompatActivity(),
             val myDir = File("$root/PhotoDecoration")
             myDir.mkdirs()
 
-            val number = (0..1000).random()
-            val fname = "Photo$number.jpg"
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val fname = "Photo$timeStamp.jpg"
             val file = File(myDir, fname)
             if (file.exists()) file.delete()
             try {
