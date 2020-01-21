@@ -197,6 +197,14 @@ class MainActivity : AppCompatActivity(),
         dispatchTakePictureIntent()
     }
 
+    private fun galleryAddPic() {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
+    }
+
     private fun savePhoto() {
         val finalBitmap = motionView.getFinalBitmap()
         finalBitmap?.let {
@@ -266,31 +274,31 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setPic() {
-        // Get the dimensions of the View
-        val targetW: Int = motionView.width
-        val targetH: Int = motionView.height
-
-        val bmOptions = BitmapFactory.Options().apply {
-            // Get the dimensions of the bitmap
-            inJustDecodeBounds = true
-
-            val photoW: Int = outWidth
-            val photoH: Int = outHeight
-
-            // Determine how much to scale down the image
-            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH*1.0f / targetH)
-
-            // Decode the image file into a Bitmap sized to fill the View
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor.toInt()
-            inPurgeable = true
-        }
-
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
-        }
-    }
+//    private fun setPic() {
+//        // Get the dimensions of the View
+//        val targetW: Int = motionView.width
+//        val targetH: Int = motionView.height
+//
+//        val bmOptions = BitmapFactory.Options().apply {
+//            // Get the dimensions of the bitmap
+//            inJustDecodeBounds = true
+//
+//            val photoW: Int = outWidth
+//            val photoH: Int = outHeight
+//
+//            // Determine how much to scale down the image
+//            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH*1.0f / targetH)
+//
+//            // Decode the image file into a Bitmap sized to fill the View
+//            inJustDecodeBounds = false
+//            inSampleSize = scaleFactor.toInt()
+//            inPurgeable = true
+//        }
+//
+//        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
+//            setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
+//        }
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -312,12 +320,17 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
-                setPic()
+//                galleryAddPic()
+//                setPic()
 //                data?.let { d ->
 //                    val bitmap = d.extras!!.get("data") as Bitmap?
 //                    try {
 //                        if (bitmap != null) {
+
 //                            setMotionViewSizeAndBackground(null, bitmap)
+                BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
+                    setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
+                }
 //                        }
 //                    } catch (e: IOException) {
 //                        e.printStackTrace()
