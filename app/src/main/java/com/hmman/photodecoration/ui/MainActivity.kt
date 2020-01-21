@@ -485,7 +485,6 @@ class MainActivity : AppCompatActivity(),
             null
         }
     }
-
     private fun showDialog(bitmap: Bitmap) {
         val fragmentManager = supportFragmentManager
         val data = Bundle()

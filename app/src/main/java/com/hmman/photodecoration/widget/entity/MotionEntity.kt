@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.PointF
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.hmman.photodecoration.model.Layer
@@ -25,7 +26,7 @@ abstract class MotionEntity(
 
     @NonNull
     private var borderPaint = Paint()
-
+    private var closePaint = Paint()
     open fun isSelected(): Boolean {
         return isSelected
     }
@@ -126,19 +127,34 @@ abstract class MotionEntity(
                 || MathUtils.pointInTriangle(point, pA, pD, pC)
 
     }
+    fun pointClose(point: PointF):Boolean{
+        updateMatrix()
+        // map rect vertices
+        matrix.mapPoints(destPoints, srcPoints)
+        Log.d("cccc",destPoints[2].toString()+"----" +destPoints[3].toString() +":"+ (destPoints[2]+50).toString() + "----"+ (destPoints[2]-50) +"----"+ destPoints[3] +50 +"----"+ (destPoints[3] - 50))
+        return point.x <=  destPoints[2]+100 && point.x >=  destPoints[2]-100 && point.y <= destPoints[3] +100 && point.y >= destPoints[3] - 100
 
+
+    }
     fun draw(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?) {
         updateMatrix()
         canvas.save()
         drawContent(canvas, drawingPaint)
         if (isSelected) { // get alpha from drawingPaint
             val storedAlpha = borderPaint.alpha
+            val closestoredAlpha = closePaint.alpha
             if (drawingPaint != null) {
                 borderPaint.alpha = drawingPaint.alpha
+                closePaint.alpha = drawingPaint.alpha
             }
             drawSelectedBg(canvas)
+//            if(bitmap!=null){
+            drawCloseBg(canvas)
+//            }
+
             // restore border alpha
             borderPaint.alpha = storedAlpha
+            closePaint.alpha = closestoredAlpha
         }
         canvas.restore()
     }
@@ -163,11 +179,15 @@ abstract class MotionEntity(
         canvas.drawLines(destPoints, 0, 8, borderPaint)
         canvas.drawLines(destPoints, 2, 8, borderPaint)
     }
-
+    private fun drawCloseBg(canvas: Canvas) {
+        canvas.drawCircle(destPoints[2], destPoints[3], 40F, closePaint)
+    }
     fun setBorderPaint(@NonNull borderPaint: Paint) {
         this.borderPaint = borderPaint
     }
-
+    fun setClosePaint(@NonNull closePaint: Paint) {
+        this.closePaint = closePaint
+    }
     protected abstract fun drawContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)
     protected abstract fun drawRealContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)
     abstract val width: Int
