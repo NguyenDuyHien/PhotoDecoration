@@ -179,7 +179,8 @@ class MainActivity : AppCompatActivity(),
             val myDir = File("$root/PhotoDecoration")
             myDir.mkdirs()
 
-            val fname = "Photo.jpg"
+            val number = (0..1000).random()
+            val fname = "Photo$number.jpg"
             val file = File(myDir, fname)
             if (file.exists()) file.delete()
             try {
