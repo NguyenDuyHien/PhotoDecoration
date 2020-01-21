@@ -10,19 +10,23 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
@@ -34,6 +38,7 @@ import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.ui.dialog.DialogSticker
 import com.hmman.photodecoration.ui.dialog.EditDialogFragment
 import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
+import com.hmman.photodecoration.util.AnimUtil
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
@@ -63,6 +68,8 @@ class MainActivity : AppCompatActivity(),
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
     private lateinit var toolsAdapter: ToolsAdapter
+
+    private lateinit var currentPhotoPath: String
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -185,8 +192,9 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun openCamera(){
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, CAMERA_REQUEST)
+//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        startActivityForResult(cameraIntent, CAMERA_REQUEST)
+        dispatchTakePictureIntent()
     }
 
     private fun savePhoto() {
@@ -218,6 +226,72 @@ class MainActivity : AppCompatActivity(),
         startActivityForResult(gallery, PICK_IMAGE)
     }
 
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, CAMERA_REQUEST)
+                }
+            }
+        }
+    }
+
+    private fun setPic() {
+        // Get the dimensions of the View
+        val targetW: Int = motionView.width
+        val targetH: Int = motionView.height
+
+        val bmOptions = BitmapFactory.Options().apply {
+            // Get the dimensions of the bitmap
+            inJustDecodeBounds = true
+
+            val photoW: Int = outWidth
+            val photoH: Int = outHeight
+
+            // Determine how much to scale down the image
+            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH*1.0f / targetH)
+
+            // Decode the image file into a Bitmap sized to fill the View
+            inJustDecodeBounds = false
+            inSampleSize = scaleFactor.toInt()
+            inPurgeable = true
+        }
+
+        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
+            setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -238,16 +312,17 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
-                data?.let { d ->
-                    val bitmap = d.extras!!.get("data") as Bitmap?
-                    try {
-                        if (bitmap != null) {
-                            setMotionViewSizeAndBackground(null, bitmap)
-                        }
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
+                setPic()
+//                data?.let { d ->
+//                    val bitmap = d.extras!!.get("data") as Bitmap?
+//                    try {
+//                        if (bitmap != null) {
+//                            setMotionViewSizeAndBackground(null, bitmap)
+//                        }
+//                    } catch (e: IOException) {
+//                        e.printStackTrace()
+//                    }
+//                }
             }
         }
         if (requestCode == REQUEST_PERMISSION_SETTING) {
@@ -461,6 +536,7 @@ class MainActivity : AppCompatActivity(),
             null
         }
     }
+
     private fun showDialog(bitmap: Bitmap) {
         val fragmentManager = supportFragmentManager
         val data = Bundle()
