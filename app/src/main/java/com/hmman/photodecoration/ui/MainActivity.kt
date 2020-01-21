@@ -197,6 +197,14 @@ class MainActivity : AppCompatActivity(),
         dispatchTakePictureIntent()
     }
 
+    private fun galleryAddPic() {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
+    }
+
     private fun savePhoto() {
         val finalBitmap = motionView.getFinalBitmap()
         finalBitmap?.let {
@@ -340,18 +348,6 @@ class MainActivity : AppCompatActivity(),
     private fun enableEditMode (show: Boolean){
         when (show){
             true -> {
-//                btnPreview.visibility = View.VISIBLE
-//                btnSave.visibility = View.VISIBLE
-//                btnReset.visibility = View.VISIBLE
-//                btnRedo.visibility = View.VISIBLE
-//                btnUndo.visibility = View.VISIBLE
-//                rvTools.apply {
-//                    visibility = View.VISIBLE
-//                    animation = AnimUtil.slideUp(this@MainActivity)
-//                }
-//                toolsAdapter.isEnable = true
-//                lnAddImage.visibility = View.INVISIBLE
-
                 btnPreview.isEnabled = true
                 btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnSave.isEnabled = true
@@ -364,18 +360,6 @@ class MainActivity : AppCompatActivity(),
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
-//                btnPreview.visibility = View.GONE
-//                btnSave.visibility = View.GONE
-//                btnReset.visibility = View.GONE
-//                btnRedo.visibility = View.GONE
-//                btnUndo.visibility = View.GONE
-//                rvTools.apply {
-//                    visibility = View.GONE
-//                    animation = AnimUtil.slideDown(this@MainActivity)
-//                }
-//                toolsAdapter.isEnable = false
-//                lnAddImage.visibility = View.VISIBLE
-
                 btnPreview.isEnabled = false
                 btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
                 btnSave.isEnabled = false
