@@ -95,9 +95,8 @@
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:background="@null"
+        android:background="@drawable/reset_button"
         android:scaleType="fitXY"
-        android:src="@drawable/reset"
         app:layout_constraintTop_toTopOf="@id/btnRedo"
         app:layout_constraintBottom_toBottomOf="@id/btnRedo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,9 +107,8 @@
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:background="@null"
+        android:background="@drawable/undo_button"
         android:scaleType="fitXY"
-        android:src="@drawable/undo"
         app:layout_constraintTop_toTopOf="@id/btnRedo"
         app:layout_constraintBottom_toBottomOf="@id/btnRedo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -122,12 +120,44 @@
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:background="@null"
+        android:background="@drawable/redo_button"
         android:scaleType="fitXY"
-        android:src="@drawable/redo"
         app:layout_constraintTop_toBottomOf="@id/resultContainer"
         app:layout_constraintBottom_toTopOf="@id/btnPreview"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:id="@+id/lnTextTool"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
+        app:layout_constraintEnd_toStartOf="@id/actionTool"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnDecrease"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_16sdp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/decrease" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnIncrease"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginRight="@dimen/_16sdp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/increase" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/actionTool"
@@ -138,8 +168,8 @@
         android:orientation="horizontal"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/btnReset"
+        app:layout_constraintStart_toEndOf="@id/lnTextTool">
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnBringToFront"
@@ -181,8 +211,9 @@
         app:layout_constraintStart_toStartOf="@id/rvTools"
         app:layout_constraintTop_toTopOf="@id/rvTools" />
 
+
     <androidx.recyclerview.widget.RecyclerView
-        android:visibility="gone"
+        android:clickable="false"
         android:id="@+id/rvTools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

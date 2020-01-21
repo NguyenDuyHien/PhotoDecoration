@@ -25,7 +25,7 @@
         android:id="@+id/sticker"
         app:srcCompat="@drawable/mankey"
         android:layout_margin="@dimen/_8sdp"
-        android:layout_width="@dimen/_60sdp"
-        android:layout_height="@dimen/_60sdp"/>
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

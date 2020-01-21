@@ -2,7 +2,6 @@ package com.hmman.photodecoration.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,12 +15,12 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
@@ -59,6 +58,7 @@ class MainActivity : AppCompatActivity(),
     private val REQUEST_PERMISSION_SETTING = 888
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
+    private lateinit var toolsAdapter: ToolsAdapter
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         initListener()
         eventActionTools()
+        editTextToolEvent()
         enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
     }
@@ -237,27 +238,51 @@ class MainActivity : AppCompatActivity(),
     private fun enableEditMode (show: Boolean){
         when (show){
             true -> {
-                btnPreview.visibility = View.VISIBLE
-                btnSave.visibility = View.VISIBLE
-                btnReset.visibility = View.VISIBLE
-                btnRedo.visibility = View.VISIBLE
-                btnUndo.visibility = View.VISIBLE
-                rvTools.apply {
-                    visibility = View.VISIBLE
-                    animation = AnimUtil.slideUp(this@MainActivity)
-                }
+//                btnPreview.visibility = View.VISIBLE
+//                btnSave.visibility = View.VISIBLE
+//                btnReset.visibility = View.VISIBLE
+//                btnRedo.visibility = View.VISIBLE
+//                btnUndo.visibility = View.VISIBLE
+//                rvTools.apply {
+//                    visibility = View.VISIBLE
+//                    animation = AnimUtil.slideUp(this@MainActivity)
+//                }
+//                toolsAdapter.isEnable = true
+//                lnAddImage.visibility = View.INVISIBLE
+
+                btnPreview.isEnabled = true
+                btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
+                btnSave.isEnabled = true
+                btnSave.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
+                btnReset.isEnabled = true
+                btnRedo.isEnabled = true
+                btnUndo.isEnabled = true
+                toolsAdapter.isEnable = true
+                rvTools.adapter = toolsAdapter
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
-                btnPreview.visibility = View.GONE
-                btnSave.visibility = View.GONE
-                btnReset.visibility = View.GONE
-                btnRedo.visibility = View.GONE
-                btnUndo.visibility = View.GONE
-                rvTools.apply {
-                    visibility = View.GONE
-                    animation = AnimUtil.slideDown(this@MainActivity)
-                }
+//                btnPreview.visibility = View.GONE
+//                btnSave.visibility = View.GONE
+//                btnReset.visibility = View.GONE
+//                btnRedo.visibility = View.GONE
+//                btnUndo.visibility = View.GONE
+//                rvTools.apply {
+//                    visibility = View.GONE
+//                    animation = AnimUtil.slideDown(this@MainActivity)
+//                }
+//                toolsAdapter.isEnable = false
+//                lnAddImage.visibility = View.VISIBLE
+
+                btnPreview.isEnabled = false
+                btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
+                btnSave.isEnabled = false
+                btnSave.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
+                btnReset.isEnabled = false
+                btnRedo.isEnabled = false
+                btnUndo.isEnabled = false
+                toolsAdapter.isEnable = false
+                rvTools.adapter = toolsAdapter
                 lnAddImage.visibility = View.VISIBLE
             }
         }
@@ -300,10 +325,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showTools() {
-        val toolsAdapter = ToolsAdapter(this)
+        toolsAdapter = ToolsAdapter(this)
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvTools.layoutManager = llmTools
         rvTools.adapter = toolsAdapter
+//        toolsAdapter.isEnable = false
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -345,11 +371,57 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun showTextEditTool(show: Boolean){
+        when (show){
+            true -> {
+                if (currentTextEntity() != null){
+                    lnTextTool.visibility = View.VISIBLE
+                }
+                else {
+                    lnTextTool.visibility = View.INVISIBLE
+                }
+            }
+            else -> {
+                lnTextTool.visibility = View.GONE
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun editTextToolEvent(){
+        btnDecrease.setOnClickListener({
+            decreaseTextEntitySize()
+        })
+        btnIncrease.setOnClickListener({
+            increaseTextEntitySize()
+        })
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun increaseTextEntitySize() {
+        val textEntity = currentTextEntity()
+        if (textEntity != null) {
+            textEntity.getLayer().font!!.increaseSize(TextLayer.Limits.FONT_SIZE_STEP)
+            textEntity.updateEntity(true)
+            motionView.invalidate()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun decreaseTextEntitySize() {
+        val textEntity = currentTextEntity()
+        if (textEntity != null) {
+            textEntity.getLayer().font!!.decreaseSize(TextLayer.Limits.FONT_SIZE_STEP)
+            textEntity.updateEntity(true)
+            motionView.invalidate()
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     private fun startTextEntityEditing() {
-        val textEntity: TextEntity = currentTextEntity()!!
+        val textEntity= currentTextEntity()
         val editDialog = EditDialogFragment.show(this,
-            textEntity.getLayer().text!!,
+            textEntity!!.getLayer().text!!,
             textEntity.getLayer().font!!.color!!)
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
@@ -428,15 +500,19 @@ class MainActivity : AppCompatActivity(),
 
     override fun onEntitySelected(entity: MotionEntity?) {
         actionTool.visibility = View.VISIBLE
+        showTextEditTool(true)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onEntityDoubleTap(entity: MotionEntity?) {
-        startTextEntityEditing()
+        if (currentTextEntity() != null){
+            startTextEntityEditing()
+        }
     }
 
     override fun onEntityUnselected() {
         actionTool.visibility = View.INVISIBLE
+        showTextEditTool(false)
     }
 
     override fun onStickerSelected(sticker: Int) {

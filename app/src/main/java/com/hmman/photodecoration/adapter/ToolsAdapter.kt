@@ -1,5 +1,6 @@
 package com.hmman.photodecoration.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ class ToolsAdapter(
 ) : RecyclerView.Adapter<ToolsAdapter.ViewHolder>() {
 
     private val mToolList: MutableList<ToolModel> = ArrayList()
+    var isEnable = true
 
     interface OnItemSelected {
         fun onToolSelected(toolType: ToolType)
@@ -38,6 +40,17 @@ class ToolsAdapter(
         val item = mToolList.get(position)
         holder.txtToolName.text = item.mToolName
         holder.imgIcon.setImageResource(item.mToolIcon)
+
+        when (isEnable){
+            true -> {
+                holder.txtToolName.setTextColor(Color.BLACK)
+                holder.imgIcon.setColorFilter(Color.BLACK)
+            }
+            else -> {
+                holder.txtToolName.setTextColor(Color.GRAY)
+                holder.imgIcon.setColorFilter(Color.GRAY)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -50,7 +63,11 @@ class ToolsAdapter(
         var txtToolName = itemView.txtToolName
 
         init {
-            itemView.setOnClickListener { mOnItemSelected.onToolSelected(mToolList.get(adapterPosition).mtoolType) }
+            if (isEnable){
+                itemView.setOnClickListener {
+                    mOnItemSelected.onToolSelected(mToolList.get(adapterPosition).mtoolType)
+                }
+            }
         }
     }
 
