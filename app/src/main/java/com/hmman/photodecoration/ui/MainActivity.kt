@@ -45,6 +45,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.min
 
 class MainActivity : AppCompatActivity(),
@@ -194,8 +196,8 @@ class MainActivity : AppCompatActivity(),
             val myDir = File("$root/PhotoDecoration")
             myDir.mkdirs()
 
-            val number = (0..1000).random()
-            val fname = "Photo$number.jpg"
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val fname = "Photo$timeStamp.jpg"
             val file = File(myDir, fname)
             if (file.exists()) file.delete()
             try {
