@@ -2,22 +2,21 @@ package com.hmman.photodecoration.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -35,7 +34,6 @@ import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.ui.dialog.DialogSticker
 import com.hmman.photodecoration.ui.dialog.EditDialogFragment
 import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
-import com.hmman.photodecoration.util.AnimUtil
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
@@ -59,6 +57,8 @@ class MainActivity : AppCompatActivity(),
     private val CAMERA_REQUEST = 111
     private val PERMISSION_REQUEST_CODE = 999
     private val REQUEST_PERMISSION_SETTING = 888
+    var isGallery = false
+    var isSave = false
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
     private lateinit var toolsAdapter: ToolsAdapter
@@ -85,11 +85,19 @@ class MainActivity : AppCompatActivity(),
         showTools()
 
         btnGallery.setOnClickListener{
-            openGallery()
+            isGallery = true
+            if (isStoragePermissionGranted()) {
+                openGallery()
+            }
+            !isGallery
         }
 
         lnAddImage.setOnClickListener {
-            openGallery()
+            isGallery = true
+            if (isStoragePermissionGranted()) {
+                openGallery()
+            }
+            !isGallery
         }
 
         btnUndo.setOnClickListener {
@@ -122,9 +130,11 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnSave.setOnClickListener {
+            isSave = true
             if (isStoragePermissionGranted()) {
                 savePhoto()
             }
+            !isSave
         }
     }
 
@@ -152,7 +162,14 @@ class MainActivity : AppCompatActivity(),
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            savePhoto()
+            if (isSave){
+                savePhoto()
+                !isSave
+            }
+            if (isGallery){
+                openGallery()
+                !isGallery
+            }
         } else {
             Snackbar.make(mainLayout, resources.getString(R.string.permission_denied), 1500).show()
             if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
