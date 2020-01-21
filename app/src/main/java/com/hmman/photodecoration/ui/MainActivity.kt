@@ -68,6 +68,8 @@ class MainActivity : AppCompatActivity(),
         eventActionTools()
         enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
+//        var bitmap = BitmapFactory.decodeResource(resources,R.drawable.sticker)
+//        Log.i("tt", "bitmap:" + bitmap.byteCount)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
