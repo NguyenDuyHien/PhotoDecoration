@@ -332,7 +332,6 @@ class MainActivity : AppCompatActivity(),
 
         motionView.invalidate()
 
-        startTextEntityEditing()
         return textLayer
     }
 
