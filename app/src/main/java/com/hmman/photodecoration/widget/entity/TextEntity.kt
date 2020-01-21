@@ -23,8 +23,9 @@ class TextEntity(
     @NonNull textLayer: TextLayer,
     @IntRange(from = 1) canvasWidth: Int,
     @IntRange(from = 1) canvasHeight: Int,
-    @NonNull val fontProvider: FontProvider
-) : MotionEntity(textLayer, canvasWidth, canvasHeight) {
+    @NonNull val fontProvider: FontProvider,
+    deleteIcon: Bitmap
+) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon) {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -102,7 +103,6 @@ class TextEntity(
         textPaint.style = Paint.Style.FILL
         textPaint.textSize = 45F
         textPaint.color =  textLayer.font?.color!!
-//        textPaint.typeface = fontProvider.getTypeface(textLayer.font!!.typeface!!)
 
         @Suppress("DEPRECATION")
         val s2 = StaticLayout(

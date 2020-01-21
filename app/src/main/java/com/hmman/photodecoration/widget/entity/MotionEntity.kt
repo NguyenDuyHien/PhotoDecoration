@@ -1,19 +1,18 @@
 package com.hmman.photodecoration.widget.entity
 
-import android.graphics.Canvas
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.PointF
+import android.graphics.*
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.hmman.photodecoration.model.Layer
+import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.MathUtils
 import com.hmman.photodecoration.util.PhotoUtils
 
 abstract class MotionEntity(
     val layer: Layer,
-    protected var canvasWidth: Int, protected var canvasHeight: Int
+    protected var canvasWidth: Int, protected var canvasHeight: Int,
+    var deleteIcon: Bitmap
 ) {
 
     protected val matrix = Matrix()
@@ -45,7 +44,8 @@ abstract class MotionEntity(
         var rotationInDegree: Float = layer.rotationInDegrees
         var scaleX: Float = layer.scale
         val scaleY: Float = layer.scale
-        if (layer.isFlipped) { // flip (by X-coordinate) if needed
+        if (layer.isFlipped) {
+            // flip (by X-coordinate) if needed
             rotationInDegree *= -1.0f
             scaleX *= -1.0f
         }
@@ -131,7 +131,7 @@ abstract class MotionEntity(
         updateMatrix()
         // map rect vertices
         matrix.mapPoints(destPoints, srcPoints)
-        Log.d("cccc",destPoints[2].toString()+"----" +destPoints[3].toString() +":"+ (destPoints[2]+50).toString() + "----"+ (destPoints[2]-50) +"----"+ destPoints[3] +50 +"----"+ (destPoints[3] - 50))
+        Log.d(TAG,destPoints[2].toString()+"----" +destPoints[3].toString() +":"+ (destPoints[2]+50).toString() + "----"+ (destPoints[2]-50) +"----"+ destPoints[3] +50 +"----"+ (destPoints[3] - 50))
         return point.x <=  destPoints[2]+100 && point.x >=  destPoints[2]-100 && point.y <= destPoints[3] +100 && point.y >= destPoints[3] - 100
 
 
@@ -142,19 +142,18 @@ abstract class MotionEntity(
         drawContent(canvas, drawingPaint)
         if (isSelected) { // get alpha from drawingPaint
             val storedAlpha = borderPaint.alpha
-            val closestoredAlpha = closePaint.alpha
+            val closeStoredAlpha = closePaint.alpha
             if (drawingPaint != null) {
                 borderPaint.alpha = drawingPaint.alpha
                 closePaint.alpha = drawingPaint.alpha
             }
             drawSelectedBg(canvas)
-//            if(bitmap!=null){
+
             drawCloseBg(canvas)
-//            }
 
             // restore border alpha
             borderPaint.alpha = storedAlpha
-            closePaint.alpha = closestoredAlpha
+            closePaint.alpha = closeStoredAlpha
         }
         canvas.restore()
     }
@@ -180,7 +179,15 @@ abstract class MotionEntity(
         canvas.drawLines(destPoints, 2, 8, borderPaint)
     }
     private fun drawCloseBg(canvas: Canvas) {
-        canvas.drawCircle(destPoints[2], destPoints[3], 40F, closePaint)
+        val destPoints = destPoints
+        val matrix = matrix
+        val imageEntity = this
+        matrix.reset()
+
+        matrix.postTranslate(destPoints[2] - imageEntity.deleteIcon.width/2, destPoints[3] - imageEntity.deleteIcon.height/2)
+        canvas.drawCircle(destPoints[2], destPoints[3], Constants.RADIUS_DELETE_ICON, borderPaint)
+
+        canvas.drawBitmap(imageEntity.deleteIcon, matrix, borderPaint)
     }
     fun setBorderPaint(@NonNull borderPaint: Paint) {
         this.borderPaint = borderPaint
@@ -205,4 +212,7 @@ abstract class MotionEntity(
         }
     }
 
+    companion object {
+        private val TAG = MotionEntity::class.simpleName
+    }
 }
