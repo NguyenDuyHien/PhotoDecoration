@@ -365,7 +365,7 @@ class MainActivity : AppCompatActivity(),
     private fun addText(text: String, colorCode: Int): TextLayer {
         val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
-            TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.sticker_ic_close_white_18dp))
+            TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
 
         motionView.addEntityAndPosition(textEntity)
 
@@ -383,7 +383,7 @@ class MainActivity : AppCompatActivity(),
             val layer = Layer()
             val sticker = BitmapFactory.decodeResource(resources, stickerResId)
             val entity =
-                ImageEntity(layer, sticker, motionView.width, motionView.height, BitmapFactory.decodeResource(resources, R.drawable.sticker_ic_close_white_18dp))
+                ImageEntity(layer, sticker, motionView.width, motionView.height, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
             motionView.addEntityAndPosition(entity)
         }
     }
