@@ -73,7 +73,7 @@ class TextEntity(
 
         val width = bitmap!!.width.toFloat()
         val height = bitmap!!.height.toFloat()
-        val widthAspect: Float = 1.0f * PhotoUtils.width / width
+        val widthAspect: Float = 1.0f * PhotoUtils.getInstance(null).width / width
 
         // for text we always match text width with parent width
         realHolyScale = widthAspect

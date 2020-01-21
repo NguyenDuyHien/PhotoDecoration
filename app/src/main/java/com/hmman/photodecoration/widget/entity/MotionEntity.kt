@@ -57,8 +57,8 @@ abstract class MotionEntity(
 
     protected open fun updateRealMatrix() {
         realMatrix.reset()
-        val topLeftX: Float = layer.x * PhotoUtils.width
-        val topLeftY: Float = layer.y * PhotoUtils.height
+        val topLeftX: Float = layer.x * PhotoUtils.getInstance(null).width
+        val topLeftY: Float = layer.y * PhotoUtils.getInstance(null).height
         val centerX: Float = topLeftX + width * realHolyScale * 0.5f
         val centerY: Float = topLeftY + height * realHolyScale * 0.5f
 

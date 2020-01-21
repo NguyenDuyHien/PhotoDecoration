@@ -1,6 +1,7 @@
 package com.hmman.photodecoration.widget
 
 import android.annotation.TargetApi
+import android.app.Activity
 import android.content.Context
 import android.graphics.*
 import android.os.Build
@@ -23,6 +24,7 @@ import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
 import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.MotionEntity
+import kotlinx.android.synthetic.main.dialog_sticker.view.*
 import java.io.IOException
 import java.lang.Exception
 import java.util.*
@@ -177,12 +179,20 @@ class MotionView : FrameLayout {
         selectEntity(null, false)
 
         try {
-            val inputStream = context.contentResolver.openInputStream(PhotoUtils.photoUri)
+            val inputStream = context.contentResolver.openInputStream(PhotoUtils.getInstance(null).photoUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            val finalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            val canvas = Canvas(finalBitmap)
-            drawAllRealEntities(canvas)
-            return finalBitmap
+            val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, PhotoUtils.getInstance(null).photoUri)
+            return if (preventRotateBitmap != null) {
+                val finalBitmap = preventRotateBitmap.copy(Bitmap.Config.ARGB_8888, true)
+                val canvas = Canvas(finalBitmap)
+                drawAllRealEntities(canvas)
+                finalBitmap
+            } else {
+                val finalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+                val canvas = Canvas(finalBitmap)
+                drawAllRealEntities(canvas)
+                finalBitmap
+            }
         } catch (e: Exception) {
 
         }

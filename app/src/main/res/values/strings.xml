@@ -5,4 +5,5 @@
     <string name="permission_req">Permission require</string>
     <string name="permission_message">Please allow storage permission to save photo!</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
