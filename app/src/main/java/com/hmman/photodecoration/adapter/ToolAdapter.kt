@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.StringUtils
 import kotlinx.android.synthetic.main.item_tool.view.*
-import java.util.*
 
 class ToolAdapter(
     private val mOnItemSelected: OnItemSelected

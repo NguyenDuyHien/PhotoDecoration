@@ -382,7 +382,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun addText(text: String, colorCode: Int): TextLayer {
+    private fun addText(text: String, colorCode: Int) {
         val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
             TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
@@ -390,12 +390,10 @@ class MainActivity : AppCompatActivity(),
         motionView.addEntityAndPosition(textEntity)
 
         val center: PointF = textEntity.absoluteCenter()
-        center.y = center.y * 0.5f
+        center.y = center.y
         textEntity.moveCenterTo(center)
 
         motionView.invalidate()
-
-        return textLayer
     }
 
     private fun addSticker(stickerResId: Int) {
