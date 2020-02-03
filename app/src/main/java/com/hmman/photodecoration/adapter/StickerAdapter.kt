@@ -1,5 +1,7 @@
 package com.hmman.photodecoration.adapter
 
+import android.content.Context
+import android.content.res.TypedArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hmman.photodecoration.R
 import kotlinx.android.synthetic.main.item_sticker.view.*
 
-class StickerAdapter(val mOnStickerSelected: OnStickerSelected) :
+
+class StickerAdapter(context: Context, val mOnStickerSelected: OnStickerSelected) :
     RecyclerView.Adapter<StickerAdapter.ItemHolder>() {
 
-    private lateinit var stickerList: MutableList<Int>
+    private var stickerList: MutableList<Int> = mutableListOf()
+    private val context: Context = context
 
     inner class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var sticker: AppCompatImageView = itemView.sticker
@@ -49,33 +53,9 @@ class StickerAdapter(val mOnStickerSelected: OnStickerSelected) :
     }
 
     private fun initStickerList() {
-        stickerList = mutableListOf()
-
-        stickerList.add(R.drawable.abra)
-        stickerList.add(R.drawable.bellsprout)
-        stickerList.add(R.drawable.bracelet)
-        stickerList.add(R.drawable.bullbasaur)
-        stickerList.add(R.drawable.candy)
-        stickerList.add(R.drawable.caterpie)
-        stickerList.add(R.drawable.charmander)
-        stickerList.add(R.drawable.mankey)
-        stickerList.add(R.drawable.map)
-        stickerList.add(R.drawable.mega_ball)
-        stickerList.add(R.drawable.meowth)
-        stickerList.add(R.drawable.pawprints)
-        stickerList.add(R.drawable.pidgey)
-        stickerList.add(R.drawable.pikachu)
-        stickerList.add(R.drawable.pikachu_1)
-        stickerList.add(R.drawable.pikachu_2)
-        stickerList.add(R.drawable.player)
-        stickerList.add(R.drawable.pointer)
-        stickerList.add(R.drawable.pokebag)
-        stickerList.add(R.drawable.pokeball)
-        stickerList.add(R.drawable.pokeballs)
-        stickerList.add(R.drawable.pokecoin)
-        stickerList.add(R.drawable.pokedex)
-        stickerList.add(R.drawable.potion)
-        stickerList.add(R.drawable.psyduck)
-        stickerList.add(R.drawable.rattata)
+        val list: TypedArray = context.resources.obtainTypedArray(R.array.list)
+        for (i in 0 until list.length()) {
+            stickerList.add(list.getResourceId(i, -1))
+        }
     }
 }

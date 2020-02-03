@@ -45,7 +45,7 @@ class DialogSticker(
     }
 
     private fun showStickerList() {
-        val adapter = StickerAdapter(mOnStickerSelected)
+        val adapter = StickerAdapter(context, mOnStickerSelected)
         val layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false)
         rvStickers.layoutManager = layoutManager
         rvStickers.adapter = adapter
