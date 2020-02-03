@@ -4,53 +4,42 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hmman.photodecoration.R
 import kotlinx.android.synthetic.main.item_tool.view.*
 import java.util.*
 
-class ToolsAdapter(
+class ToolAdapter(
     private val mOnItemSelected: OnItemSelected
-) : RecyclerView.Adapter<ToolsAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ToolAdapter.ViewHolder>() {
 
     private val mToolList: MutableList<ToolModel> = ArrayList()
     var isEnable = true
 
-    interface OnItemSelected {
-        fun onToolSelected(toolType: ToolType)
-    }
-
     internal inner class ToolModel(
         val mToolName: String,
         val mToolIcon: Int,
-        var mtoolType: ToolType
+        var mToolType: ToolType
     )
 
-    enum class ToolType {
-        TEXT, STICKER
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToolsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_tool, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mToolList.get(position)
+        val item = mToolList[position]
+        var color: Int = Color.GRAY
         holder.txtToolName.text = item.mToolName
         holder.imgIcon.setImageResource(item.mToolIcon)
-
-        when (isEnable){
-            true -> {
-                holder.txtToolName.setTextColor(Color.BLACK)
-                holder.imgIcon.setColorFilter(Color.BLACK)
-            }
-            else -> {
-                holder.txtToolName.setTextColor(Color.GRAY)
-                holder.imgIcon.setColorFilter(Color.GRAY)
-            }
+        when (isEnable) {
+            true -> color = Color.BLACK
         }
+        holder.txtToolName.setTextColor(color)
+        holder.imgIcon.setColorFilter(color)
     }
 
     override fun getItemCount(): Int {
@@ -59,20 +48,28 @@ class ToolsAdapter(
 
     open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var imgIcon = itemView.imgIcon
-        var txtToolName = itemView.txtToolName
+        var imgIcon: AppCompatImageView = itemView.imgIcon
+        var txtToolName: AppCompatTextView = itemView.txtToolName
 
         init {
-            if (isEnable){
+            if (isEnable) {
                 itemView.setOnClickListener {
-                    mOnItemSelected.onToolSelected(mToolList.get(adapterPosition).mtoolType)
+                    mOnItemSelected.onToolSelected(mToolList[adapterPosition].mToolType)
                 }
             }
         }
     }
 
     init {
-        mToolList.add(ToolModel("Text", R.drawable.text, ToolType.TEXT))
-        mToolList.add(ToolModel("Sticker", R.drawable.sticker, ToolType.STICKER))
+        mToolList.add(ToolModel(ToolType.TEXT.name, R.drawable.text, ToolType.TEXT))
+        mToolList.add(ToolModel(ToolType.STICKER.name, R.drawable.sticker, ToolType.STICKER))
+    }
+
+    enum class ToolType {
+        TEXT, STICKER
+    }
+
+    interface OnItemSelected {
+        fun onToolSelected(toolType: ToolType)
     }
 }

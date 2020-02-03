@@ -10,16 +10,13 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -32,14 +29,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.adapter.StickerAdapter
-import com.hmman.photodecoration.adapter.ToolsAdapter
+import com.hmman.photodecoration.adapter.ToolAdapter
 import com.hmman.photodecoration.model.Font
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.ui.dialog.DialogSticker
 import com.hmman.photodecoration.ui.dialog.EditDialogFragment
 import com.hmman.photodecoration.ui.dialog.PreviewDialogFragment
-import com.hmman.photodecoration.util.AnimUtil
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
@@ -56,9 +52,9 @@ import java.util.*
 import kotlin.math.min
 
 class MainActivity : AppCompatActivity(),
-    ToolsAdapter.OnItemSelected,
+    ToolAdapter.OnItemSelected,
     MotionView.MotionViewCallback,
-    StickerAdapter.onStickerSelected {
+    StickerAdapter.OnStickerSelected {
 
     private lateinit var fontProvider: FontProvider
     private val PICK_IMAGE = 100
@@ -68,7 +64,7 @@ class MainActivity : AppCompatActivity(),
     var isGallery = false
     var imageUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
-    private lateinit var toolsAdapter: ToolsAdapter
+    private lateinit var toolAdapter: ToolAdapter
 
     private lateinit var currentPhotoPath: String
 
@@ -312,8 +308,8 @@ class MainActivity : AppCompatActivity(),
                 btnReset.isEnabled = true
                 btnRedo.isEnabled = true
                 btnUndo.isEnabled = true
-                toolsAdapter.isEnable = true
-                rvTools.adapter = toolsAdapter
+                toolAdapter.isEnable = true
+                rvTools.adapter = toolAdapter
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
@@ -324,8 +320,8 @@ class MainActivity : AppCompatActivity(),
                 btnReset.isEnabled = false
                 btnRedo.isEnabled = false
                 btnUndo.isEnabled = false
-                toolsAdapter.isEnable = false
-                rvTools.adapter = toolsAdapter
+                toolAdapter.isEnable = false
+                rvTools.adapter = toolAdapter
                 lnAddImage.visibility = View.VISIBLE
             }
         }
@@ -367,19 +363,19 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showTools() {
-        toolsAdapter = ToolsAdapter(this)
+        toolAdapter = ToolAdapter(this)
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvTools.layoutManager = llmTools
-        rvTools.adapter = toolsAdapter
+        rvTools.adapter = toolAdapter
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    override fun onToolSelected(toolType: ToolsAdapter.ToolType) {
+    override fun onToolSelected(toolType: ToolAdapter.ToolType) {
         when (toolType) {
-            ToolsAdapter.ToolType.TEXT -> {
+            ToolAdapter.ToolType.TEXT -> {
                 showAddTextDialog()
             }
-            ToolsAdapter.ToolType.STICKER -> {
+            ToolAdapter.ToolType.STICKER -> {
                 stickerDialog.show()
             }
         }
