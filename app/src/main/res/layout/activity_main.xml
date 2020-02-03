@@ -244,7 +244,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Preview"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:backgroundTint="@color/lightBlue"
         app:layout_constraintTop_toTopOf="@id/btnGallery"
         app:layout_constraintBottom_toBottomOf="@id/btnGallery"
@@ -257,7 +257,7 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:backgroundTint="@color/lightBlue"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="@id/btnPreview"
         app:layout_constraintBottom_toBottomOf="@+id/btnPreview"
         app:layout_constraintEnd_toStartOf="@+id/btnPreview" />

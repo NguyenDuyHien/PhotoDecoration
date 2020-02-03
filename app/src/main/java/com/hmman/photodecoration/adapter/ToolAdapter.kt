@@ -1,6 +1,7 @@
 package com.hmman.photodecoration.adapter
 
 import android.graphics.Color
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hmman.photodecoration.R
+import com.hmman.photodecoration.util.StringUtils
 import kotlinx.android.synthetic.main.item_tool.view.*
 import java.util.*
 
@@ -33,7 +35,7 @@ class ToolAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mToolList[position]
         var color: Int = Color.GRAY
-        holder.txtToolName.text = item.mToolName
+        holder.txtToolName.text = StringUtils.capitalize(item.mToolName)
         holder.imgIcon.setImageResource(item.mToolIcon)
         when (isEnable) {
             true -> color = Color.BLACK
