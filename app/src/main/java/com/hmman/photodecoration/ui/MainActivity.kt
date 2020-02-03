@@ -192,8 +192,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun openCamera(){
-//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        startActivityForResult(cameraIntent, CAMERA_REQUEST)
         dispatchTakePictureIntent()
     }
 
@@ -274,32 +272,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-//    private fun setPic() {
-//        // Get the dimensions of the View
-//        val targetW: Int = motionView.width
-//        val targetH: Int = motionView.height
-//
-//        val bmOptions = BitmapFactory.Options().apply {
-//            // Get the dimensions of the bitmap
-//            inJustDecodeBounds = true
-//
-//            val photoW: Int = outWidth
-//            val photoH: Int = outHeight
-//
-//            // Determine how much to scale down the image
-//            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH*1.0f / targetH)
-//
-//            // Decode the image file into a Bitmap sized to fill the View
-//            inJustDecodeBounds = false
-//            inSampleSize = scaleFactor.toInt()
-//            inPurgeable = true
-//        }
-//
-//        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-//            setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
-//        }
-//    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -320,23 +292,10 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
-//                galleryAddPic()
-//                setPic()
-//                data?.let { d ->
-//                    val bitmap = d.extras!!.get("data") as Bitmap?
-//                    try {
-//                        if (bitmap != null) {
-
-//                            setMotionViewSizeAndBackground(null, bitmap)
+                galleryAddPic()
                 BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
                     setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
                 }
-//                            setMotionViewSizeAndBackground(null, bitmap)
-//                        }
-//                    } catch (e: IOException) {
-//                        e.printStackTrace()
-//                    }
-//                }
             }
         }
         if (requestCode == REQUEST_PERMISSION_SETTING) {
@@ -345,21 +304,9 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun enableEditMode (show: Boolean){
-        when (show){
+    private fun enableEditMode (enable: Boolean){
+        when (enable){
             true -> {
-//                btnPreview.visibility = View.VISIBLE
-//                btnSave.visibility = View.VISIBLE
-//                btnReset.visibility = View.VISIBLE
-//                btnRedo.visibility = View.VISIBLE
-//                btnUndo.visibility = View.VISIBLE
-//                rvTools.apply {
-//                    visibility = View.VISIBLE
-//                    animation = AnimUtil.slideUp(this@MainActivity)
-//                }
-//                toolsAdapter.isEnable = true
-//                lnAddImage.visibility = View.INVISIBLE
-
                 btnPreview.isEnabled = true
                 btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnSave.isEnabled = true
@@ -372,18 +319,6 @@ class MainActivity : AppCompatActivity(),
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
-//                btnPreview.visibility = View.GONE
-//                btnSave.visibility = View.GONE
-//                btnReset.visibility = View.GONE
-//                btnRedo.visibility = View.GONE
-//                btnUndo.visibility = View.GONE
-//                rvTools.apply {
-//                    visibility = View.GONE
-//                    animation = AnimUtil.slideDown(this@MainActivity)
-//                }
-//                toolsAdapter.isEnable = false
-//                lnAddImage.visibility = View.VISIBLE
-
                 btnPreview.isEnabled = false
                 btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
                 btnSave.isEnabled = false
@@ -497,12 +432,12 @@ class MainActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun editTextToolEvent(){
-        btnDecrease.setOnClickListener({
+        btnDecrease.setOnClickListener{
             decreaseTextEntitySize()
-        })
-        btnIncrease.setOnClickListener({
+        }
+        btnIncrease.setOnClickListener{
             increaseTextEntitySize()
-        })
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

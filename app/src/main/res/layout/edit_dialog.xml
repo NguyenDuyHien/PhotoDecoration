@@ -23,7 +23,7 @@
         android:textSize="15sp" />
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:id="@+id/edtContent"
         style="@style/EditText"
         android:layout_width="match_parent"

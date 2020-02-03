@@ -55,9 +55,9 @@ class StickerAdapter (context: Context, val mOnStickerSelected: onStickerSelecte
     inner class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var sticker = itemView.sticker
         init {
-            itemView.setOnClickListener({
+            itemView.setOnClickListener{
                 mOnStickerSelected.onStickerSelected(stickerList[adapterPosition])
-            })
+            }
         }
 
     }
