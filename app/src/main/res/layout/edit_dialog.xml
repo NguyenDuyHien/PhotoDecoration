@@ -9,16 +9,15 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:background="@android:color/transparent"
-        android:id="@+id/btnDone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:id="@+id/btnColor"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="20dp"
         android:padding="10dp"
-        android:text="Done"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="15sp" />
@@ -29,17 +28,18 @@
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btnDone"
+        android:layout_below="@+id/btnColor"
+        android:layout_above="@id/btnDone"
         android:background="@null"
         android:gravity="center"
         android:inputType="textMultiLine"
         android:textSize="40sp" />
 
     <Button
-        android:text="Select color"
+        android:text="Done"
         android:elevation="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_8sdp"
-        android:id="@+id/btnColor"
+        android:id="@+id/btnDone"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
