@@ -24,6 +24,7 @@ import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -115,21 +116,25 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnPreview.setOnClickListener {
-            motionView.unselectEntity()
-            val bitmap =
-                Bitmap.createBitmap(
-                    resultContainer.width,
-                    resultContainer.height,
-                    Bitmap.Config.ARGB_8888
-                )
-            val canvas = Canvas(bitmap)
-            resultContainer.draw(canvas)
-            showDialog(bitmap)
+            previewPhoto()
         }
 
         btnSave.setOnClickListener {
             savePhoto()
         }
+    }
+
+    private fun previewPhoto(){
+        motionView.unselectEntity()
+        val bitmap =
+            Bitmap.createBitmap(
+                resultContainer.width,
+                resultContainer.height,
+                Bitmap.Config.ARGB_8888
+            )
+        val canvas = Canvas(bitmap)
+        resultContainer.draw(canvas)
+        showDialog(bitmap)
     }
 
     private fun isStoragePermissionGranted() : Boolean {
@@ -156,10 +161,7 @@ class MainActivity : AppCompatActivity(),
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (isGallery){
-                openGallery()
-                !isGallery
-            }
+            openGallery()
         } else {
             Snackbar.make(mainLayout, resources.getString(R.string.permission_denied), 1500).show()
             if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -417,7 +419,7 @@ class MainActivity : AppCompatActivity(),
                     lnTextTool.visibility = View.VISIBLE
                 }
                 else {
-                    lnTextTool.visibility = View.INVISIBLE
+                    lnTextTool.visibility = View.GONE
                 }
             }
             else -> {

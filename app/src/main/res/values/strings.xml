@@ -6,4 +6,16 @@
     <string name="permission_message">Please allow storage permission to load photo!</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="bringToFront">Bring to Front</string>
+    <string name="moveToBack">Move to Back</string>
+    <string name="deleteEntity">Delete</string>
+    <string name="increaseSize">Increase text size</string>
+    <string name="decreaseSize">Decrease text size</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="reset">Reset</string>
+    <string name="openGallery">Open Gallery</string>
+    <string name="takePhoto">Take Photo</string>
+    <string name="savePhoto">Save Photo</string>
+    <string name="previewPhoto">Preview Photo</string>
 </resources>
