@@ -91,19 +91,11 @@ class MainActivity : AppCompatActivity(),
         showTools()
 
         btnGallery.setOnClickListener{
-            isGallery = true
-            if (isStoragePermissionGranted()) {
-                openGallery()
-            }
-            !isGallery
+            openGallery()
         }
 
         lnAddImage.setOnClickListener {
-            isGallery = true
-            if (isStoragePermissionGranted()) {
-                openGallery()
-            }
-            !isGallery
+            openGallery()
         }
 
         btnUndo.setOnClickListener {
@@ -227,9 +219,13 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun openGallery() {
-        val gallery =
-            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        startActivityForResult(gallery, PICK_IMAGE)
+        isGallery = true
+        if (isStoragePermissionGranted()) {
+            val gallery =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery, PICK_IMAGE)
+        }
+        !isGallery
     }
 
     @Throws(IOException::class)
