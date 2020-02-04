@@ -181,7 +181,9 @@ class MotionView : FrameLayout {
         try {
             val inputStream = context.contentResolver.openInputStream(PhotoUtils.getInstance(null).photoUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
+            Log.d("long","${PhotoUtils.getInstance(null).photoUri}")
             val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, PhotoUtils.getInstance(null).photoUri)
+
             return if (preventRotateBitmap != null) {
                 val finalBitmap = preventRotateBitmap.copy(Bitmap.Config.ARGB_8888, true)
                 val canvas = Canvas(finalBitmap)

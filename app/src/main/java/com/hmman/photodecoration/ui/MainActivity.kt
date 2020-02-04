@@ -2,8 +2,7 @@ package com.hmman.photodecoration.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.scale
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity(),
     private val REQUEST_PERMISSION_SETTING = 888
     var isGallery = false
     var imageUri: Uri? = null
+    var photoUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
     private lateinit var toolsAdapter: ToolsAdapter
 
@@ -266,6 +267,17 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    fun addImageToGallery(filePath: String, context: Context) {
+
+        val values = ContentValues()
+
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        values.put(MediaStore.MediaColumns.DATA, filePath)
+
+       photoUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+    }
+
     private fun setPic() {
         // Get the dimensions of the View
         val targetW: Int = motionView.width
@@ -288,8 +300,12 @@ class MainActivity : AppCompatActivity(),
         }
 
         BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            setMotionViewSizeAndBackground(Uri.parse(currentPhotoPath),bitmap)
+            val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, photoUri!!)
+            preventRotateBitmap?.let {
+                setMotionViewSizeAndBackground(photoUri, it)
+            }
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -312,17 +328,8 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
+                addImageToGallery(currentPhotoPath,this)
                 setPic()
-//                data?.let { d ->
-//                    val bitmap = d.extras!!.get("data") as Bitmap?
-//                    try {
-//                        if (bitmap != null) {
-//                            setMotionViewSizeAndBackground(null, bitmap)
-//                        }
-//                    } catch (e: IOException) {
-//                        e.printStackTrace()
-//                    }
-//                }
             }
         }
         if (requestCode == REQUEST_PERMISSION_SETTING) {
