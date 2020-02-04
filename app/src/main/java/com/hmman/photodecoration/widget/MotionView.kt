@@ -46,6 +46,7 @@ class MotionView : FrameLayout {
 
     @Nullable
     var selectedEntity: MotionEntity? = null
+        private set
     private var selectedLayerPaint: Paint? = null
     @Nullable
     private var motionViewCallback: MotionViewCallback? = null
