@@ -98,24 +98,28 @@ class TextEntity(
     @RequiresApi(Build.VERSION_CODES.M)
     @NonNull
     private fun createBitmap(@NonNull textLayer: TextLayer, @Nullable reuseBmp: Bitmap?): Bitmap? {
-        val boundsWidth = canvasWidth
 
         textPaint.style = Paint.Style.FILL
-        textPaint.textSize = 45F
+        textPaint.textSize = textLayer.font!!.size * canvasWidth
         textPaint.color =  textLayer.font?.color!!
 
-        @Suppress("DEPRECATION")
-        val s2 = StaticLayout(
-            textLayer.text,
-            textPaint,
-            boundsWidth,
-            Layout.Alignment.ALIGN_CENTER,
-            1f,
-            1f,
-            true
-        )
+        val boundsWidth: Int = min(canvasWidth, textPaint.measureText(textLayer.text).toInt())
 
-        val boundsHeight = s2.height
+        // Set initial scale for Text
+        textLayer.setInitialScale(boundsWidth*1f/canvasWidth)
+
+        val sl = StaticLayout.Builder.obtain(
+            textLayer.text.toString(),
+            0,
+            textLayer.text!!.length,
+            textPaint,
+            boundsWidth)
+            .setAlignment(Layout.Alignment.ALIGN_CENTER)
+            .setIncludePad(true)
+            .setLineSpacing(1f, 1f)
+            .build()
+
+        val boundsHeight = sl.height
         val bmpHeight = (canvasHeight * max(
             TextLayer.Limits.MIN_BITMAP_HEIGHT,
             1.0f * boundsHeight / canvasHeight
@@ -136,7 +140,7 @@ class TextEntity(
             canvas.translate(0f, textYCoordinate)
         }
 
-        s2.draw(canvas)
+        sl.draw(canvas)
         canvas.restore()
         return bmp
     }
