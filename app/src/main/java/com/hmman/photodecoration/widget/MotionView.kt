@@ -23,6 +23,7 @@ import com.hmman.photodecoration.R
 import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
 import com.hmman.photodecoration.util.PhotoUtils
+import com.hmman.photodecoration.widget.entity.IconEntity
 import com.hmman.photodecoration.widget.entity.MotionEntity
 import kotlinx.android.synthetic.main.dialog_sticker.view.*
 import java.io.IOException
@@ -52,6 +53,9 @@ class MotionView : FrameLayout {
     var selectedEntity: MotionEntity? = null
         private set
     private var selectedLayerPaint: Paint? = null
+
+    // Icon
+    private val icons: MutableList<IconEntity> = ArrayList()
     // callback
     @Nullable
     private var motionViewCallback: MotionViewCallback? = null
@@ -93,6 +97,7 @@ class MotionView : FrameLayout {
     }
 
     private fun init(@NonNull context: Context) { // I fucking love Android
+        configDefaultIcons()
         setWillNotDraw(false)
         selectedLayerPaint = Paint()
         selectedLayerPaint!!.alpha = (255 * Constants.SELECTED_LAYER_ALPHA).toInt()
@@ -106,7 +111,25 @@ class MotionView : FrameLayout {
         setOnTouchListener(onTouchListener)
         updateUI()
     }
-
+    private fun configDefaultIcons() {
+        val deleteIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+        val deleteIconEntity = IconEntity(deleteIcon, IconEntity.RIGHT_TOP)
+//        val scaleIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_scale)
+//        val iconScaleEntity = IconEntity(scaleIcon, IconEntity.RIGHT_BOTTOM)
+        icons.clear()
+        icons.add(deleteIconEntity)
+//        icons.add(iconScaleEntity)
+    }
+    private fun selectIconEntity(iconEntity: IconEntity?) {
+        when (iconEntity?.gravity) {
+            IconEntity.RIGHT_TOP -> {
+                deletedSelectedEntity()
+            }
+//            IconEntity.RIGHT_BOTTOM->{
+//                setOnTouchListener(onTouchListener)
+//            }
+        }
+    }
     fun getEntities(): List<MotionEntity> {
         return entities
     }
@@ -125,7 +148,8 @@ class MotionView : FrameLayout {
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
         if (entity != null) {
             initEntityBorder(entity)
-            initEntityClose(entity)
+//            initEntityClose(entity)
+            initEntityIconBackground(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
             selectEntity(entity, true)
@@ -150,10 +174,18 @@ class MotionView : FrameLayout {
 //        }
 
     }
+    private fun initEntityIconBackground(entity: MotionEntity) {
+        val iconBackground = Paint()
+        iconBackground.isAntiAlias = true
+        iconBackground.style = Paint.Style.FILL
+        iconBackground.color = ContextCompat.getColor(context, R.color.fill_color)
+        entity.setIconBackground(iconBackground)
+    }
+
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         if (selectedEntity != null) {
-            selectedEntity!!.draw(canvas, selectedLayerPaint)
+            selectedEntity!!.draw(canvas, selectedLayerPaint,icons)
         }
     }
 
@@ -165,7 +197,7 @@ class MotionView : FrameLayout {
     private fun drawAllEntities(canvas: Canvas) {
         for (i in entities.indices) {
             println(i)
-            entities[i].draw(canvas, null)
+            entities[i].draw(canvas, null,icons)
         }
     }
 
@@ -262,29 +294,46 @@ class MotionView : FrameLayout {
     private fun closeSelectionOnTap(e: MotionEvent): Boolean {
         val p = PointF(e.x, e.y)
         if (selectedEntity != null  && selectedEntity!!.pointClose(p)) {
-            deletedSelectedEntity()
+//            deletedSelectedEntity()
             return true
         }
         return false
 
     }
-    private fun updateSelectionOnTap(e: MotionEvent): Boolean {
-        val entity = findEntityAtPoint(e.x, e.y)
-        return if (entity != null) {
-            selectEntity(entity, true)
-            true
-        } else {
-            if(selectedEntity !=null){
-                val p = PointF(e.x, e.y)
-                if(selectedEntity!!.pointClose(p)){
-                    deletedSelectedEntity()
+//    private fun updateSelectionOnTap(e: MotionEvent): Boolean {
+    private fun updateSelectionOnTap(e: MotionEvent) {
+//        val entity = findEntityAtPoint(e.x, e.y)
+////        return if (entity != null) {
+////            selectEntity(entity, true)
+////            true
+////        } else {
+////            if(selectedEntity !=null){
+////                val p = PointF(e.x, e.y)
+////                if(selectedEntity!!.pointClose(p)){
+////                    deletedSelectedEntity()
+////                }
+////            }
+////            unselectEntity()
+////            false
+////        }
+        val iconEntity: IconEntity? = findIconAtPoint(e.x, e.y)
+        selectIconEntity(iconEntity)
+        val entity: MotionEntity? = findEntityAtPoint(e.x, e.y)
+        selectEntity(entity, true)
+    }
+    private fun findIconAtPoint(x: Float, y: Float): IconEntity? {
+        var selected: IconEntity? = null
+        if (selectedEntity != null) {
+            for (i in icons.indices.reversed()) {
+                if (selectedEntity!!.pointInLayerRectIcon(PointF(x, y), icons[i])) {
+                    selected = icons[i]
+                    break
                 }
             }
-            unselectEntity()
-            false
-        }
-    }
 
+        }
+        return selected
+    }
     private fun updateOnLongPress(e: MotionEvent) {
         if (selectedEntity != null) {
             val p = PointF(e.x, e.y)
@@ -398,6 +447,7 @@ class MotionView : FrameLayout {
             rotateGestureDetector!!.onTouchEvent(event)
             gestureDetectorCompat!!.onTouchEvent(event)
             moveGestureDetector!!.onTouchEvent(event)
+
         }
 
         true
@@ -418,7 +468,7 @@ class MotionView : FrameLayout {
 
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            closeSelectionOnTap(e)
+//            closeSelectionOnTap(e)
             updateSelectionOnTap(e)
             return true
         }
@@ -427,6 +477,8 @@ class MotionView : FrameLayout {
 
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
+//            val p = PointF( detector.focusX, detector.focusY)
+//            if (selectedEntity != null&& selectedEntity!!.pointGesture(p)) {
             if (selectedEntity != null) {
                 val scaleFactorDiff = detector.scaleFactor
                 selectedEntity!!.layer.postScale(scaleFactorDiff - 1.0f)
@@ -448,7 +500,9 @@ class MotionView : FrameLayout {
 
     private inner class MoveListener : MoveGestureDetector.SimpleOnMoveGestureListener() {
         override fun onMove(detector: MoveGestureDetector): Boolean {
-            handleTranslate(detector.getFocusDelta())
+            if (selectedEntity != null) {
+                handleTranslate(detector.getFocusDelta())
+            }
             return true
         }
     }
