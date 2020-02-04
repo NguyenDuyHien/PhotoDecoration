@@ -43,22 +43,17 @@ class MotionView : FrameLayout {
     private val redoActionEntities = Stack<String>()
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()
-    //    private val
+
     @Nullable
-    var selectedEntity: MotionEntity? = null
-        private set
+    private var selectedEntity: MotionEntity? = null
     private var selectedLayerPaint: Paint? = null
-    // callback
     @Nullable
     private var motionViewCallback: MotionViewCallback? = null
-    // gesture detection
     private var scaleGestureDetector: ScaleGestureDetector? = null
     private var rotateGestureDetector: RotateGestureDetector? = null
     private var moveGestureDetector: MoveGestureDetector? = null
     private var gestureDetectorCompat: GestureDetectorCompat? = null
-    private var motionEventTouch: MotionEvent? = null
 
-    // constructors
     constructor(context: Context) : super(context) {
         init(context)
     }
@@ -109,13 +104,6 @@ class MotionView : FrameLayout {
 
     fun setMotionViewCallback(@Nullable callback: MotionViewCallback?) {
         motionViewCallback = callback
-    }
-
-    fun addEntity(@Nullable entity: MotionEntity?) {
-        if (entity != null) {
-            entities.add(entity)
-            selectEntity(entity, false)
-        }
     }
 
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
@@ -179,8 +167,9 @@ class MotionView : FrameLayout {
             val inputStream =
                 context.contentResolver.openInputStream(PhotoUtils.getInstance(null).photoUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            Log.d("long","${PhotoUtils.getInstance(null).photoUri}")
-            val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, PhotoUtils.getInstance(null).photoUri)
+            Log.d("long", "${PhotoUtils.getInstance(null).photoUri}")
+            val preventRotateBitmap = PhotoUtils.getInstance(null)
+                .rotateImageIfRequired(bitmap, PhotoUtils.getInstance(null).photoUri)
 
             return if (preventRotateBitmap != null) {
                 val finalBitmap = preventRotateBitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -240,7 +229,7 @@ class MotionView : FrameLayout {
         }
     }
 
-    fun unselectEntity() {
+    fun unSelectEntity() {
         if (selectedEntity != null) {
             selectEntity(null, true)
             motionViewCallback!!.onEntityUnselected()
@@ -282,7 +271,7 @@ class MotionView : FrameLayout {
                     deletedSelectedEntity()
                 }
             }
-            unselectEntity()
+            unSelectEntity()
             false
         }
     }
@@ -303,7 +292,7 @@ class MotionView : FrameLayout {
         }
     }
 
-    fun moveEntityToBack(@Nullable entity: MotionEntity?) {
+    private fun moveEntityToBack(@Nullable entity: MotionEntity?) {
         if (entity == null) {
             return
         }
@@ -339,7 +328,7 @@ class MotionView : FrameLayout {
             undoActionEntities.push("REMOVE")
             selectedEntity = null
             indexUndoRemoveEntities.push(pos)
-            unselectEntity()
+            unSelectEntity()
             invalidate()
         }
     }
@@ -359,7 +348,7 @@ class MotionView : FrameLayout {
                 } else {
                     undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
                     selectedEntity = null
-                    unselectEntity()
+                    unSelectEntity()
                     indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
                 }
                 undoActionEntities.push(redoActionEntities.pop())

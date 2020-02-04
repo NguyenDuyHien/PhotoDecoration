@@ -20,11 +20,9 @@ import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.graphics.scale
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
@@ -122,7 +120,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun previewPhoto(){
-        motionView.unselectEntity()
+        motionView.unSelectEntity()
         val bitmap =
             Bitmap.createBitmap(
                 resultContainer.width,
