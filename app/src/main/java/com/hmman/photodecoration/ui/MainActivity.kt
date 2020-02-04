@@ -198,6 +198,14 @@ class MainActivity : AppCompatActivity(),
         dispatchTakePictureIntent()
     }
 
+    private fun galleryAddPic() {
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            sendBroadcast(mediaScanIntent)
+        }
+    }
+
     private fun savePhoto() {
         val finalBitmap = motionView.getFinalBitmap()
         finalBitmap?.let {
