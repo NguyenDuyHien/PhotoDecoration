@@ -1,7 +1,6 @@
 package com.hmman.photodecoration.ui.dialog
 
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.flask.colorpicker.ColorPickerView
-import com.flask.colorpicker.builder.ColorPickerClickListener
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.Constants
@@ -44,10 +42,10 @@ class EditDialogFragment : DialogFragment() {
         }
     }
 
-    var mTextEditor: TextEditor? = null
+    private var mTextEditor: TextEditor? = null
+    private var mContent: String? = null
+    private var mInputMethodManager: InputMethodManager? = null
     var mColorCode: Int? = null
-    var mContent: String? = null
-    var mInputMethodManager: InputMethodManager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,66 +62,67 @@ class EditDialogFragment : DialogFragment() {
         edtContent.setSelection(edtContent.getText()!!.length)
         btnColor.setBackgroundColor(mColorCode!!)
 
-        btnColor.setOnClickListener({
+        btnColor.setOnClickListener {
             changeTextEntityColor(mColorCode!!)
-        })
+        }
 
-        btnDone.setOnClickListener({
+        btnDone.setOnClickListener {
             dismiss()
             mInputMethodManager!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
             mContent = edtContent.text.toString()
-            if (!TextUtils.isEmpty(mContent)){
+            if (!TextUtils.isEmpty(mContent)) {
                 mTextEditor!!.onDone(mContent!!, mColorCode!!)
             }
-        })
+        }
     }
 
-    fun changeTextEntityColor(initialColor: Int){
+    private fun changeTextEntityColor(initialColor: Int) {
         ColorPickerDialogBuilder
             .with(context)
-            .setTitle("Select Color")
+            .setTitle(Constants.TITLE_CHANGE_COLOR)
             .initialColor(initialColor)
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
             .density(17)
-            .setPositiveButton("OK", object : ColorPickerClickListener {
-                override fun onClick(d: DialogInterface?, lastSelectedColor: Int, allColors: Array<out Int>?) {
-                    mColorCode = lastSelectedColor
-                    edtContent.setTextColor(lastSelectedColor)
-                    btnColor.setBackgroundColor(lastSelectedColor)
-                }
-            })
-            .setNegativeButton("Cancel", DialogInterface.OnClickListener{ _, _ ->  })
+            .setPositiveButton(Constants.DEFAULT_OK_BUTTON)
+            { _, lastSelectedColor, _ ->
+                mColorCode = lastSelectedColor
+                edtContent.setTextColor(lastSelectedColor)
+                btnColor.setBackgroundColor(lastSelectedColor)
+            }
+            .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ -> }
             .build()
             .show()
     }
 
 
-    fun setOnDoneListener (textEditor: TextEditor){
+    fun setOnDoneListener(textEditor: TextEditor) {
         mTextEditor = textEditor
     }
 
     interface TextEditor {
-        fun onDone (text: String, colorCode: Int)
+        fun onDone(text: String, colorCode: Int)
     }
 
     companion object {
-        val TAG = EditDialogFragment::class.java.simpleName
+        private val TAG = EditDialogFragment::class.java.simpleName
 
-        fun show (@NonNull appcompatActivity: AppCompatActivity,
-                  @NonNull inputText: String,
-                  @ColorInt colorCode: Int): EditDialogFragment{
+        fun show(
+            @NonNull appcompatActivity: AppCompatActivity,
+            @NonNull inputText: String,
+            @ColorInt colorCode: Int
+        ): EditDialogFragment {
             val args = Bundle()
             args.putString(Constants.TEXT_CONTENT, inputText)
             args.putInt(Constants.COLOR_CODE, colorCode)
             val fragment = EditDialogFragment()
-            fragment.setArguments(args)
+            fragment.arguments = args
             fragment.show(appcompatActivity.supportFragmentManager, TAG)
             return fragment
         }
 
         //show dialog with empty text
-        fun show (@NonNull appcompatActivity: AppCompatActivity) : EditDialogFragment{
-            return show(appcompatActivity, "", Color.WHITE)
+        fun show(@NonNull appcompatActivity: AppCompatActivity): EditDialogFragment {
+            return show(appcompatActivity, Constants.DEFAULT_TEXT, Color.WHITE)
         }
     }
 }

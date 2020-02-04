@@ -8,5 +8,9 @@ class Constants {
         const val PREVIEW_DIALOG_TAG = "PREVIEW_TAG"
         const val EDIT_TEXT_TAG = "EDIT_TAG"
         const val RADIUS_DELETE_ICON = 40F
+        const val DEFAULT_TEXT = ""
+        const val DEFAULT_CANCEL_BUTTON = "Cancel"
+        const val DEFAULT_OK_BUTTON = "OK"
+        const val TITLE_CHANGE_COLOR = "Select Color"
     }
 }

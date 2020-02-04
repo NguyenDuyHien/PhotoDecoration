@@ -54,7 +54,11 @@ class StickerAdapter(context: Context, val mOnStickerSelected: OnStickerSelected
     private fun initStickerList() {
         val list: TypedArray = context.resources.obtainTypedArray(R.array.list)
         for (i in 0 until list.length()) {
-            stickerList.add(list.getResourceId(i, -1))
+            stickerList.add(list.getResourceId(i, Constants.DEFAULT_VALUE))
         }
+    }
+
+    object Constants {
+        const val DEFAULT_VALUE = -1
     }
 }
