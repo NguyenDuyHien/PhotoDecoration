@@ -15,14 +15,21 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import com.hmman.photodecoration.R
+import com.hmman.photodecoration.model.Font
+import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
+import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.IconEntity
 import com.hmman.photodecoration.widget.entity.MotionEntity
+import com.hmman.photodecoration.widget.entity.TextEntity
+import kotlinx.android.synthetic.main.activity_main.*
+import org.w3c.dom.Text
 import java.util.*
 
 class MotionView : FrameLayout {
@@ -124,6 +131,7 @@ class MotionView : FrameLayout {
 //            }
         }
     }
+
     fun getEntities(): List<MotionEntity> {
         return entities
     }
@@ -134,9 +142,9 @@ class MotionView : FrameLayout {
 
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
         if (entity != null) {
-            initEntityBorder(entity)
-//            initEntityClose(entity)
-            initEntityIconBackground(entity)
+//            initEntityBorder(entity)
+//            initEntityIconBackground(entity)
+            initEntityBorderAndIconBackground(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
             undoActionEntities.push("ADD")
@@ -367,7 +375,7 @@ class MotionView : FrameLayout {
         if (entities.remove(selectedEntity!!)) {
             undoEntities.push(selectedEntity)
             undoActionEntities.push("REMOVE")
-            selectedEntity = null
+//            selectedEntity = null
             indexUndoRemoveEntities.push(pos)
             unSelectEntity()
             invalidate()
@@ -388,7 +396,7 @@ class MotionView : FrameLayout {
                     entities.add(undoEntities.pop())
                 } else {
                     undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
-                    selectedEntity = null
+//                    selectedEntity = null
                     unSelectEntity()
                     indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
                 }
@@ -464,6 +472,35 @@ class MotionView : FrameLayout {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun redrawTextEntityOnScaleEnd (){
+        val fontProvider = FontProvider(resources)
+        val textLayer = TextLayer()
+        val font = (selectedEntity as TextEntity).getLayer().font
+        font!!.size = TextLayer.Limits.INITIAL_FONT_SIZE * selectedEntity!!.layer.scale / TextLayer.Limits.MIN_SCALE
+        val currentText = (selectedEntity as TextEntity).getLayer().text
+        textLayer.font = font
+        textLayer.text = currentText
+
+        val textEntity =
+            TextEntity(textLayer, this.width, this.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
+
+//        initEntityBorder(textEntity)
+//        initEntityIconBackground(textEntity)
+        initEntityBorderAndIconBackground(textEntity)
+        textEntity.layer = selectedEntity!!.layer
+        entities.remove(selectedEntity!!)
+        entities.add(textEntity)
+        selectEntity(textEntity, true)
+
+        updateUI()
+    }
+
+    private fun initEntityBorderAndIconBackground(entity: MotionEntity){
+        initEntityBorder(entity)
+        initEntityIconBackground(entity)
+    }
+
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
 //            val p = PointF( detector.focusX, detector.focusY)
@@ -474,6 +511,14 @@ class MotionView : FrameLayout {
                 updateUI()
             }
             return true
+        }
+
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+            super.onScaleEnd(detector)
+            if (selectedEntity is TextEntity){
+                redrawTextEntityOnScaleEnd()
+            }
         }
     }
 

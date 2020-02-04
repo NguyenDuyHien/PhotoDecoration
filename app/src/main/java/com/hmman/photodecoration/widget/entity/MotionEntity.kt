@@ -10,7 +10,7 @@ import com.hmman.photodecoration.util.MathUtils
 import com.hmman.photodecoration.util.PhotoUtils
 
 abstract class MotionEntity(
-    val layer: Layer,
+    var layer: Layer,
     protected var canvasWidth: Int, protected var canvasHeight: Int,
     var deleteIcon: Bitmap
 ) {
