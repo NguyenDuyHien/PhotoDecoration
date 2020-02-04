@@ -9,20 +9,18 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -31,7 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.adapter.StickerAdapter
-import com.hmman.photodecoration.adapter.ToolsAdapter
+import com.hmman.photodecoration.adapter.ToolAdapter
 import com.hmman.photodecoration.model.Font
 import com.hmman.photodecoration.model.Layer
 import com.hmman.photodecoration.model.TextLayer
@@ -54,9 +52,9 @@ import java.util.*
 import kotlin.math.min
 
 class MainActivity : AppCompatActivity(),
-    ToolsAdapter.OnItemSelected,
+    ToolAdapter.OnItemSelected,
     MotionView.MotionViewCallback,
-    StickerAdapter.onStickerSelected {
+    StickerAdapter.OnStickerSelected {
 
     private lateinit var fontProvider: FontProvider
     private val PICK_IMAGE = 100
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity(),
     var imageUri: Uri? = null
     var photoUri: Uri? = null
     private lateinit var stickerDialog: DialogSticker
-    private lateinit var toolsAdapter: ToolsAdapter
+    private lateinit var toolAdapter: ToolAdapter
 
     private lateinit var currentPhotoPath: String
 
@@ -91,19 +89,11 @@ class MainActivity : AppCompatActivity(),
         showTools()
 
         btnGallery.setOnClickListener{
-            isGallery = true
-            if (isStoragePermissionGranted()) {
-                openGallery()
-            }
-            !isGallery
+            openGallery()
         }
 
         lnAddImage.setOnClickListener {
-            isGallery = true
-            if (isStoragePermissionGranted()) {
-                openGallery()
-            }
-            !isGallery
+            openGallery()
         }
 
         btnUndo.setOnClickListener {
@@ -123,21 +113,25 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnPreview.setOnClickListener {
-            motionView.unselectEntity()
-            val bitmap =
-                Bitmap.createBitmap(
-                    resultContainer.width,
-                    resultContainer.height,
-                    Bitmap.Config.ARGB_8888
-                )
-            val canvas = Canvas(bitmap)
-            resultContainer.draw(canvas)
-            showDialog(bitmap)
+            previewPhoto()
         }
 
         btnSave.setOnClickListener {
             savePhoto()
         }
+    }
+
+    private fun previewPhoto(){
+        motionView.unselectEntity()
+        val bitmap =
+            Bitmap.createBitmap(
+                resultContainer.width,
+                resultContainer.height,
+                Bitmap.Config.ARGB_8888
+            )
+        val canvas = Canvas(bitmap)
+        resultContainer.draw(canvas)
+        showDialog(bitmap)
     }
 
     private fun isStoragePermissionGranted() : Boolean {
@@ -164,10 +158,7 @@ class MainActivity : AppCompatActivity(),
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (isGallery){
-                openGallery()
-                !isGallery
-            }
+            openGallery()
         } else {
             Snackbar.make(mainLayout, resources.getString(R.string.permission_denied), 1500).show()
             if (Build.VERSION.SDK_INT >= 23 && !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -192,8 +183,6 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun openCamera(){
-//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        startActivityForResult(cameraIntent, CAMERA_REQUEST)
         dispatchTakePictureIntent()
     }
 
@@ -229,9 +218,13 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun openGallery() {
-        val gallery =
-            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        startActivityForResult(gallery, PICK_IMAGE)
+        isGallery = true
+        if (isStoragePermissionGranted()) {
+            val gallery =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery, PICK_IMAGE)
+        }
+        !isGallery
     }
 
     @Throws(IOException::class)
@@ -345,8 +338,8 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun enableEditMode (show: Boolean){
-        when (show){
+    private fun enableEditMode (enable: Boolean){
+        when (enable){
             true -> {
                 btnPreview.isEnabled = true
                 btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
@@ -355,8 +348,8 @@ class MainActivity : AppCompatActivity(),
                 btnReset.isEnabled = true
                 btnRedo.isEnabled = true
                 btnUndo.isEnabled = true
-                toolsAdapter.isEnable = true
-                rvTools.adapter = toolsAdapter
+                toolAdapter.isEnable = true
+                rvTools.adapter = toolAdapter
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
@@ -367,8 +360,8 @@ class MainActivity : AppCompatActivity(),
                 btnReset.isEnabled = false
                 btnRedo.isEnabled = false
                 btnUndo.isEnabled = false
-                toolsAdapter.isEnable = false
-                rvTools.adapter = toolsAdapter
+                toolAdapter.isEnable = false
+                rvTools.adapter = toolAdapter
                 lnAddImage.visibility = View.VISIBLE
             }
         }
@@ -410,26 +403,26 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun showTools() {
-        toolsAdapter = ToolsAdapter(this)
+        toolAdapter = ToolAdapter(this)
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvTools.layoutManager = llmTools
-        rvTools.adapter = toolsAdapter
+        rvTools.adapter = toolAdapter
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    override fun onToolSelected(toolType: ToolsAdapter.ToolType) {
+    override fun onToolSelected(toolType: ToolAdapter.ToolType) {
         when (toolType) {
-            ToolsAdapter.ToolType.TEXT -> {
+            ToolAdapter.ToolType.TEXT -> {
                 showAddTextDialog()
             }
-            ToolsAdapter.ToolType.STICKER -> {
+            ToolAdapter.ToolType.STICKER -> {
                 stickerDialog.show()
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun addText(text: String, colorCode: Int): TextLayer {
+    private fun addText(text: String, colorCode: Int) {
         val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
             TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
@@ -437,12 +430,10 @@ class MainActivity : AppCompatActivity(),
         motionView.addEntityAndPosition(textEntity)
 
         val center: PointF = textEntity.absoluteCenter()
-        center.y = center.y * 0.5f
+        center.y = center.y
         textEntity.moveCenterTo(center)
 
         motionView.invalidate()
-
-        return textLayer
     }
 
     private fun addSticker(stickerResId: Int) {
@@ -462,7 +453,7 @@ class MainActivity : AppCompatActivity(),
                     lnTextTool.visibility = View.VISIBLE
                 }
                 else {
-                    lnTextTool.visibility = View.INVISIBLE
+                    lnTextTool.visibility = View.GONE
                 }
             }
             else -> {
@@ -473,12 +464,12 @@ class MainActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun editTextToolEvent(){
-        btnDecrease.setOnClickListener({
+        btnDecrease.setOnClickListener{
             decreaseTextEntitySize()
-        })
-        btnIncrease.setOnClickListener({
+        }
+        btnIncrease.setOnClickListener{
             increaseTextEntitySize()
-        })
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainLayout"
-    android:background="@color/editBackground">
+    android:background="@color/mainBackground">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/resultContainer"
@@ -65,6 +66,7 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:tooltipText="@string/openGallery"
         android:id="@+id/btnGallery"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
@@ -78,6 +80,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:tooltipText="@string/takePhoto"
         android:id="@+id/btnCamera"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
@@ -91,6 +94,7 @@
         app:layout_constraintTop_toTopOf="@id/btnGallery" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:tooltipText="@string/reset"
         android:id="@+id/btnReset"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
@@ -103,6 +107,7 @@
         app:layout_constraintEnd_toStartOf="@id/btnUndo"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:tooltipText="@string/undo"
         android:id="@+id/btnUndo"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
@@ -115,6 +120,7 @@
         app:layout_constraintEnd_toStartOf="@id/btnRedo"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:tooltipText="@string/redo"
         android:layout_margin="@dimen/_8sdp"
         android:id="@+id/btnRedo"
         android:layout_width="@dimen/_20sdp"
@@ -140,6 +146,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:tooltipText="@string/decreaseSize"
             android:id="@+id/btnDecrease"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -149,6 +156,7 @@
             android:src="@drawable/decrease" />
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:tooltipText="@string/increaseSize"
             android:id="@+id/btnIncrease"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -172,6 +180,7 @@
         app:layout_constraintStart_toEndOf="@id/lnTextTool">
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:tooltipText="@string/bringToFront"
             android:id="@+id/btnBringToFront"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -181,6 +190,7 @@
             android:src="@drawable/move_up" />
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:tooltipText="@string/moveToBack"
             android:id="@+id/btnMoveToBack"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -190,6 +200,7 @@
             android:src="@drawable/move_down" />
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:tooltipText="@string/deleteEntity"
             android:id="@+id/btnDelete"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
@@ -229,23 +240,25 @@
         tools:listitem="@layout/item_tool" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:tooltipText="@string/previewPhoto"
         android:id="@+id/btnPreview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Preview"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:backgroundTint="@color/lightBlue"
         app:layout_constraintTop_toTopOf="@id/btnGallery"
         app:layout_constraintBottom_toBottomOf="@id/btnGallery"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
+        android:tooltipText="@string/savePhoto"
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
         android:backgroundTint="@color/lightBlue"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         app:layout_constraintTop_toTopOf="@id/btnPreview"
         app:layout_constraintBottom_toBottomOf="@+id/btnPreview"
         app:layout_constraintEnd_toStartOf="@+id/btnPreview" />

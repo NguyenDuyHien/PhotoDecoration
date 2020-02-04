@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.adapter.StickerAdapter
-import com.hmman.photodecoration.util.AnimUtil
+import com.hmman.photodecoration.util.AnimUtils
 import kotlinx.android.synthetic.main.dialog_sticker.*
 
-class DialogSticker (
+class DialogSticker(
     context: Context,
-    val mOnStickerSelected: StickerAdapter.onStickerSelected
-) : Dialog (context){
+    val mOnStickerSelected: StickerAdapter.OnStickerSelected
+) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +33,7 @@ class DialogSticker (
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT
             )
-            attributes.windowAnimations = AnimUtil.slideRightLeftDialog()
+            attributes.windowAnimations = AnimUtils.slideRightLeftDialog()
             setGravity(Gravity.BOTTOM)
         }
 
@@ -46,7 +46,7 @@ class DialogSticker (
 
     private fun showStickerList() {
         val adapter = StickerAdapter(context, mOnStickerSelected)
-        val layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL,false)
+        val layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false)
         rvStickers.layoutManager = layoutManager
         rvStickers.adapter = adapter
     }

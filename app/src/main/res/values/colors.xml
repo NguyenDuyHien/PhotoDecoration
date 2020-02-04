@@ -7,9 +7,10 @@
     <color name="colorPrimaryDark">#2196F3</color>
     <color name="colorAccent">#E8594F</color>
     <color name="lightBlue">#03A9F4</color>
-    <color name="editBackground">#BADFF0</color>
+    <color name="mainBackground">#BADFF0</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="gray">#646464</color>
     <color name="stroke_color">#03A9F4</color>
+    <color name="editDialogBackground">#B3000000</color>
 </resources>

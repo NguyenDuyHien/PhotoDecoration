@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="list">
+        <item>@drawable/abra</item>
+        <item>@drawable/bellsprout</item>
+        <item>@drawable/bracelet</item>
+        <item>@drawable/bullbasaur</item>
+        <item>@drawable/candy</item>
+        <item>@drawable/caterpie</item>
+        <item>@drawable/charmander</item>
+        <item>@drawable/mankey</item>
+        <item>@drawable/map</item>
+        <item>@drawable/mega_ball</item>
+        <item>@drawable/meowth</item>
+        <item>@drawable/pawprints</item>
+        <item>@drawable/pidgey</item>
+        <item>@drawable/pikachu</item>
+        <item>@drawable/pikachu_1</item>
+        <item>@drawable/pikachu_2</item>
+        <item>@drawable/player</item>
+        <item>@drawable/pointer</item>
+        <item>@drawable/pokebag</item>
+        <item>@drawable/pokeball</item>
+        <item>@drawable/pokeballs</item>
+        <item>@drawable/pokecoin</item>
+        <item>@drawable/pokedex</item>
+        <item>@drawable/psyduck</item>
+        <item>@drawable/rattata</item>
+    </array>
+</resources>

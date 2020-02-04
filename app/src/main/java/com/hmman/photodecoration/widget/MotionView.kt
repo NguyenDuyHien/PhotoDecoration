@@ -42,11 +42,9 @@ class MotionView : FrameLayout {
         fun onEntityUnselected()
     }
 
-    // layers
     private val entities: MutableList<MotionEntity> =
         ArrayList()
     private val undoEntities: Stack<MotionEntity> = Stack()
-//    private val resetEntities: MutableList<MotionEntity> = ArrayList<MotionEntity>()
 
     @Nullable
     var selectedEntity: MotionEntity? = null
@@ -140,6 +138,7 @@ class MotionView : FrameLayout {
         borderPaint.color = ContextCompat.getColor(context, R.color.stroke_color)
         entity.setBorderPaint(borderPaint)
     }
+
     private fun initEntityClose(@NonNull entity: MotionEntity) { // init stroke
         val strokeSize = resources.getDimensionPixelSize(R.dimen.stroke_size)
         val borderPaint = Paint()
@@ -147,9 +146,8 @@ class MotionView : FrameLayout {
         borderPaint.isAntiAlias = true
         borderPaint.color = ContextCompat.getColor(context, R.color.white)
         entity.setClosePaint(borderPaint)
-//        }
-
     }
+
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         if (selectedEntity != null) {
@@ -355,22 +353,6 @@ class MotionView : FrameLayout {
     fun undo() {
         val lastItemPosition = entities.size - 1
         val listSize = entities.size
-//        when {
-//            isReseted -> {
-//                entities.addAll(resetEntities)
-//                resetEntities.clear()
-//                updateUI()
-//                isReseted = false
-//            }
-//            listSize > 0 -> {
-//                undoEntities.push(entities.removeAt(lastItemPosition))
-//                selectEntity(null, false)
-//                updateUI()
-//            }
-//            else -> {
-//                Toast.makeText(this.context, "Nothing to Undo", Toast.LENGTH_SHORT).show();
-//            }
-//        }
         when {
             listSize > 0 -> {
                 undoEntities.push(entities.removeAt(lastItemPosition))
@@ -383,14 +365,11 @@ class MotionView : FrameLayout {
         }
     }
 
-//    private var isReseted = false
     fun reset() {
-//        resetEntities.addAll(entities)
         entities.clear()
         selectEntity(null, false)
         updateUI()
         motionViewCallback!!.onEntityUnselected()
-//        isReseted = true
     }
 
     // gesture detectors
