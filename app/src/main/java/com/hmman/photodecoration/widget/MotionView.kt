@@ -45,7 +45,7 @@ class MotionView : FrameLayout {
     private val indexRedoRemoveEntities = Stack<Int>()
 
     @Nullable
-    private var selectedEntity: MotionEntity? = null
+    var selectedEntity: MotionEntity? = null
     private var selectedLayerPaint: Paint? = null
     @Nullable
     private var motionViewCallback: MotionViewCallback? = null
