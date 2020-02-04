@@ -24,8 +24,9 @@ class TextEntity(
     @IntRange(from = 1) canvasWidth: Int,
     @IntRange(from = 1) canvasHeight: Int,
     @NonNull val fontProvider: FontProvider,
+    name: String,
     deleteIcon: Bitmap
-) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon) {
+) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon, name) {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -47,8 +48,8 @@ class TextEntity(
         bitmap = newBmp
         val width: Float = bitmap!!.width.toFloat()
         val height: Float = bitmap!!.height.toFloat()
-        val widthAspect = 1F * canvasWidth/width
-        val heightAspect =1F * canvasHeight/height
+        val widthAspect = 1F * canvasWidth / width
+        val heightAspect = 1F * canvasHeight / height
         // for text we always match text width with parent width
         holyScale = min(widthAspect, heightAspect)
 
@@ -101,19 +102,20 @@ class TextEntity(
 
         textPaint.style = Paint.Style.FILL
         textPaint.textSize = textLayer.font!!.size * canvasWidth
-        textPaint.color =  textLayer.font?.color!!
+        textPaint.color = textLayer.font?.color!!
 
         val boundsWidth: Int = min(canvasWidth, textPaint.measureText(textLayer.text).toInt())
 
         // Set initial scale for Text
-        textLayer.setInitialScale(boundsWidth*1f/canvasWidth)
+        textLayer.setInitialScale(boundsWidth * 1f / canvasWidth)
 
         val sl = StaticLayout.Builder.obtain(
             textLayer.text.toString(),
             0,
             textLayer.text!!.length,
             textPaint,
-            boundsWidth)
+            boundsWidth
+        )
             .setAlignment(Layout.Alignment.ALIGN_CENTER)
             .setIncludePad(true)
             .setLineSpacing(1f, 1f)
@@ -165,6 +167,10 @@ class TextEntity(
         if (bitmap != null && !bitmap!!.isRecycled) {
             bitmap!!.recycle()
         }
+    }
+
+    override fun clone(): MotionEntity {
+        return TextEntity(getLayer(), canvasWidth, canvasHeight, fontProvider, name, deleteIcon)
     }
 
     fun updateEntity() {

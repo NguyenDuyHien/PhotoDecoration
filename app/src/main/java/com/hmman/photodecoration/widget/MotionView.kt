@@ -39,6 +39,8 @@ class MotionView : FrameLayout {
 
     private val entities: MutableList<MotionEntity> = ArrayList()
     private val undoEntities: Stack<MotionEntity> = Stack()
+    private val moveUndoEntities: Stack<MotionEntity> = Stack()
+    private val moveRedoEntities: Stack<MotionEntity> = Stack()
     private val undoActionEntities: Stack<String> = Stack()
     private val redoActionEntities = Stack<String>()
     private val indexUndoRemoveEntities = Stack<Int>()
@@ -150,7 +152,6 @@ class MotionView : FrameLayout {
 
     private fun drawAllEntities(canvas: Canvas) {
         for (i in entities.indices) {
-            println(i)
             entities[i].draw(canvas, null)
         }
     }
@@ -210,6 +211,7 @@ class MotionView : FrameLayout {
             if (needUpdateUI) {
                 updateUI()
             }
+
         }
     }
 
@@ -327,7 +329,7 @@ class MotionView : FrameLayout {
         if (entities.remove(selectedEntity!!)) {
             undoEntities.push(selectedEntity)
             undoActionEntities.push("REMOVE")
-            selectedEntity = null
+//            selectedEntity = null
             indexUndoRemoveEntities.push(pos)
             unSelectEntity()
             invalidate()
@@ -344,13 +346,29 @@ class MotionView : FrameLayout {
         val listSize = redoActionEntities.size
         when {
             listSize > 0 -> {
-                if (redoActionEntities[redoActionEntities.size - 1] == "ADD") {
-                    entities.add(undoEntities.pop())
-                } else {
-                    undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
-                    selectedEntity = null
-                    unSelectEntity()
-                    indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
+                when {
+                    redoActionEntities[redoActionEntities.size - 1] == "ADD" -> {
+                        entities.add(undoEntities.pop())
+                    }
+                    redoActionEntities[redoActionEntities.size - 1] == "MOVE" -> {
+                        var indexOfEntity = -1
+                        entities.forEachIndexed { index, motionEntity ->
+                            if (motionEntity.name == moveRedoEntities[moveRedoEntities.size - 1].name) {
+                                indexOfEntity = index
+                            }
+                        }
+                        if (indexOfEntity != -1) {
+                            moveUndoEntities.push(entities[indexOfEntity])
+                            entities.removeAt(indexOfEntity)
+                            entities.add(moveRedoEntities.pop())
+                            unSelectEntity()
+                        }
+                    }
+                    else -> {
+                        undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
+                        unSelectEntity()
+                        indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
+                    }
                 }
                 undoActionEntities.push(redoActionEntities.pop())
                 updateUI()
@@ -366,14 +384,35 @@ class MotionView : FrameLayout {
         val listSize = undoActionEntities.size
         when {
             listSize > 0 -> {
-                if (undoActionEntities[undoActionEntities.size - 1] == "ADD") {
-                    undoEntities.push(entities.removeAt(lastItemPosition))
-                    selectEntity(null, false)
-                } else {
-                    val entity = undoEntities.pop()
-                    entities.add(indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1], entity)
-                    indexRedoRemoveEntities.push(indexUndoRemoveEntities.pop())
-                    selectEntity(entity, true)
+                when {
+                    undoActionEntities[undoActionEntities.size - 1] == "ADD" -> {
+                        undoEntities.push(entities.removeAt(lastItemPosition))
+                        unSelectEntity()
+                    }
+                    undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
+                        var lastIndexOf = -1
+                        entities.forEachIndexed { index, motionEntity ->
+                            if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
+                                lastIndexOf = index
+                            }
+                        }
+                        if (lastIndexOf != -1) {
+                            moveRedoEntities.push(entities[lastIndexOf])
+                            entities.removeAt(lastIndexOf)
+                            entities.add(moveUndoEntities.pop())
+                            unSelectEntity()
+                        }
+                    }
+                    else -> {
+                        val entity = undoEntities.pop()
+
+                        entities.add(
+                            indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1],
+                            entity
+                        )
+                        indexRedoRemoveEntities.push(indexUndoRemoveEntities.pop())
+                        selectEntity(entity, true)
+                    }
                 }
                 redoActionEntities.push(undoActionEntities.pop())
                 updateUI()
@@ -399,7 +438,6 @@ class MotionView : FrameLayout {
             gestureDetectorCompat!!.onTouchEvent(event)
             moveGestureDetector!!.onTouchEvent(event)
         }
-
         true
     }
 
@@ -416,13 +454,11 @@ class MotionView : FrameLayout {
             updateOnLongPress(e)
         }
 
-
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             closeSelectionOnTap(e)
             updateSelectionOnTap(e)
             return true
         }
-
     }
 
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
@@ -432,6 +468,13 @@ class MotionView : FrameLayout {
                 selectedEntity!!.layer.postScale(scaleFactorDiff - 1.0f)
                 updateUI()
             }
+            return true
+        }
+
+        override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+            val entity = entities[entities.indexOf(selectedEntity!!)].clone()
+            moveUndoEntities.add(entity)
+            undoActionEntities.push("MOVE")
             return true
         }
     }
@@ -444,11 +487,25 @@ class MotionView : FrameLayout {
             }
             return true
         }
+
+        override fun onRotateBegin(detector: RotateGestureDetector?): Boolean {
+            val entity = entities[entities.indexOf(selectedEntity!!)].clone()
+            moveUndoEntities.add(entity)
+            undoActionEntities.push("MOVE")
+            return true
+        }
     }
 
     private inner class MoveListener : MoveGestureDetector.SimpleOnMoveGestureListener() {
         override fun onMove(detector: MoveGestureDetector): Boolean {
             handleTranslate(detector.getFocusDelta())
+            return true
+        }
+
+        override fun onMoveBegin(detector: MoveGestureDetector): Boolean {
+            val entity = entities[entities.indexOf(selectedEntity)].clone()
+            moveUndoEntities.add(entity)
+            undoActionEntities.push("MOVE")
             return true
         }
     }

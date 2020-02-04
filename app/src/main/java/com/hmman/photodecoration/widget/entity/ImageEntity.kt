@@ -14,16 +14,17 @@ class ImageEntity(
     @NonNull val bitmap: Bitmap,
     @IntRange(from = 1) canvasWidth: Int,
     @IntRange(from = 1) canvasHeight: Int,
+    name: String,
     deleteIcon: Bitmap
-) : MotionEntity(layer, canvasWidth, canvasHeight, deleteIcon) {
+) : MotionEntity(layer, canvasWidth, canvasHeight, deleteIcon, name) {
 
     init {
         val width = bitmap.width.toFloat()
         val height = bitmap.height.toFloat()
-        val widthAspect = 1F * canvasWidth/width
-        val heightAspect = 1F * canvasHeight/height
-        val realWidthAspect = 1F * PhotoUtils.getInstance(null).width/width
-        val realHeightAspect = 1F * PhotoUtils.getInstance(null).height/height
+        val widthAspect = 1F * canvasWidth / width
+        val heightAspect = 1F * canvasHeight / height
+        val realWidthAspect = 1F * PhotoUtils.getInstance(null).width / width
+        val realHeightAspect = 1F * PhotoUtils.getInstance(null).height / height
 
         holyScale = min(widthAspect, heightAspect)
         realHolyScale = min(realWidthAspect, realHeightAspect)
@@ -54,5 +55,9 @@ class ImageEntity(
 
     override fun release() {
         if (!bitmap.isRecycled) bitmap.recycle()
+    }
+
+    override fun clone(): MotionEntity {
+        return ImageEntity(layer.clone(), bitmap, canvasWidth, canvasHeight, name, deleteIcon)
     }
 }

@@ -2,7 +2,10 @@ package com.hmman.photodecoration.ui
 
 import android.Manifest
 import android.app.Activity
-import android.content.*
+import android.content.ContentValues
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -86,7 +89,7 @@ class MainActivity : AppCompatActivity(),
 
         showTools()
 
-        btnGallery.setOnClickListener{
+        btnGallery.setOnClickListener {
             openGallery()
         }
 
@@ -106,7 +109,7 @@ class MainActivity : AppCompatActivity(),
             motionView.reset()
         }
 
-        btnCamera.setOnClickListener{
+        btnCamera.setOnClickListener {
             openCamera()
         }
 
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun previewPhoto(){
+    private fun previewPhoto() {
         motionView.unSelectEntity()
         val bitmap =
             Bitmap.createBitmap(
@@ -132,7 +135,7 @@ class MainActivity : AppCompatActivity(),
         showDialog(bitmap)
     }
 
-    private fun isStoragePermissionGranted() : Boolean {
+    private fun isStoragePermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 true
@@ -180,7 +183,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun openCamera(){
+    private fun openCamera() {
         dispatchTakePictureIntent()
     }
 
@@ -205,7 +208,7 @@ class MainActivity : AppCompatActivity(),
             if (file.exists()) file.delete()
             try {
                 val out = FileOutputStream(file)
-                finalBitmap.compress(Bitmap.CompressFormat.JPEG,100, out)
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
                 out.flush()
                 out.close()
                 Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
@@ -273,7 +276,8 @@ class MainActivity : AppCompatActivity(),
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
         values.put(MediaStore.MediaColumns.DATA, filePath)
 
-       photoUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        photoUri =
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     }
 
     private fun setPic() {
@@ -289,7 +293,7 @@ class MainActivity : AppCompatActivity(),
             val photoH: Int = outHeight
 
             // Determine how much to scale down the image
-            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH*1.0f / targetH)
+            val scaleFactor: Float = min(photoW * 1.0f / targetW, photoH * 1.0f / targetH)
 
             // Decode the image file into a Bitmap sized to fill the View
             inJustDecodeBounds = false
@@ -298,7 +302,8 @@ class MainActivity : AppCompatActivity(),
         }
 
         BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, photoUri!!)
+            val preventRotateBitmap =
+                PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, photoUri!!)
             preventRotateBitmap?.let {
                 setMotionViewSizeAndBackground(photoUri, it)
             }
@@ -316,7 +321,8 @@ class MainActivity : AppCompatActivity(),
                         val inputStream =
                             contentResolver.openInputStream(imageUri!!)
                         val bitmap = BitmapFactory.decodeStream(inputStream)
-                        val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, imageUri!!)
+                        val preventRotateBitmap =
+                            PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, imageUri!!)
                         preventRotateBitmap?.let {
                             setMotionViewSizeAndBackground(imageUri, it)
                         }
@@ -326,7 +332,7 @@ class MainActivity : AppCompatActivity(),
                 }
             }
             if (requestCode == CAMERA_REQUEST) {
-                addImageToGallery(currentPhotoPath,this)
+                addImageToGallery(currentPhotoPath, this)
                 setPic()
             }
         }
@@ -336,13 +342,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun enableEditMode (enable: Boolean){
-        when (enable){
+    private fun enableEditMode(enable: Boolean) {
+        when (enable) {
             true -> {
                 btnPreview.isEnabled = true
-                btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
+                btnPreview.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnSave.isEnabled = true
-                btnSave.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.lightBlue)
+                btnSave.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnReset.isEnabled = true
                 btnRedo.isEnabled = true
                 btnUndo.isEnabled = true
@@ -352,9 +360,11 @@ class MainActivity : AppCompatActivity(),
             }
             else -> {
                 btnPreview.isEnabled = false
-                btnPreview.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
+                btnPreview.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.gray)
                 btnSave.isEnabled = false
-                btnSave.supportBackgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
+                btnSave.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.gray)
                 btnReset.isEnabled = false
                 btnRedo.isEnabled = false
                 btnUndo.isEnabled = false
@@ -423,7 +433,14 @@ class MainActivity : AppCompatActivity(),
     private fun addText(text: String, colorCode: Int) {
         val textLayer = createTextLayer(text, colorCode)!!
         val textEntity =
-            TextEntity(textLayer, motionView.width, motionView.height, fontProvider, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
+            TextEntity(
+                textLayer,
+                motionView.width,
+                motionView.height,
+                fontProvider,
+                text,
+                BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+            )
 
         motionView.addEntityAndPosition(textEntity)
 
@@ -439,18 +456,24 @@ class MainActivity : AppCompatActivity(),
             val layer = Layer()
             val sticker = BitmapFactory.decodeResource(resources, stickerResId)
             val entity =
-                ImageEntity(layer, sticker, motionView.width, motionView.height, BitmapFactory.decodeResource(resources, R.drawable.ic_delete))
+                ImageEntity(
+                    layer,
+                    sticker,
+                    motionView.width,
+                    motionView.height,
+                    stickerResId.toString(),
+                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                )
             motionView.addEntityAndPosition(entity)
         }
     }
 
-    private fun showTextEditTool(show: Boolean){
-        when (show){
+    private fun showTextEditTool(show: Boolean) {
+        when (show) {
             true -> {
-                if (currentTextEntity() != null){
+                if (currentTextEntity() != null) {
                     lnTextTool.visibility = View.VISIBLE
-                }
-                else {
+                } else {
                     lnTextTool.visibility = View.GONE
                 }
             }
@@ -461,11 +484,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun editTextToolEvent(){
-        btnDecrease.setOnClickListener{
+    private fun editTextToolEvent() {
+        btnDecrease.setOnClickListener {
             decreaseTextEntitySize()
         }
-        btnIncrease.setOnClickListener{
+        btnIncrease.setOnClickListener {
             increaseTextEntitySize()
         }
     }
@@ -492,10 +515,12 @@ class MainActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun startTextEntityEditing() {
-        val textEntity= currentTextEntity()
-        val editDialog = EditDialogFragment.show(this,
+        val textEntity = currentTextEntity()
+        val editDialog = EditDialogFragment.show(
+            this,
             textEntity!!.getLayer().text!!,
-            textEntity.getLayer().font!!.color!!)
+            textEntity.getLayer().font!!.color!!
+        )
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onDone(text: String, colorCode: Int) {
@@ -526,7 +551,7 @@ class MainActivity : AppCompatActivity(),
         newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
     }
 
-    private fun showAddTextDialog(){
+    private fun showAddTextDialog() {
         val editDialog: EditDialogFragment = EditDialogFragment.show(this)
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
@@ -547,7 +572,7 @@ class MainActivity : AppCompatActivity(),
         return textLayer
     }
 
-    private fun eventActionTools(){
+    private fun eventActionTools() {
         btnBringToFront.setOnClickListener {
             bringToFront(motionView.selectedEntity!!)
         }
@@ -559,15 +584,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun deleteEntity(){
+    private fun deleteEntity() {
         motionView.deletedSelectedEntity()
     }
 
-    private fun bringToFront(entity: MotionEntity){
+    private fun bringToFront(entity: MotionEntity) {
         motionView.bringLayerToFront(entity)
     }
 
-    private fun moveToBack(){
+    private fun moveToBack() {
         motionView.moveSelectedBack()
     }
 
@@ -578,7 +603,7 @@ class MainActivity : AppCompatActivity(),
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onEntityDoubleTap(entity: MotionEntity?) {
-        if (currentTextEntity() != null){
+        if (currentTextEntity() != null) {
             startTextEntityEditing()
         }
     }

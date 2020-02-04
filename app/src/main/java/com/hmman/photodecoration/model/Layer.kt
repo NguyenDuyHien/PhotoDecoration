@@ -1,18 +1,12 @@
 package com.hmman.photodecoration.model
 
-import androidx.annotation.FloatRange
-
-open class Layer {
-    @FloatRange(from = 0.0, to = 360.0)
-    var rotationInDegrees = 0f
-    var scale = 0f
-    var x = 0f
-    var y = 0f
-    var isFlipped = false
-
-    fun Layer() {
-        reset()
-    }
+open class Layer(
+    var rotationInDegrees: Float = 0f,
+    var scale: Float = 0f,
+    var x: Float = 0f,
+    var y: Float = 0f,
+    var isFlipped: Boolean = false
+) {
 
     open fun reset() {
         rotationInDegrees = 0.0f
@@ -30,11 +24,11 @@ open class Layer {
     }
 
     open fun getMaxScale(): Float {
-        return Layer.Limits.MAX_SCALE
+        return Limits.MAX_SCALE
     }
 
     open fun getMinScale(): Float {
-        return Layer.Limits.MIN_SCALE
+        return Limits.MIN_SCALE
     }
 
     fun postRotate(rotationInDegreesDiff: Float) {
@@ -52,7 +46,7 @@ open class Layer {
     }
 
     open fun initialScale(): Float {
-        return Layer.Limits.INITIAL_ENTITY_SCALE
+        return Limits.INITIAL_ENTITY_SCALE
     }
 
     internal interface Limits {
@@ -61,5 +55,9 @@ open class Layer {
             const val MAX_SCALE = 4.0f
             const val INITIAL_ENTITY_SCALE = 0.4f
         }
+    }
+
+    open fun clone(): Layer {
+        return Layer(rotationInDegrees, scale, x, y, isFlipped)
     }
 }
