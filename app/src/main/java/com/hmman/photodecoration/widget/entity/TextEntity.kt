@@ -104,10 +104,18 @@ class TextEntity(
         textPaint.textSize = textLayer.font!!.size * canvasWidth
         textPaint.color = textLayer.font?.color!!
 
-        val boundsWidth: Int = min(canvasWidth, textPaint.measureText(textLayer.text).toInt())
+        //In case Text only on character: Paint.MeasureText return wrong size
+        val textWidth = max(textPaint.measureText(textLayer.text).toInt(), textPaint.textSize.toInt())
+        val boundsWidth: Int = min(canvasWidth, textWidth)
 
         // Set initial scale for Text
-        textLayer.setInitialScale(boundsWidth * 1f / canvasWidth)
+        val initialScale = if (boundsWidth*1f/canvasWidth > TextLayer.Limits.MIN_SCALE) {
+            boundsWidth*1f/canvasWidth
+        } else {
+            TextLayer.Limits.MIN_SCALE
+        }
+
+        textLayer.setInitialScale(initialScale)
 
         val sl = StaticLayout.Builder.obtain(
             textLayer.text.toString(),

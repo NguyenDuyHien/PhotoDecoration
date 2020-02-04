@@ -27,6 +27,7 @@ abstract class MotionEntity(
     @NonNull
     private var borderPaint = Paint()
     private var closePaint = Paint()
+    private var iconBackgroundPaint = Paint()
     open fun isSelected(): Boolean {
         return isSelected
     }
@@ -128,7 +129,22 @@ abstract class MotionEntity(
                 || MathUtils.pointInTriangle(point, pA, pD, pC)
 
     }
-
+    fun pointInLayerRectIcon(point: PointF, iconEntity: IconEntity): Boolean {
+        iconEntity.pA.x = iconEntity.destPoints[0]
+        iconEntity.pA.y = iconEntity.destPoints[1]
+        iconEntity.pB.x = iconEntity.destPoints[2]
+        iconEntity.pB.y = iconEntity.destPoints[3]
+        iconEntity.pC.x = iconEntity.destPoints[4]
+        iconEntity.pC.y = iconEntity.destPoints[5]
+        iconEntity.pD.x = iconEntity.destPoints[6]
+        iconEntity.pD.y = iconEntity.destPoints[7]
+        return MathUtils.pointInTriangle(point, iconEntity.pA, iconEntity.pB, iconEntity.pC) || MathUtils.pointInTriangle(
+            point,
+            iconEntity.pA,
+            iconEntity.pD,
+            iconEntity.pC
+        )
+    }
     fun pointClose(point: PointF): Boolean {
         updateMatrix()
         // map rect vertices
@@ -141,8 +157,38 @@ abstract class MotionEntity(
 
 
     }
+    fun pointGesture(point: PointF): Boolean {
+        updateMatrix()
+        // map rect vertices
+        matrix.mapPoints(destPoints, srcPoints)
+//        Log.d(TAG,destPoints[2].toString()+"----" +destPoints[3].toString() +":"+ (destPoints[2]+50).toString() + "----"+ (destPoints[2]-50) +"----"+ destPoints[3] +50 +"----"+ (destPoints[3] - 50))
+        return point.x <= destPoints[0] + 100 && point.x >= destPoints[0] - 100 && point.y <= destPoints[1] + 100 && point.y >= destPoints[1] - 100
 
-    fun draw(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?) {
+
+    }
+
+    //    fun draw(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?) {
+//        updateMatrix()
+//        canvas.save()
+//        drawContent(canvas, drawingPaint)
+//        if (isSelected) { // get alpha from drawingPaint
+//            val storedAlpha = borderPaint.alpha
+//            val closeStoredAlpha = closePaint.alpha
+//            if (drawingPaint != null) {
+//                borderPaint.alpha = drawingPaint.alpha
+//                closePaint.alpha = drawingPaint.alpha
+//            }
+//            drawSelectedBg(canvas)
+//
+//            drawCloseBg(canvas)
+//
+//            // restore border alpha
+//            borderPaint.alpha = storedAlpha
+//            closePaint.alpha = closeStoredAlpha
+//        }
+//        canvas.restore()
+//    }
+    fun draw(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?, icons: MutableList<IconEntity>) {
         updateMatrix()
         canvas.save()
         drawContent(canvas, drawingPaint)
@@ -154,8 +200,8 @@ abstract class MotionEntity(
                 closePaint.alpha = drawingPaint.alpha
             }
             drawSelectedBg(canvas)
-
-            drawCloseBg(canvas)
+            drawIcons(canvas, icons)
+//            drawCloseBg(canvas)
 
             // restore border alpha
             borderPaint.alpha = storedAlpha
@@ -196,16 +242,48 @@ abstract class MotionEntity(
             destPoints[3] - imageEntity.deleteIcon.height / 2
         )
         canvas.drawCircle(destPoints[2], destPoints[3], Constants.RADIUS_DELETE_ICON, borderPaint)
+        canvas.drawCircle(destPoints[0], destPoints[1], Constants.RADIUS_ICON, borderPaint)
 
+        canvas.drawCircle(destPoints[4], destPoints[5], Constants.RADIUS_ICON, borderPaint)
+        canvas.drawCircle(destPoints[6], destPoints[7], Constants.RADIUS_ICON, borderPaint)
         canvas.drawBitmap(imageEntity.deleteIcon, matrix, borderPaint)
     }
 
+    private fun drawIcons(canvas: Canvas, icons: MutableList<IconEntity>) {
+        var x = 0f
+        var y = 0f
+        for (iconEntity in icons) {
+            if (iconEntity.gravity == IconEntity.LEFT_TOP) {
+                x = destPoints[0]
+                y = destPoints[1]
+            } else if (iconEntity.gravity == IconEntity.RIGHT_BOTTOM) {
+                x = destPoints[4]
+                y = destPoints[5]
+            }
+            else if (iconEntity.gravity == IconEntity.RIGHT_TOP) {
+                x = destPoints[2]
+                y = destPoints[3]
+            }
+            configIconMatrix(iconEntity, x, y)
+            canvas.drawBitmap(iconEntity.bitmapIcon, iconEntity.matrix, null)
+            canvas.drawCircle(x, y, iconEntity.radius, iconBackgroundPaint)
+        }
+    }
+
+    private fun configIconMatrix(iconEntity: IconEntity, x: Float, y: Float) {
+        iconEntity.matrix.reset()
+        iconEntity.matrix.postTranslate(x - iconEntity.width / 2, y - iconEntity.height / 2)
+        iconEntity.matrix.mapPoints(iconEntity.destPoints, iconEntity.srcPoints)
+    }
     fun setBorderPaint(@NonNull borderPaint: Paint) {
         this.borderPaint = borderPaint
     }
 
     fun setClosePaint(@NonNull closePaint: Paint) {
         this.closePaint = closePaint
+    }
+    fun setIconBackground(iconBackground: Paint) {
+        this.iconBackgroundPaint = iconBackground
     }
 
     protected abstract fun drawContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)

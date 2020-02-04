@@ -12,5 +12,6 @@ class Constants {
         const val DEFAULT_CANCEL_BUTTON = "Cancel"
         const val DEFAULT_OK_BUTTON = "OK"
         const val TITLE_CHANGE_COLOR = "Select Color"
+        const val RADIUS_ICON = 30F
     }
 }

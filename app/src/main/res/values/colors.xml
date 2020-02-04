@@ -13,4 +13,5 @@
     <color name="gray">#646464</color>
     <color name="stroke_color">#03A9F4</color>
     <color name="editDialogBackground">#B3000000</color>
+    <color name="fill_color">#50000000</color>
 </resources>
