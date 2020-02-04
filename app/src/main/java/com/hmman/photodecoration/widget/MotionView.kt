@@ -293,27 +293,17 @@ class MotionView : FrameLayout {
         return false
 
     }
-//    private fun updateSelectionOnTap(e: MotionEvent): Boolean {
+
     private fun updateSelectionOnTap(e: MotionEvent) {
-//        val entity = findEntityAtPoint(e.x, e.y)
-////        return if (entity != null) {
-////            selectEntity(entity, true)
-////            true
-////        } else {
-////            if(selectedEntity !=null){
-////                val p = PointF(e.x, e.y)
-////                if(selectedEntity!!.pointClose(p)){
-////                    deletedSelectedEntity()
-////                }
-////            }
-////            unselectEntity()
-////            false
-////        }
         val iconEntity: IconEntity? = findIconAtPoint(e.x, e.y)
         selectIconEntity(iconEntity)
         val entity: MotionEntity? = findEntityAtPoint(e.x, e.y)
-        selectEntity(entity, true)
+        when (entity){
+            null -> unSelectEntity()
+            else -> selectEntity(entity, true)
+        }
     }
+    
     private fun findIconAtPoint(x: Float, y: Float): IconEntity? {
         var selected: IconEntity? = null
         if (selectedEntity != null) {
