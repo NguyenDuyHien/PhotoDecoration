@@ -25,7 +25,6 @@ class StickerAdapter(context: Context, val mOnStickerSelected: OnStickerSelected
                 mOnStickerSelected.onStickerSelected(stickerList[adapterPosition])
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {

@@ -1,11 +1,9 @@
 package com.hmman.photodecoration.widget
 
 import android.annotation.TargetApi
-import android.app.Activity
 import android.content.Context
 import android.graphics.*
 import android.os.Build
-import android.provider.MediaStore
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -24,9 +22,6 @@ import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
 import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.MotionEntity
-import kotlinx.android.synthetic.main.dialog_sticker.view.*
-import java.io.IOException
-import java.lang.Exception
 import java.util.*
 
 class MotionView : FrameLayout {
@@ -42,10 +37,13 @@ class MotionView : FrameLayout {
         fun onEntityUnselected()
     }
 
-    private val entities: MutableList<MotionEntity> =
-        ArrayList()
+    private val entities: MutableList<MotionEntity> = ArrayList()
     private val undoEntities: Stack<MotionEntity> = Stack()
-
+    private val undoActionEntities: Stack<String> = Stack()
+    private val redoActionEntities = Stack<String>()
+    private val indexUndoRemoveEntities = Stack<Int>()
+    private val indexRedoRemoveEntities = Stack<Int>()
+    //    private val
     @Nullable
     var selectedEntity: MotionEntity? = null
         private set
@@ -126,6 +124,7 @@ class MotionView : FrameLayout {
             initEntityClose(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
+            undoActionEntities.push("ADD")
             selectEntity(entity, true)
         }
     }
@@ -173,11 +172,12 @@ class MotionView : FrameLayout {
         }
     }
 
-    fun getFinalBitmap () : Bitmap? {
+    fun getFinalBitmap(): Bitmap? {
         selectEntity(null, false)
 
         try {
-            val inputStream = context.contentResolver.openInputStream(PhotoUtils.getInstance(null).photoUri)
+            val inputStream =
+                context.contentResolver.openInputStream(PhotoUtils.getInstance(null).photoUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
             Log.d("long","${PhotoUtils.getInstance(null).photoUri}")
             val preventRotateBitmap = PhotoUtils.getInstance(null).rotateImageIfRequired(bitmap, PhotoUtils.getInstance(null).photoUri)
@@ -259,24 +259,26 @@ class MotionView : FrameLayout {
         }
         return selected
     }
+
     private fun closeSelectionOnTap(e: MotionEvent): Boolean {
         val p = PointF(e.x, e.y)
-        if (selectedEntity != null  && selectedEntity!!.pointClose(p)) {
+        if (selectedEntity != null && selectedEntity!!.pointClose(p)) {
             deletedSelectedEntity()
             return true
         }
         return false
 
     }
+
     private fun updateSelectionOnTap(e: MotionEvent): Boolean {
         val entity = findEntityAtPoint(e.x, e.y)
         return if (entity != null) {
             selectEntity(entity, true)
             true
         } else {
-            if(selectedEntity !=null){
+            if (selectedEntity != null) {
                 val p = PointF(e.x, e.y)
-                if(selectedEntity!!.pointClose(p)){
+                if (selectedEntity!!.pointClose(p)) {
                     deletedSelectedEntity()
                 }
             }
@@ -327,10 +329,17 @@ class MotionView : FrameLayout {
         if (selectedEntity == null) {
             return
         }
+        /**
+         * Find position of selected Entity
+         * */
+        val pos = entities.indexOf(selectedEntity!!)
+
         if (entities.remove(selectedEntity!!)) {
-            selectedEntity!!.release()
+            undoEntities.push(selectedEntity)
+            undoActionEntities.push("REMOVE")
             selectedEntity = null
-            motionViewCallback!!.onEntityUnselected()
+            indexUndoRemoveEntities.push(pos)
+            unselectEntity()
             invalidate()
         }
     }
@@ -342,21 +351,41 @@ class MotionView : FrameLayout {
     }
 
     fun redo() {
-        if (undoEntities.size > 0) {
-            entities.add(undoEntities.pop())
-            updateUI()
-        } else {
-            Toast.makeText(this.context, "Nothing to Redo", Toast.LENGTH_SHORT).show()
+        val listSize = redoActionEntities.size
+        when {
+            listSize > 0 -> {
+                if (redoActionEntities[redoActionEntities.size - 1] == "ADD") {
+                    entities.add(undoEntities.pop())
+                } else {
+                    undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
+                    selectedEntity = null
+                    unselectEntity()
+                    indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
+                }
+                undoActionEntities.push(redoActionEntities.pop())
+                updateUI()
+            }
+            else -> {
+                Toast.makeText(this.context, "Nothing to Redo", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     fun undo() {
         val lastItemPosition = entities.size - 1
-        val listSize = entities.size
+        val listSize = undoActionEntities.size
         when {
             listSize > 0 -> {
-                undoEntities.push(entities.removeAt(lastItemPosition))
-                selectEntity(null, false)
+                if (undoActionEntities[undoActionEntities.size - 1] == "ADD") {
+                    undoEntities.push(entities.removeAt(lastItemPosition))
+                    selectEntity(null, false)
+                } else {
+                    val entity = undoEntities.pop()
+                    entities.add(indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1], entity)
+                    indexRedoRemoveEntities.push(indexUndoRemoveEntities.pop())
+                    selectEntity(entity, true)
+                }
+                redoActionEntities.push(undoActionEntities.pop())
                 updateUI()
             }
             else -> {
