@@ -1,8 +1,9 @@
 package com.hmman.photodecoration.model
 
-class TextLayer : Layer() {
-    var text: String? = null
+class TextLayer(
+    var text: String? = null,
     var font: Font? = null
+) : Layer() {
     private var initialScale = 0f
 
     override fun reset() {
@@ -20,7 +21,8 @@ class TextLayer : Layer() {
     }
 
     override fun initialScale(): Float {
-        return initialScale
+//        return initialScale
+        return Limits.MIN_SCALE
     }
 
     fun setInitialScale(initialScale: Float) {
@@ -29,7 +31,7 @@ class TextLayer : Layer() {
 
     interface Limits {
         companion object {
-            const val MAX_SCALE = 2.0f
+            const val MAX_SCALE = 1f
             const val MIN_SCALE = 0.2f
             const val MIN_BITMAP_HEIGHT = 0.13f
             const val FONT_SIZE_STEP = 0.008f
@@ -37,5 +39,9 @@ class TextLayer : Layer() {
             const val INITIAL_FONT_COLOR = 0x1000000
             const val INITIAL_SCALE = 0.8f // set the same to avoid text scaling
         }
+    }
+
+    fun cloneTextLayer(): TextLayer {
+        return TextLayer(text, font)
     }
 }

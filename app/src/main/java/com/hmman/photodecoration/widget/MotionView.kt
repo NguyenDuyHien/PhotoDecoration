@@ -22,6 +22,7 @@ import com.hmman.photodecoration.R
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.multitouch.MoveGestureDetector
 import com.hmman.photodecoration.multitouch.RotateGestureDetector
+import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
 import com.hmman.photodecoration.widget.entity.IconEntity
@@ -114,11 +115,8 @@ class MotionView : FrameLayout {
     private fun configDefaultIcons() {
         val deleteIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
         val deleteIconEntity = IconEntity(deleteIcon, IconEntity.RIGHT_TOP)
-//        val scaleIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_scale)
-//        val iconScaleEntity = IconEntity(scaleIcon, IconEntity.RIGHT_BOTTOM)
         icons.clear()
         icons.add(deleteIconEntity)
-//        icons.add(iconScaleEntity)
     }
 
     private fun selectIconEntity(iconEntity: IconEntity?) {
@@ -142,23 +140,13 @@ class MotionView : FrameLayout {
 
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
         if (entity != null) {
-//            initEntityBorder(entity)
-//            initEntityIconBackground(entity)
             initEntityBorderAndIconBackground(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
             undoActionEntities.push("ADD")
+            redoActionEntities.clear()
             selectEntity(entity, true)
         }
-    }
-
-    private fun initEntityBorder(@NonNull entity: MotionEntity) { // init stroke
-        val strokeSize = resources.getDimensionPixelSize(R.dimen.stroke_size)
-        val borderPaint = Paint()
-        borderPaint.strokeWidth = strokeSize.toFloat()
-        borderPaint.isAntiAlias = true
-        borderPaint.color = ContextCompat.getColor(context, R.color.stroke_color)
-        entity.setBorderPaint(borderPaint)
     }
 
     private fun initEntityClose(@NonNull entity: MotionEntity) { // init stroke
@@ -168,14 +156,6 @@ class MotionView : FrameLayout {
         borderPaint.isAntiAlias = true
         borderPaint.color = ContextCompat.getColor(context, R.color.white)
         entity.setClosePaint(borderPaint)
-    }
-
-    private fun initEntityIconBackground(entity: MotionEntity) {
-        val iconBackground = Paint()
-        iconBackground.isAntiAlias = true
-        iconBackground.style = Paint.Style.FILL
-        iconBackground.color = ContextCompat.getColor(context, R.color.fill_color)
-        entity.setIconBackground(iconBackground)
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -249,6 +229,9 @@ class MotionView : FrameLayout {
                 needUpdateUI = true
             }
             if (needUpdateUI) {
+                println("Onmove after translate")
+                println(selectedEntity!!.layer.x)
+                println(selectedEntity!!.layer.y)
                 updateUI()
             }
 
@@ -411,9 +394,11 @@ class MotionView : FrameLayout {
                         }
                     }
                     else -> {
-                        undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
-                        unSelectEntity()
-                        indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
+                        if (indexRedoRemoveEntities.size > 0) {
+                            undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
+                            unSelectEntity()
+                            indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
+                        }
                     }
                 }
                 undoActionEntities.push(redoActionEntities.pop())
@@ -436,6 +421,9 @@ class MotionView : FrameLayout {
                         unSelectEntity()
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
+                        println("On Move")
+                        undoActionEntities.forEach { println(it) }
+                        println(moveUndoEntities.size)
                         var lastIndexOf = -1
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
@@ -445,6 +433,12 @@ class MotionView : FrameLayout {
                         if (lastIndexOf != -1) {
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
+                            println("Move Undo Entity")
+                            println(moveUndoEntities[moveUndoEntities.size - 1].layer.x)
+                            println(moveUndoEntities[moveUndoEntities.size - 1].layer.y)
+//                            val textLayer =
+//                                moveUndoEntities[moveUndoEntities.size - 1].layer as TextLayer
+//                            println(textLayer.text)
                             entities.add(moveUndoEntities.pop())
                             unSelectEntity()
                         }
@@ -517,6 +511,7 @@ class MotionView : FrameLayout {
         val currentText = (selectedEntity as TextEntity).getLayer().text
         textLayer.font = font
         textLayer.text = currentText
+        textLayer.scale = selectedEntity!!.layer.scale
 
         val textEntity =
             TextEntity(
@@ -525,11 +520,9 @@ class MotionView : FrameLayout {
                 this.height,
                 fontProvider,
                 currentText!!,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
+                this.context
             )
-
-//        initEntityBorder(textEntity)
-//        initEntityIconBackground(textEntity)
         initEntityBorderAndIconBackground(textEntity)
         textEntity.layer = selectedEntity!!.layer
         entities.remove(selectedEntity!!)
@@ -540,14 +533,13 @@ class MotionView : FrameLayout {
     }
 
     private fun initEntityBorderAndIconBackground(entity: MotionEntity) {
-        initEntityBorder(entity)
-        initEntityIconBackground(entity)
+        BorderUtil.initEntityBorder(entity, context)
+        BorderUtil.initEntityIconBackground(entity, context)
     }
 
     private inner class ScaleListener : SimpleOnScaleGestureListener() {
+        var entity: MotionEntity? = null
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-//            val p = PointF( detector.focusX, detector.focusY)
-//            if (selectedEntity != null&& selectedEntity!!.pointGesture(p)) {
             if (selectedEntity != null) {
                 val scaleFactorDiff = detector.scaleFactor
                 selectedEntity!!.layer.postScale(scaleFactorDiff - 1.0f)
@@ -558,12 +550,11 @@ class MotionView : FrameLayout {
 
         override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
             if (entities.indexOf(selectedEntity) != -1) {
-                val entity = entities[entities.indexOf(selectedEntity!!)].clone()
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
+                entity = entities[entities.indexOf(selectedEntity!!)].clone()
             }
             return true
         }
+
 
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
@@ -571,10 +562,16 @@ class MotionView : FrameLayout {
             if (selectedEntity is TextEntity) {
                 redrawTextEntityOnScaleEnd()
             }
+            if (entity != null) {
+                moveUndoEntities.add(entity)
+                undoActionEntities.push("MOVE")
+                entity = null
+            }
         }
     }
 
     private inner class RotateListener : RotateGestureDetector.SimpleOnRotateGestureListener() {
+        var entity: MotionEntity? = null
         override fun onRotate(detector: RotateGestureDetector?): Boolean {
             if (selectedEntity != null) {
                 selectedEntity!!.layer.postRotate(-detector!!.rotationDegreesDelta)
@@ -585,15 +582,23 @@ class MotionView : FrameLayout {
 
         override fun onRotateBegin(detector: RotateGestureDetector?): Boolean {
             if (entities.indexOf(selectedEntity) != -1) {
-                val entity = entities[entities.indexOf(selectedEntity!!)].clone()
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
+                entity = entities[entities.indexOf(selectedEntity!!)].clone()
+
             }
             return true
+        }
+
+        override fun onRotateEnd(detector: RotateGestureDetector?) {
+            if (entity != null) {
+                moveUndoEntities.add(entity)
+                undoActionEntities.push("MOVE")
+                entity = null
+            }
         }
     }
 
     private inner class MoveListener : MoveGestureDetector.SimpleOnMoveGestureListener() {
+        var entity: MotionEntity? = null
         override fun onMove(detector: MoveGestureDetector): Boolean {
             if (selectedEntity != null) {
                 handleTranslate(detector.getFocusDelta())
@@ -603,11 +608,23 @@ class MotionView : FrameLayout {
 
         override fun onMoveBegin(detector: MoveGestureDetector): Boolean {
             if (entities.indexOf(selectedEntity) != -1) {
-                val entity = entities[entities.indexOf(selectedEntity)].clone()
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
+                entity = entities[entities.indexOf(selectedEntity)].clone()
+                println("onMove Begin")
+                println(entity!!.layer.x)
+                println(entity!!.layer.y)
             }
             return true
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {
+            if (entity != null) {
+                moveUndoEntities.add(entity)
+                undoActionEntities.push("MOVE")
+                println("onMove End")
+                println(entity!!.layer.x)
+                println(entity!!.layer.y)
+                entity = null
+            }
         }
     }
 

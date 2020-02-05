@@ -1,5 +1,6 @@
 package com.hmman.photodecoration.widget.entity
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -13,10 +14,10 @@ import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import com.hmman.photodecoration.model.TextLayer
+import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
 import kotlin.math.max
-import kotlin.math.min
 
 @RequiresApi(Build.VERSION_CODES.M)
 class TextEntity(
@@ -25,12 +26,14 @@ class TextEntity(
     @IntRange(from = 1) canvasHeight: Int,
     @NonNull val fontProvider: FontProvider,
     name: String,
-    deleteIcon: Bitmap
+    deleteIcon: Bitmap,
+    context: Context
 ) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon, name) {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-
     private var bitmap: Bitmap? = null
+    private val textLayer = textLayer
+    private val context = context
 
     init {
         updateEntity(false)
@@ -51,8 +54,8 @@ class TextEntity(
         val widthAspect = 1F * canvasWidth / width
         val heightAspect = 1F * canvasHeight / height
         // for text we always match text width with parent width
-        holyScale = min(widthAspect, heightAspect)
-
+//        holyScale = min(widthAspect, heightAspect)
+        holyScale = widthAspect
         // initial position of the entity
         srcPoints[0] = 0f
         srcPoints[1] = 0f
@@ -104,13 +107,28 @@ class TextEntity(
         textPaint.textSize = textLayer.font!!.size * canvasWidth
         textPaint.color = textLayer.font?.color!!
 
-        //In case Text only on character: Paint.MeasureText return wrong size
-        val textWidth = max(textPaint.measureText(textLayer.text).toInt(), textPaint.textSize.toInt())
-        val boundsWidth: Int = min(canvasWidth, textWidth)
+        //In case Text only one character: Paint.MeasureText return wrong size
+        val textWidth =
+            max(
+//                textPaint.measureText(getMaxText(textLayer.text!!)).toInt(),
+                getMaxText(textLayer.text!!),
+                textPaint.textSize.toInt()
+            )
+
+        if (PhotoUtils.getInstance(null).boundsWidth == 0f) PhotoUtils.getInstance(null)
+            .boundsWidth = textWidth.toFloat()
+        else PhotoUtils.getInstance(null).boundsWidth *= textLayer.scale
+        val boundsWidth: Int = textWidth
+//        var boundsWidth: Int
+//        boundsWidth = if (textWidth > canvasWidth) {
+//            textWidth
+//        } else {
+//            min(canvasWidth, textWidth)
+//        }
 
         // Set initial scale for Text
-        val initialScale = if (boundsWidth*1f/canvasWidth > TextLayer.Limits.MIN_SCALE) {
-            boundsWidth*1f/canvasWidth
+        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
+            boundsWidth * 1f / canvasWidth
         } else {
             TextLayer.Limits.MIN_SCALE
         }
@@ -161,6 +179,7 @@ class TextEntity(
 
     override fun drawContent(canvas: Canvas, drawingPaint: Paint?) {
         if (bitmap != null) {
+            updateEntity(false)
             canvas.drawBitmap(bitmap!!, matrix, drawingPaint)
         }
     }
@@ -178,13 +197,41 @@ class TextEntity(
     }
 
     override fun clone(): MotionEntity {
-        return TextEntity(getLayer(), canvasWidth, canvasHeight, fontProvider, name, deleteIcon)
+        val entity = TextEntity(
+            textLayer.cloneTextLayer(),
+            canvasWidth,
+            canvasHeight,
+            fontProvider.clone(),
+            name,
+            deleteIcon,
+            context
+        )
+        BorderUtil.initEntityBorder(entity, context)
+        BorderUtil.initEntityIconBackground(entity, context)
+        entity.moveToCanvasCenter()
+        entity.layer.scale = entity.layer.initialScale()
+        return entity
     }
 
     fun updateEntity() {
         updateEntity(true)
         updateRealEntity(true)
     }
+
+    private fun getMaxText(text: String): Int {
+//        textPaint.measureText(getMaxText(textLayer.text!!)).toInt(),
+//        val textPaint: TextPaint
+        if (textPaint.measureText(text) > canvasWidth) return canvasWidth
+//        val a = text.split(" ")
+        val a = text.lines()
+        var maxLength = ""
+        for (i in a) {
+            if (i.length > maxLength.length) maxLength = i
+        }
+
+        return textPaint.measureText(maxLength).toInt()
+    }
+
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
     override val height: Int = if (bitmap != null) bitmap!!.height else 0

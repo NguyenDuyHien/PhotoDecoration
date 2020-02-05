@@ -13,6 +13,7 @@ class PhotoUtils private constructor(val activity: Activity) {
     var width: Int = 0
     var height: Int = 0
     var photoUri: Uri = Uri.EMPTY
+    var boundsWidth: Float = 0f
 
     private fun rotateImage(img: Bitmap, degree: Int): Bitmap? {
         val matrix = Matrix()

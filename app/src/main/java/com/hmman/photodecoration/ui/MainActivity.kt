@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
@@ -439,16 +438,17 @@ class MainActivity : AppCompatActivity(),
                 motionView.height,
                 fontProvider,
                 text,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
+                this
             )
 
         motionView.addEntityAndPosition(textEntity)
 
-        val center: PointF = textEntity.absoluteCenter()
-        center.y = center.y
-        textEntity.moveCenterTo(center)
+//        val center: PointF = textEntity.absoluteCenter()
+//        center.y = center.y
+//        textEntity.moveCenterTo(center)
 
-        motionView.invalidate()
+//        motionView.invalidate()
     }
 
     private fun addSticker(stickerResId: Int) {
@@ -462,7 +462,8 @@ class MainActivity : AppCompatActivity(),
                     motionView.width,
                     motionView.height,
                     stickerResId.toString(),
-                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
+                    this
                 )
             motionView.addEntityAndPosition(entity)
         }

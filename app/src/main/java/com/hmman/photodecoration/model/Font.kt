@@ -1,7 +1,5 @@
 package com.hmman.photodecoration.model
 
-import android.graphics.Color
-
 data class Font(
     var color: Int? = null,
     var typeface: String? = null,
