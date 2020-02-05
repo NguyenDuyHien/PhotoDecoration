@@ -48,7 +48,7 @@ class MotionView : FrameLayout {
     val moveUndoEntities: Stack<MotionEntity> = Stack()
     private val moveRedoEntities: Stack<MotionEntity> = Stack()
     val undoActionEntities: Stack<String> = Stack()
-    private val redoActionEntities = Stack<String>()
+    val redoActionEntities = Stack<String>()
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()
     private val removeEntities: Stack<MotionEntity> = Stack()
@@ -417,7 +417,7 @@ class MotionView : FrameLayout {
         when {
             listSize > 0 -> {
                 when {
-                    undoActionEntities[undoActionEntities.size - 1] == "ADD" -> {
+                    undoActionEntities[undoActionEntities.size - 1] == "ADD" && lastItemPosition != -1 -> {
                         undoEntities.push(entities.removeAt(lastItemPosition))
                         unSelectEntity()
                     }
@@ -557,6 +557,7 @@ class MotionView : FrameLayout {
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
+                redoActionEntities.clear()
                 entity = null
             }
         }
@@ -584,6 +585,7 @@ class MotionView : FrameLayout {
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
+                redoActionEntities.clear()
                 entity = null
             }
         }
@@ -609,6 +611,7 @@ class MotionView : FrameLayout {
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
+                redoActionEntities.clear()
                 entity = null
             }
         }

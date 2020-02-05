@@ -412,12 +412,6 @@ class MainActivity : AppCompatActivity(),
             )
 
         motionView.addEntityAndPosition(textEntity)
-
-//        val center: PointF = textEntity.absoluteCenter()
-//        center.y = center.y
-//        textEntity.moveCenterTo(center)
-
-//        motionView.invalidate()
     }
 
     private fun addSticker(stickerResId: Int) {
@@ -499,6 +493,7 @@ class MainActivity : AppCompatActivity(),
                 textEntity.updateEntity(true)
                 motionView.moveUndoEntities.add(textEntity)
                 motionView.undoActionEntities.push("MOVE")
+                motionView.redoActionEntities.clear()
                 motionView.invalidate()
             }
         })
