@@ -129,7 +129,7 @@
         android:background="@drawable/redo_button"
         android:scaleType="fitXY"
         app:layout_constraintTop_toBottomOf="@id/resultContainer"
-        app:layout_constraintBottom_toTopOf="@id/btnPreview"
+        app:layout_constraintBottom_toTopOf="@id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
@@ -239,29 +239,29 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:listitem="@layout/item_tool" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:tooltipText="@string/previewPhoto"
-        android:id="@+id/btnPreview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Preview"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/lightBlue"
-        app:layout_constraintTop_toTopOf="@id/btnGallery"
-        app:layout_constraintBottom_toBottomOf="@id/btnGallery"
-        app:layout_constraintEnd_toEndOf="parent" />
+<!--    <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:tooltipText="@string/previewPhoto"-->
+<!--        android:id="@+id/btnPreview"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Preview"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:backgroundTint="@color/lightBlue"-->
+<!--        app:layout_constraintTop_toTopOf="@id/btnGallery"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/btnGallery"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
     <androidx.appcompat.widget.AppCompatButton
-        android:tooltipText="@string/savePhoto"
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
         android:backgroundTint="@color/lightBlue"
+        android:text="Save"
         android:textColor="@color/white"
-        app:layout_constraintTop_toTopOf="@id/btnPreview"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPreview"
-        app:layout_constraintEnd_toStartOf="@+id/btnPreview" />
+        android:tooltipText="@string/savePhoto"
+        android:layout_marginEnd="@dimen/_6sdp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
