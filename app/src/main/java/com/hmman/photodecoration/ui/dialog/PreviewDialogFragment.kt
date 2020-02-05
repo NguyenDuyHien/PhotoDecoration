@@ -2,15 +2,17 @@ package com.hmman.photodecoration.ui.dialog
 
 import android.app.Dialog
 import android.graphics.Bitmap
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
+import com.github.chrisbanes.photoview.PhotoView
 import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.Constants
+
 
 class PreviewDialogFragment : DialogFragment() {
 
@@ -22,12 +24,22 @@ class PreviewDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        var view: View = inflater.inflate(R.layout.preview_dialog, container, false)
-        var imgView = view.findViewById<AppCompatImageView>(R.id.imgResult2)
+        val view: View = inflater.inflate(R.layout.preview_dialog, container, false)
+        val imgView = view.findViewById<PhotoView>(R.id.imgPreview)
         val bitmap = arguments?.getParcelable<Bitmap>(Constants.PREVIEW_BITMAP)
         imgView.setImageBitmap(bitmap)
         imgView.visibility = View.VISIBLE
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val dialog = dialog
+        if (dialog != null) {
+            dialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            dialog.window!!.setBackgroundDrawable(null)
+        }
     }
 
     /** The system calls this only when creating the layout in a dialog. */

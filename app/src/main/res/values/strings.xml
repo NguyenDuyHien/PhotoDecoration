@@ -18,4 +18,5 @@
     <string name="takePhoto">Take Photo</string>
     <string name="savePhoto">Save Photo</string>
     <string name="previewPhoto">Preview Photo</string>
+    <string name="sendToTV">Send to TV</string>
 </resources>

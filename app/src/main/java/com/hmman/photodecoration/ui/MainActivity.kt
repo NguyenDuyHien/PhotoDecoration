@@ -111,27 +111,20 @@ class MainActivity : AppCompatActivity(),
             openCamera()
         }
 
-//        btnPreview.setOnClickListener {
-////            previewPhoto()
-////        }
+        btnPreview.setOnClickListener {
+            previewPhoto()
+        }
 
         btnSave.setOnClickListener {
             PhotoUtils.getInstance(null).savePhoto(this, mainLayout, motionView)
         }
     }
 
-//    private fun previewPhoto() {
-//        motionView.unSelectEntity()
-//        val bitmap =
-//            Bitmap.createBitmap(
-//                resultContainer.width,
-//                resultContainer.height,
-//                Bitmap.Config.ARGB_8888
-//            )
-//        val canvas = Canvas(bitmap)
-//        resultContainer.draw(canvas)
-//        showDialog(bitmap)
-//    }
+    private fun previewPhoto() {
+        motionView.unSelectEntity()
+        val bitmap = motionView.getFinalBitmap()
+        bitmap?.let { showDialog(it) }
+    }
 
     private fun isStoragePermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= 23) {
@@ -320,9 +313,9 @@ class MainActivity : AppCompatActivity(),
     private fun enableEditMode(enable: Boolean) {
         when (enable) {
             true -> {
-//                btnPreview.isEnabled = true
-//                btnPreview.supportBackgroundTintList =
-//                    ContextCompat.getColorStateList(this, R.color.lightBlue)
+                btnPreview.isEnabled = true
+                btnPreview.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnSave.isEnabled = true
                 btnSave.supportBackgroundTintList =
                     ContextCompat.getColorStateList(this, R.color.lightBlue)
@@ -334,9 +327,9 @@ class MainActivity : AppCompatActivity(),
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
-//                btnPreview.isEnabled = false
-//                btnPreview.supportBackgroundTintList =
-//                    ContextCompat.getColorStateList(this, R.color.gray)
+                btnPreview.isEnabled = false
+                btnPreview.supportBackgroundTintList =
+                    ContextCompat.getColorStateList(this, R.color.gray)
                 btnSave.isEnabled = false
                 btnSave.supportBackgroundTintList =
                     ContextCompat.getColorStateList(this, R.color.gray)
@@ -520,15 +513,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-//    private fun showDialog(bitmap: Bitmap) {
-//        val fragmentManager = supportFragmentManager
-//        val data = Bundle()
-//        data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
-//        val newFragment =
-//            PreviewDialogFragment()
-//        newFragment.arguments = data
-//        newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
-//    }
+    private fun showDialog(bitmap: Bitmap) {
+        val fragmentManager = supportFragmentManager
+        val data = Bundle()
+        data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
+        val newFragment =
+            PreviewDialogFragment()
+        newFragment.arguments = data
+        newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
+    }
 
     private fun showAddTextDialog() {
         val editDialog: EditDialogFragment = EditDialogFragment.show(this)
