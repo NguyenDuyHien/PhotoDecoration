@@ -21,4 +21,8 @@ data class Font(
             const val MIN_FONT_SIZE = 0.01f
         }
     }
+
+    open fun clone(): Font {
+        return Font(color, typeface, size)
+    }
 }

@@ -504,6 +504,8 @@ class MainActivity : AppCompatActivity(),
                 textEntity.getLayer().text = text
                 textEntity.getLayer().font!!.color = colorCode
                 textEntity.updateEntity(true)
+                motionView.moveUndoEntities.add(textEntity)
+                motionView.undoActionEntities.push("MOVE")
                 motionView.invalidate()
             }
         })

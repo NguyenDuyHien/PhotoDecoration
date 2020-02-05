@@ -197,8 +197,13 @@ class TextEntity(
     }
 
     override fun clone(): MotionEntity {
+        val cloneTextLayer = textLayer.cloneTextLayer()
+        cloneTextLayer.x = textLayer.x
+        cloneTextLayer.y = textLayer.y
+        cloneTextLayer.rotationInDegrees = textLayer.rotationInDegrees
+        cloneTextLayer.scale = textLayer.scale
         val entity = TextEntity(
-            textLayer.cloneTextLayer(),
+            cloneTextLayer,
             canvasWidth,
             canvasHeight,
             fontProvider.clone(),
@@ -208,8 +213,10 @@ class TextEntity(
         )
         BorderUtil.initEntityBorder(entity, context)
         BorderUtil.initEntityIconBackground(entity, context)
-        entity.moveToCanvasCenter()
-        entity.layer.scale = entity.layer.initialScale()
+        if (entity.layer.x == 0f && entity.layer.y == 0f) {
+            entity.moveToCanvasCenter()
+            entity.layer.scale = entity.layer.initialScale()
+        }
         return entity
     }
 

@@ -45,9 +45,9 @@ class MotionView : FrameLayout {
 
     private val entities: MutableList<MotionEntity> = ArrayList()
     private val undoEntities: Stack<MotionEntity> = Stack()
-    private val moveUndoEntities: Stack<MotionEntity> = Stack()
+    val moveUndoEntities: Stack<MotionEntity> = Stack()
     private val moveRedoEntities: Stack<MotionEntity> = Stack()
-    private val undoActionEntities: Stack<String> = Stack()
+    val undoActionEntities: Stack<String> = Stack()
     private val redoActionEntities = Stack<String>()
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()

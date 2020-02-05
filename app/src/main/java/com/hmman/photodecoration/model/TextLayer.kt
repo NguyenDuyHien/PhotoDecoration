@@ -42,6 +42,6 @@ class TextLayer(
     }
 
     fun cloneTextLayer(): TextLayer {
-        return TextLayer(text, font)
+        return TextLayer(text, font!!.clone())
     }
 }
