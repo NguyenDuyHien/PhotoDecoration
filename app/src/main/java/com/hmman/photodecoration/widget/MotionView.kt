@@ -308,7 +308,10 @@ class MotionView : FrameLayout {
         val entity: MotionEntity? = findEntityAtPoint(e.x, e.y)
         when (entity) {
             null -> unSelectEntity()
-            else -> selectEntity(entity, true)
+            else -> {
+                selectEntity(entity, true)
+                bringLayerToFront(entity)
+            }
         }
     }
 

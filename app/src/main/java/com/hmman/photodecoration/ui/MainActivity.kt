@@ -46,7 +46,6 @@ import com.hmman.photodecoration.widget.entity.MotionEntity
 import com.hmman.photodecoration.widget.entity.TextEntity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -113,27 +112,27 @@ class MainActivity : AppCompatActivity(),
             openCamera()
         }
 
-        btnPreview.setOnClickListener {
-            previewPhoto()
-        }
+//        btnPreview.setOnClickListener {
+////            previewPhoto()
+////        }
 
         btnSave.setOnClickListener {
-            savePhoto()
+            PhotoUtils.getInstance(null).savePhoto(this, mainLayout, motionView)
         }
     }
 
-    private fun previewPhoto() {
-        motionView.unSelectEntity()
-        val bitmap =
-            Bitmap.createBitmap(
-                resultContainer.width,
-                resultContainer.height,
-                Bitmap.Config.ARGB_8888
-            )
-        val canvas = Canvas(bitmap)
-        resultContainer.draw(canvas)
-        showDialog(bitmap)
-    }
+//    private fun previewPhoto() {
+//        motionView.unSelectEntity()
+//        val bitmap =
+//            Bitmap.createBitmap(
+//                resultContainer.width,
+//                resultContainer.height,
+//                Bitmap.Config.ARGB_8888
+//            )
+//        val canvas = Canvas(bitmap)
+//        resultContainer.draw(canvas)
+//        showDialog(bitmap)
+//    }
 
     private fun isStoragePermissionGranted(): Boolean {
         return if (Build.VERSION.SDK_INT >= 23) {
@@ -192,29 +191,6 @@ class MainActivity : AppCompatActivity(),
             val f = File(currentPhotoPath)
             mediaScanIntent.data = Uri.fromFile(f)
             sendBroadcast(mediaScanIntent)
-        }
-    }
-
-    private fun savePhoto() {
-        val finalBitmap = motionView.getFinalBitmap()
-        finalBitmap?.let {
-            val root = Environment.getExternalStorageDirectory().absolutePath
-            val myDir = File("$root/PhotoDecoration")
-            myDir.mkdirs()
-
-            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-            val fname = "Photo$timeStamp.jpg"
-            val file = File(myDir, fname)
-            if (file.exists()) file.delete()
-            try {
-                val out = FileOutputStream(file)
-                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                out.flush()
-                out.close()
-                Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 
@@ -345,9 +321,9 @@ class MainActivity : AppCompatActivity(),
     private fun enableEditMode(enable: Boolean) {
         when (enable) {
             true -> {
-                btnPreview.isEnabled = true
-                btnPreview.supportBackgroundTintList =
-                    ContextCompat.getColorStateList(this, R.color.lightBlue)
+//                btnPreview.isEnabled = true
+//                btnPreview.supportBackgroundTintList =
+//                    ContextCompat.getColorStateList(this, R.color.lightBlue)
                 btnSave.isEnabled = true
                 btnSave.supportBackgroundTintList =
                     ContextCompat.getColorStateList(this, R.color.lightBlue)
@@ -359,9 +335,9 @@ class MainActivity : AppCompatActivity(),
                 lnAddImage.visibility = View.INVISIBLE
             }
             else -> {
-                btnPreview.isEnabled = false
-                btnPreview.supportBackgroundTintList =
-                    ContextCompat.getColorStateList(this, R.color.gray)
+//                btnPreview.isEnabled = false
+//                btnPreview.supportBackgroundTintList =
+//                    ContextCompat.getColorStateList(this, R.color.gray)
                 btnSave.isEnabled = false
                 btnSave.supportBackgroundTintList =
                     ContextCompat.getColorStateList(this, R.color.gray)
@@ -541,15 +517,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun showDialog(bitmap: Bitmap) {
-        val fragmentManager = supportFragmentManager
-        val data = Bundle()
-        data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
-        val newFragment =
-            PreviewDialogFragment()
-        newFragment.arguments = data
-        newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
-    }
+//    private fun showDialog(bitmap: Bitmap) {
+//        val fragmentManager = supportFragmentManager
+//        val data = Bundle()
+//        data.putParcelable(Constants.PREVIEW_BITMAP, bitmap)
+//        val newFragment =
+//            PreviewDialogFragment()
+//        newFragment.arguments = data
+//        newFragment.show(fragmentManager, Constants.PREVIEW_DIALOG_TAG)
+//    }
 
     private fun showAddTextDialog() {
         val editDialog: EditDialogFragment = EditDialogFragment.show(this)
