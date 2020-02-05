@@ -422,6 +422,9 @@ class MotionView : FrameLayout {
                         unSelectEntity()
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
+                        println("On Move")
+                        undoActionEntities.forEach { println(it) }
+                        println(moveUndoEntities.size)
                         var lastIndexOf = -1
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
@@ -524,8 +527,11 @@ class MotionView : FrameLayout {
                 BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                 this.context
             )
+
+//        initEntityBorder(textEntity)
+//        initEntityIconBackground(textEntity)
         initEntityBorderAndIconBackground(textEntity)
-//        textEntity.layer = selectedEntity!!.layer
+        textEntity.layer = selectedEntity!!.layer
         entities.remove(selectedEntity!!)
         entities.add(textEntity)
         selectEntity(textEntity, true)
@@ -568,6 +574,11 @@ class MotionView : FrameLayout {
             }
             if (selectedEntity is TextEntity) {
                 redrawTextEntityOnScaleEnd()
+            }
+            if (entity != null) {
+                moveUndoEntities.add(entity)
+                undoActionEntities.push("MOVE")
+                entity = null
             }
         }
     }
