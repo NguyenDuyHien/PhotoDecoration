@@ -51,6 +51,7 @@ class MotionView : FrameLayout {
     private val redoActionEntities = Stack<String>()
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()
+    private val removeEntities: Stack<MotionEntity> = Stack()
 
     @Nullable
     var selectedEntity: MotionEntity? = null
@@ -229,9 +230,6 @@ class MotionView : FrameLayout {
                 needUpdateUI = true
             }
             if (needUpdateUI) {
-                println("Onmove after translate")
-                println(selectedEntity!!.layer.x)
-                println(selectedEntity!!.layer.y)
                 updateUI()
             }
 
@@ -359,7 +357,7 @@ class MotionView : FrameLayout {
         val pos = entities.indexOf(selectedEntity!!)
 
         if (entities.remove(selectedEntity!!)) {
-            undoEntities.push(selectedEntity)
+            removeEntities.push(selectedEntity)
             undoActionEntities.push("REMOVE")
 //            selectedEntity = null
             indexUndoRemoveEntities.push(pos)
@@ -424,9 +422,6 @@ class MotionView : FrameLayout {
                         unSelectEntity()
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
-                        println("On Move")
-                        undoActionEntities.forEach { println(it) }
-                        println(moveUndoEntities.size)
                         var lastIndexOf = -1
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
@@ -436,18 +431,12 @@ class MotionView : FrameLayout {
                         if (lastIndexOf != -1) {
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
-                            println("Move Undo Entity")
-                            println(moveUndoEntities[moveUndoEntities.size - 1].layer.x)
-                            println(moveUndoEntities[moveUndoEntities.size - 1].layer.y)
-//                            val textLayer =
-//                                moveUndoEntities[moveUndoEntities.size - 1].layer as TextLayer
-//                            println(textLayer.text)
                             entities.add(moveUndoEntities.pop())
                             unSelectEntity()
                         }
                     }
                     else -> {
-                        val entity = undoEntities.pop()
+                        val entity = removeEntities.pop()
 
                         entities.add(
                             indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1],
@@ -612,9 +601,6 @@ class MotionView : FrameLayout {
         override fun onMoveBegin(detector: MoveGestureDetector): Boolean {
             if (entities.indexOf(selectedEntity) != -1) {
                 entity = entities[entities.indexOf(selectedEntity)].clone()
-                println("onMove Begin")
-                println(entity!!.layer.x)
-                println(entity!!.layer.y)
             }
             return true
         }
@@ -623,9 +609,6 @@ class MotionView : FrameLayout {
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
-                println("onMove End")
-                println(entity!!.layer.x)
-                println(entity!!.layer.y)
                 entity = null
             }
         }
