@@ -54,6 +54,9 @@ dependencies {
     // Kotlin reflection
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
+    // PhotoView
+    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
