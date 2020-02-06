@@ -52,7 +52,7 @@ open class Layer(
     internal interface Limits {
         companion object {
             const val MIN_SCALE = 0.1f
-            const val MAX_SCALE = 4.0f
+            const val MAX_SCALE = 1.5f
             const val INITIAL_ENTITY_SCALE = 0.4f
         }
     }
