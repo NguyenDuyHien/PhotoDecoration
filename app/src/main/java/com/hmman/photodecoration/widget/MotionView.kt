@@ -572,9 +572,9 @@ class MotionView : FrameLayout {
                 redoActionEntities.clear()
                 entity = null
             }
-            if (selectedEntity is TextEntity) {
-                redrawTextEntityOnScaleEnd()
-            }
+//            if (selectedEntity is TextEntity) {
+//                redrawTextEntityOnScaleEnd()
+//            }
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
