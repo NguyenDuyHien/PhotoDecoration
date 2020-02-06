@@ -112,10 +112,10 @@ class TextEntity(
             textPaint.textSize.toInt()
         )
         val boundsWidth: Int = textWidth
-        
-        // Set initial scale for Text
-        val initialScale = if (boundsWidth.toFloat() / canvasWidth > TextLayer.Limits.MIN_SCALE) {
-            boundsWidth.toFloat() / canvasWidth
+
+//         Set initial scale for Text
+        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
+            boundsWidth * 1f / canvasWidth
         } else {
             TextLayer.Limits.MIN_SCALE
         }
@@ -213,8 +213,8 @@ class TextEntity(
         updateEntity(true)
         updateRealEntity(true)
     }
-
-    private fun getMaxText(text: String): Int {
+    
+    private fun getMaxText(text:String): Int {
         val a = text.lines()
         var maxLength = textPaint.measureText("")
         for (i in a) {

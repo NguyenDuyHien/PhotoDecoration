@@ -91,7 +91,6 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         }
 
     val metrics = DisplayMetrics()
-//    activity!!.windowManager.defaultDisplay.getMetrics(metrics)
     val density = metrics.density
 
     private fun fitString(edtContent: AppCompatEditText, mContent: String) : String {
