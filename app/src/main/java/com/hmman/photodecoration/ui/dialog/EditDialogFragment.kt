@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.edit_dialog.*
 
 class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
-    private var isChanging:Boolean= false
     private lateinit var colorDialog: DialogColor
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -258,29 +257,22 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             .density(17)
             .setPositiveButton(Constants.DEFAULT_OK_BUTTON)
             { _, lastSelectedColor, _ ->
-                isChanging = false
                 mColorCode = lastSelectedColor
                 edtContent.setTextColor(lastSelectedColor)
                 btnColor.setBackgroundColor(lastSelectedColor)
             }
             .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ ->
-                isChanging = false
             }
 
             .build()
             .show()
-
     }
 
     override fun onColorSelected(color: Int) {
         if( color == 0){
-            if(!isChanging){
-                isChanging= true
                 changeTextEntityColor()
-            }
         }
         else {
-            isChanging= false
             mColorCode= color
             edtContent.setTextColor(color)
             btnColor.setBackgroundColor(color)

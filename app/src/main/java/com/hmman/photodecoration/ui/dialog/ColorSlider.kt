@@ -34,8 +34,6 @@ class ColorSlider @JvmOverloads constructor(
     @Nullable
     private var mListener: OnColorSelectedListener? =
         null
-
-    private var barCornerRadius: Float = 8f
     var isLockMode = false
 
     fun setSelectorColor(@ColorInt color: Int) {
@@ -53,8 +51,6 @@ class ColorSlider @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet?
     ) {
-
-
         mPaint = Paint()
         mPaint!!.style = Paint.Style.FILL_AND_STROKE
         mSelectorPaint = Paint()
@@ -71,21 +67,13 @@ class ColorSlider @JvmOverloads constructor(
                 context.theme.obtainStyledAttributes(attrs, R.styleable.ColorSlider, 0, 0)
             try {
                 selectorColor = a.getColor(R.styleable.ColorSlider_cs_selector_color, 0)
-                val id = a.getResourceId(R.styleable.ColorSlider_cs_colors, 0)
-                val hexId = a.getResourceId(R.styleable.ColorSlider_cs_hex_colors, 0)
-
-                barCornerRadius = a.getDimension(R.styleable.ColorSlider_cornerRadius, 30f)
+             /*   val id = a.getResourceId(R.styleable.ColorSlider_cs_colors, 0)
 
                 if (id != 0) {
                     val ids = resources.getIntArray(id)
                     if (ids.size > 0) {
                         mColors = IntArray(ids.size)
                         System.arraycopy(ids, 0, mColors, 0, ids.size)
-                    }
-                } else if (hexId != 0) {
-                    val hex = resources.getStringArray(hexId)
-                    if (hex.size > 0) {
-                        convertToColors(hex)
                     }
                 }
                 if (mColors.size == 0) {
@@ -95,7 +83,7 @@ class ColorSlider @JvmOverloads constructor(
                     if (fromColor != 0 && toColor != 0 && steps != 0) {
                         calculateColors(fromColor, toColor, steps)
                     }
-                }
+                }*/
             } catch (e: Exception) {
                 Log.d("ColorSlider", "init: " + e.localizedMessage)
             } finally {
@@ -137,74 +125,6 @@ class ColorSlider @JvmOverloads constructor(
             0
         )
     }
-
-    private fun convertToColors(hex: Array<String>) {
-        mColors = IntArray(hex.size)
-        for (i in hex.indices) {
-            mColors[i] = Color.parseColor(hex[i])
-        }
-    }
-
-   /* private fun calculateColors(@ColorInt colors: IntArray, steps: Int) {
-        val numOfColors = colors.size
-        val stepsPerBlock = steps / (numOfColors - 1)
-        var leftSteps = 0
-        if (steps % stepsPerBlock != 0) {
-            leftSteps = steps % stepsPerBlock
-        }
-        mColors = IntArray(steps)
-        for (i in 1 until numOfColors) {
-            val fromColor = colors[i - 1]
-            val toColor = colors[i]
-            val startBlockPosition = (i - 1) * stepsPerBlock
-            var endBlockPosition = i * stepsPerBlock
-            if (i == numOfColors - 1) endBlockPosition += leftSteps
-            val blockSteps = endBlockPosition - startBlockPosition
-            val a1 = Color.alpha(fromColor).toFloat()
-            val r1 = Color.red(fromColor).toFloat()
-            val g1 = Color.green(fromColor).toFloat()
-            val b1 = Color.blue(fromColor).toFloat()
-            val a2 = Color.alpha(toColor).toFloat()
-            val r2 = Color.red(toColor).toFloat()
-            val g2 = Color.green(toColor).toFloat()
-            val b2 = Color.blue(toColor).toFloat()
-            val alphaStep = (a2 - a1) / blockSteps.toFloat()
-            val redStep = (r2 - r1) / blockSteps.toFloat()
-            val greenStep = (g2 - g1) / blockSteps.toFloat()
-            val blueStep = (b2 - b1) / blockSteps.toFloat()
-            var k = 0
-            for (j in startBlockPosition until endBlockPosition) {
-                mColors[j] = Color.argb(
-                    (a1 + alphaStep * k).toInt(), (r1 + redStep * k).toInt(),
-                    (g1 + greenStep * k).toInt(), (b1 + blueStep * k).toInt()
-                )
-                k++
-            }
-        }
-    }*/
-
-    private fun calculateColors(@ColorInt fromColor: Int, @ColorInt toColor: Int, steps: Int) {
-        val a1 = Color.alpha(fromColor).toFloat()
-        val r1 = Color.red(fromColor).toFloat()
-        val g1 = Color.green(fromColor).toFloat()
-        val b1 = Color.blue(fromColor).toFloat()
-        val a2 = Color.alpha(toColor).toFloat()
-        val r2 = Color.red(toColor).toFloat()
-        val g2 = Color.green(toColor).toFloat()
-        val b2 = Color.blue(toColor).toFloat()
-        val alphaStep = (a2 - a1) / steps.toFloat()
-        val redStep = (r2 - r1) / steps.toFloat()
-        val greenStep = (g2 - g1) / steps.toFloat()
-        val blueStep = (b2 - b1) / steps.toFloat()
-        mColors = IntArray(steps)
-        for (i in 0 until steps) {
-            mColors[i] = Color.argb(
-                (a1 + alphaStep * i).toInt(), (r1 + redStep * i).toInt(),
-                (g1 + greenStep * i).toInt(), (b1 + blueStep * i).toInt()
-            )
-        }
-    }
-
     private fun processTouch(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) return true else if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_UP) {
             updateView(event.x, event.y)
