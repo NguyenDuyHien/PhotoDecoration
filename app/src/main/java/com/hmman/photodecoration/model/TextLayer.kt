@@ -21,7 +21,7 @@ class TextLayer(
     }
 
     override fun initialScale(): Float {
-        return Limits.INITIAL_SCALE
+        return Limits.MIN_SCALE
     }
 
     fun setInitialScale(initialScale: Float) {

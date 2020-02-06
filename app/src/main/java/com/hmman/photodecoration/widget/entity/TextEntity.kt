@@ -13,8 +13,6 @@ import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
-import androidx.core.content.res.ResourcesCompat
-import com.hmman.photodecoration.R
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
