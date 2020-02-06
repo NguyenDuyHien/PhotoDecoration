@@ -105,7 +105,10 @@ class TextEntity(
         textPaint.color = textLayer.font?.color!!
 
         //In case Text only on character: Paint.MeasureText return wrong size
-        val textWidth = max(textPaint.measureText(getMaxText(textLayer.text!!)).toInt(), textPaint.textSize.toInt())
+        val textWidth = max(
+//            textPaint.measureText(getMaxText(textLayer.text!!)).toInt(),
+            getMaxText(textLayer.text!!),
+            textPaint.textSize.toInt())
         val boundsWidth: Int = textWidth
 
         // Set initial scale for Text
@@ -186,16 +189,14 @@ class TextEntity(
         updateRealEntity(true)
     }
 
-    private fun getMaxText(text:String): String {
-//        val a = text.split("\r\n|\r|\n")
+    private fun getMaxText(text:String): Int {
         val a =text.lines()
-        var maxLength = ""
+        var maxLength = textPaint.measureText("")
         for (i in a) {
-            if(i.length > maxLength.length) maxLength = i
+            if(textPaint.measureText(i) > maxLength) maxLength = textPaint.measureText(i)
         }
-        return maxLength
+        return maxLength.toInt()
     }
-
 
 //    private fun getLongestLine(text:String): String {
 //        var longestLine = ""
