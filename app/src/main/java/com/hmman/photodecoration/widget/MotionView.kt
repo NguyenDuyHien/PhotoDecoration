@@ -551,9 +551,9 @@ class MotionView : FrameLayout {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
             super.onScaleEnd(detector)
-            if (selectedEntity is TextEntity) {
-                redrawTextEntityOnScaleEnd()
-            }
+//            if (selectedEntity is TextEntity) {
+//                redrawTextEntityOnScaleEnd()
+//            }
             if (entity != null) {
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")

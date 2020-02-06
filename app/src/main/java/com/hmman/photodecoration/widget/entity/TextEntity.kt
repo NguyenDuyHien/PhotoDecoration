@@ -102,38 +102,11 @@ class TextEntity(
     @RequiresApi(Build.VERSION_CODES.M)
     @NonNull
     private fun createBitmap(@NonNull textLayer: TextLayer, @Nullable reuseBmp: Bitmap?): Bitmap? {
+        val boundsWidth = canvasWidth * 2
 
         textPaint.style = Paint.Style.FILL
-        textPaint.textSize = textLayer.font!!.size * canvasWidth
-        textPaint.color = textLayer.font?.color!!
-
-        //In case Text only one character: Paint.MeasureText return wrong size
-        val textWidth =
-            max(
-//                textPaint.measureText(getMaxText(textLayer.text!!)).toInt(),
-                getMaxText(textLayer.text!!),
-                textPaint.textSize.toInt()
-            )
-
-        if (PhotoUtils.getInstance(null).boundsWidth == 0f) PhotoUtils.getInstance(null)
-            .boundsWidth = textWidth.toFloat()
-        else PhotoUtils.getInstance(null).boundsWidth *= textLayer.scale
-        val boundsWidth: Int = textWidth
-//        var boundsWidth: Int
-//        boundsWidth = if (textWidth > canvasWidth) {
-//            textWidth
-//        } else {
-//            min(canvasWidth, textWidth)
-//        }
-
-        // Set initial scale for Text
-        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
-            boundsWidth * 1f / canvasWidth
-        } else {
-            TextLayer.Limits.MIN_SCALE
-        }
-
-        textLayer.setInitialScale(initialScale)
+        textPaint.textSize = textLayer.font!!.size * canvasWidth * 3
+        textPaint.color =  textLayer.font?.color!!
 
         val sl = StaticLayout.Builder.obtain(
             textLayer.text.toString(),
@@ -179,7 +152,6 @@ class TextEntity(
 
     override fun drawContent(canvas: Canvas, drawingPaint: Paint?) {
         if (bitmap != null) {
-            updateEntity(false)
             canvas.drawBitmap(bitmap!!, matrix, drawingPaint)
         }
     }
@@ -224,21 +196,6 @@ class TextEntity(
         updateEntity(true)
         updateRealEntity(true)
     }
-
-    private fun getMaxText(text: String): Int {
-//        textPaint.measureText(getMaxText(textLayer.text!!)).toInt(),
-//        val textPaint: TextPaint
-        if (textPaint.measureText(text) > canvasWidth) return canvasWidth
-//        val a = text.split(" ")
-        val a = text.lines()
-        var maxLength = ""
-        for (i in a) {
-            if (i.length > maxLength.length) maxLength = i
-        }
-
-        return textPaint.measureText(maxLength).toInt()
-    }
-
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
     override val height: Int = if (bitmap != null) bitmap!!.height else 0
