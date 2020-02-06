@@ -1,7 +1,5 @@
 package com.hmman.photodecoration.model
 
-import android.graphics.Color
-
 data class Font(
     var color: Int? = null,
     var typeface: String? = null,
@@ -22,5 +20,9 @@ data class Font(
         companion object {
             const val MIN_FONT_SIZE = 0.01f
         }
+    }
+
+    open fun clone(): Font {
+        return Font(color, typeface, size)
     }
 }

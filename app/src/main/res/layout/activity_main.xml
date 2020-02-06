@@ -247,6 +247,7 @@
         android:text="Preview"
         android:textColor="@color/white"
         android:backgroundTint="@color/lightBlue"
+        android:layout_marginEnd="@dimen/_6sdp"
         app:layout_constraintTop_toTopOf="@id/btnGallery"
         app:layout_constraintBottom_toBottomOf="@id/btnGallery"
         app:layout_constraintEnd_toEndOf="parent" />

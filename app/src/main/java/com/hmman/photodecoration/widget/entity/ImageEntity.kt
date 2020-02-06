@@ -1,11 +1,13 @@
 package com.hmman.photodecoration.widget.entity
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import com.hmman.photodecoration.model.Layer
+import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.PhotoUtils
 import kotlin.math.min
 
@@ -15,8 +17,11 @@ class ImageEntity(
     @IntRange(from = 1) canvasWidth: Int,
     @IntRange(from = 1) canvasHeight: Int,
     name: String,
-    deleteIcon: Bitmap
+    deleteIcon: Bitmap,
+    context: Context
 ) : MotionEntity(layer, canvasWidth, canvasHeight, deleteIcon, name) {
+
+    val context = context
 
     init {
         val width = bitmap.width.toFloat()
@@ -25,7 +30,6 @@ class ImageEntity(
         val heightAspect = 1F * canvasHeight / height
         val realWidthAspect = 1F * PhotoUtils.getInstance(null).width / width
         val realHeightAspect = 1F * PhotoUtils.getInstance(null).height / height
-
         holyScale = min(widthAspect, heightAspect)
         realHolyScale = min(realWidthAspect, realHeightAspect)
 
@@ -58,6 +62,10 @@ class ImageEntity(
     }
 
     override fun clone(): MotionEntity {
-        return ImageEntity(layer.clone(), bitmap, canvasWidth, canvasHeight, name, deleteIcon)
+        var entity =
+            ImageEntity(layer.clone(), bitmap, canvasWidth, canvasHeight, name, deleteIcon, context)
+        BorderUtil.initEntityBorder(entity, context)
+        BorderUtil.initEntityIconBackground(entity, context)
+        return entity
     }
 }

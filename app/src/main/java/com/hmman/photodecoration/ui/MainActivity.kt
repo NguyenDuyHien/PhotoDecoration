@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.PointF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
@@ -46,7 +45,6 @@ import com.hmman.photodecoration.widget.entity.MotionEntity
 import com.hmman.photodecoration.widget.entity.TextEntity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -118,21 +116,14 @@ class MainActivity : AppCompatActivity(),
         }
 
         btnSave.setOnClickListener {
-            savePhoto()
+            PhotoUtils.getInstance(null).savePhoto(this, mainLayout, motionView)
         }
     }
 
     private fun previewPhoto() {
         motionView.unSelectEntity()
-        val bitmap =
-            Bitmap.createBitmap(
-                resultContainer.width,
-                resultContainer.height,
-                Bitmap.Config.ARGB_8888
-            )
-        val canvas = Canvas(bitmap)
-        resultContainer.draw(canvas)
-        showDialog(bitmap)
+        val bitmap = motionView.getFinalBitmap()
+        bitmap?.let { showDialog(it) }
     }
 
     private fun isStoragePermissionGranted(): Boolean {
@@ -192,29 +183,6 @@ class MainActivity : AppCompatActivity(),
             val f = File(currentPhotoPath)
             mediaScanIntent.data = Uri.fromFile(f)
             sendBroadcast(mediaScanIntent)
-        }
-    }
-
-    private fun savePhoto() {
-        val finalBitmap = motionView.getFinalBitmap()
-        finalBitmap?.let {
-            val root = Environment.getExternalStorageDirectory().absolutePath
-            val myDir = File("$root/PhotoDecoration")
-            myDir.mkdirs()
-
-            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-            val fname = "Photo$timeStamp.jpg"
-            val file = File(myDir, fname)
-            if (file.exists()) file.delete()
-            try {
-                val out = FileOutputStream(file)
-                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-                out.flush()
-                out.close()
-                Snackbar.make(mainLayout, resources.getString(R.string.photo_saved), 1000).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 
@@ -439,16 +407,11 @@ class MainActivity : AppCompatActivity(),
                 motionView.height,
                 fontProvider,
                 text,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
+                this
             )
 
         motionView.addEntityAndPosition(textEntity)
-
-        val center: PointF = textEntity.absoluteCenter()
-        center.y = center.y
-        textEntity.moveCenterTo(center)
-
-        motionView.invalidate()
     }
 
     private fun addSticker(stickerResId: Int) {
@@ -462,7 +425,8 @@ class MainActivity : AppCompatActivity(),
                     motionView.width,
                     motionView.height,
                     stickerResId.toString(),
-                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete)
+                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
+                    this
                 )
             motionView.addEntityAndPosition(entity)
         }
@@ -524,9 +488,13 @@ class MainActivity : AppCompatActivity(),
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onDone(text: String, colorCode: Int) {
+                motionView.moveUndoEntities.add(textEntity.clone())
+                motionView.undoActionEntities.push("MOVE")
+                motionView.redoActionEntities.clear()
                 textEntity.getLayer().text = text
                 textEntity.getLayer().font!!.color = colorCode
                 textEntity.updateEntity(true)
+
                 motionView.invalidate()
             }
         })

@@ -36,6 +36,10 @@ class FontProvider(private val resources: Resources) {
         private const val DEFAULT_FONT_NAME = "Helvetica"
     }
 
+    open fun clone(): FontProvider {
+        return FontProvider(resources)
+    }
+
     init {
         typefaces = HashMap()
         fontNameToTypefaceFile = HashMap()
