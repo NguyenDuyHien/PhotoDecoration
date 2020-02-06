@@ -103,29 +103,11 @@ class TextEntity(
     @RequiresApi(Build.VERSION_CODES.M)
     @NonNull
     private fun createBitmap(@NonNull textLayer: TextLayer, @Nullable reuseBmp: Bitmap?): Bitmap? {
+        val boundsWidth = canvasWidth * 2
+
         textPaint.style = Paint.Style.FILL
-        textPaint.typeface = fontProvider.getTypeface(textLayer.font!!.typeface)
-        textPaint.textSize = textLayer.font!!.size * canvasWidth
-        textPaint.color = textLayer.font?.color!!
-
-        //In case Text only on character: Paint.MeasureText return wrong size
-//        val textWidth = max(
-//            getMaxText(textLayer.text!!),
-//            textPaint.textSize.toInt()
-//        )
-        var boundsWidth = getMaxText(textLayer.text!!)
-
-        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
-            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
-        }
-
-//         Set initial scale for Text
-//        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
-//            boundsWidth * 1f / canvasWidth
-//        } else {
-//            TextLayer.Limits.MIN_SCALE
-//        }
-        textLayer.setInitialScale(boundsWidth.toFloat() / canvasWidth)
+        textPaint.textSize = textLayer.font!!.size * canvasWidth * 3
+        textPaint.color =  textLayer.font?.color!!
 
         val sl = StaticLayout.Builder.obtain(
             textLayer.text.toString(),
@@ -171,7 +153,6 @@ class TextEntity(
 
     override fun drawContent(canvas: Canvas, drawingPaint: Paint?) {
         if (bitmap != null) {
-            updateEntity(false)
             canvas.drawBitmap(bitmap!!, matrix, drawingPaint)
         }
     }
@@ -193,8 +174,7 @@ class TextEntity(
         cloneTextLayer.x = textLayer.x
         cloneTextLayer.y = textLayer.y
         cloneTextLayer.rotationInDegrees = textLayer.rotationInDegrees
-//        cloneTextLayer.scale = textLayer.scale
-        cloneTextLayer.scale = textLayer.initialScale()
+        cloneTextLayer.scale = textLayer.scale
 
         val entity = TextEntity(
             cloneTextLayer,
@@ -211,47 +191,12 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
-        updateEntity()
         return entity
     }
 
     fun updateEntity() {
         updateEntity(true)
         updateRealEntity(true)
-    }
-    
-    private fun getMaxText(text:String): Int {
-        val a = text.lines()
-        var maxLength = textPaint.measureText("")
-        for (i in a) {
-            if (textPaint.measureText(i) > maxLength) maxLength = textPaint.measureText(i)
-        }
-        return maxLength.toInt()
-    }
-
-//    private fun getLongestLine(text:String): String {
-//        var longestLine = ""
-//        val textWidth = textPaint.measureText(text)
-//        when {
-//            canvasWidth > textWidth -> {
-//                longestLine = text
-//            }
-//            else -> {
-//                longestLine = text.substring(0, numOfCharInOneLine(text))
-//            }
-//        }
-//        return longestLine
-//    }
-
-    fun numOfCharInOneLine(text: String): Int {
-        var numOfChar: Int = 0
-        for (i in 0..text.length){
-            if (textPaint.measureText(text.substring(0, i)).toInt() > canvasWidth){
-                numOfChar = i
-                break
-            }
-        }
-        return numOfChar
     }
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0

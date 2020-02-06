@@ -21,8 +21,7 @@ class TextLayer(
     }
 
     override fun initialScale(): Float {
-        return initialScale
-//        return Limits.MIN_SCALE
+        return Limits.MIN_SCALE
     }
 
     fun setInitialScale(initialScale: Float) {
@@ -31,7 +30,7 @@ class TextLayer(
 
     interface Limits {
         companion object {
-            const val MAX_SCALE = 1.6f
+            const val MAX_SCALE = 2.0f
             const val MIN_SCALE = 0.2f
             const val MIN_BITMAP_HEIGHT = 0.13f
             const val FONT_SIZE_STEP = 0.008f
