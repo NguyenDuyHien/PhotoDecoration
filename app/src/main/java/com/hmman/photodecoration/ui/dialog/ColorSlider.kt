@@ -67,23 +67,6 @@ class ColorSlider @JvmOverloads constructor(
                 context.theme.obtainStyledAttributes(attrs, R.styleable.ColorSlider, 0, 0)
             try {
                 selectorColor = a.getColor(R.styleable.ColorSlider_cs_selector_color, 0)
-             /*   val id = a.getResourceId(R.styleable.ColorSlider_cs_colors, 0)
-
-                if (id != 0) {
-                    val ids = resources.getIntArray(id)
-                    if (ids.size > 0) {
-                        mColors = IntArray(ids.size)
-                        System.arraycopy(ids, 0, mColors, 0, ids.size)
-                    }
-                }
-                if (mColors.size == 0) {
-                    val fromColor = a.getColor(R.styleable.ColorSlider_cs_from_color, 0)
-                    val toColor = a.getColor(R.styleable.ColorSlider_cs_to_color, 0)
-                    val steps = a.getInt(R.styleable.ColorSlider_cs_steps, 21)
-                    if (fromColor != 0 && toColor != 0 && steps != 0) {
-                        calculateColors(fromColor, toColor, steps)
-                    }
-                }*/
             } catch (e: Exception) {
                 Log.d("ColorSlider", "init: " + e.localizedMessage)
             } finally {
