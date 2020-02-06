@@ -189,7 +189,8 @@ class TextEntity(
         cloneTextLayer.x = textLayer.x
         cloneTextLayer.y = textLayer.y
         cloneTextLayer.rotationInDegrees = textLayer.rotationInDegrees
-        cloneTextLayer.scale = textLayer.scale
+        cloneTextLayer.scale = textLayer.initialScale()
+
         val entity = TextEntity(
             cloneTextLayer,
             canvasWidth,
@@ -205,6 +206,7 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
+        updateEntity()
         return entity
     }
 
