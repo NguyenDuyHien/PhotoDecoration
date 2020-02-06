@@ -223,6 +223,20 @@ class TextEntity(
         return maxLength.toInt()
     }
 
+//    private fun getLongestLine(text:String): String {
+//        var longestLine = ""
+//        val textWidth = textPaint.measureText(text)
+//        when {
+//            canvasWidth > textWidth -> {
+//                longestLine = text
+//            }
+//            else -> {
+//                longestLine = text.substring(0, numOfCharInOneLine(text))
+//            }
+//        }
+//        return longestLine
+//    }
+
     fun numOfCharInOneLine(text: String): Int {
         var numOfChar: Int = 0
         for (i in 0..text.length){
