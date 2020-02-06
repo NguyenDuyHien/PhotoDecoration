@@ -221,6 +221,17 @@ class TextEntity(
         return maxLength.toInt()
     }
 
+    fun numOfCharInOneLine(text: String): Int {
+        var numOfChar: Int = 0
+        for (i in 0..text.length){
+            if (textPaint.measureText(text.substring(0, i)).toInt() > canvasWidth){
+                numOfChar = i
+                break
+            }
+        }
+        return numOfChar
+    }
+
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
     override val height: Int = if (bitmap != null) bitmap!!.height else 0
 }

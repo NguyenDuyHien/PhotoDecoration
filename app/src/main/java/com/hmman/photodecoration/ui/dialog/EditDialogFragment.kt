@@ -256,7 +256,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         }
     }
 
-    private fun changeTextEntityColor() {
+    private fun changeTextEntityColor(initialColor: Int) {
         ColorPickerDialogBuilder
             .with(context)
             .setTitle(Constants.TITLE_CHANGE_COLOR)
@@ -277,7 +277,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
     override fun onColorSelected(color: Int) {
         if( color == 0){
-                changeTextEntityColor()
+                changeTextEntityColor(color)
         }
         else {
             mColorCode= color
