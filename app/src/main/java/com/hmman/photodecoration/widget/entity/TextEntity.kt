@@ -111,8 +111,8 @@ class TextEntity(
             getMaxText(textLayer.text!!),
             textPaint.textSize.toInt()
         )
-
         val boundsWidth: Int = textWidth
+        
         // Set initial scale for Text
         val initialScale = if (boundsWidth.toFloat() / canvasWidth > TextLayer.Limits.MIN_SCALE) {
             boundsWidth.toFloat() / canvasWidth
