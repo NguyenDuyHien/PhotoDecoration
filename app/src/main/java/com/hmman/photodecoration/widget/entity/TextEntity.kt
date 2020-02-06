@@ -113,9 +113,9 @@ class TextEntity(
         )
         val boundsWidth: Int = textWidth
 
-//         Set initial scale for Text
-        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
-            boundsWidth * 1f / canvasWidth
+        // Set initial scale for Text
+        val initialScale = if (boundsWidth*1f/canvasWidth > TextLayer.Limits.MIN_SCALE) {
+            boundsWidth*1f/canvasWidth
         } else {
             TextLayer.Limits.MIN_SCALE
         }
@@ -222,20 +222,6 @@ class TextEntity(
         }
         return maxLength.toInt()
     }
-
-//    private fun getLongestLine(text:String): String {
-//        var longestLine = ""
-//        val textWidth = textPaint.measureText(text)
-//        when {
-//            canvasWidth > textWidth -> {
-//                longestLine = text
-//            }
-//            else -> {
-//                longestLine = text.substring(0, numOfCharInOneLine(text))
-//            }
-//        }
-//        return longestLine
-//    }
 
     fun numOfCharInOneLine(text: String): Int {
         var numOfChar: Int = 0
