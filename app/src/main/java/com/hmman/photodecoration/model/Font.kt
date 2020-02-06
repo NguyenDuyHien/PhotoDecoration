@@ -6,6 +6,14 @@ data class Font(
     var size: Float = 0f
 ) {
 
+    fun getColor(): Int {
+        return color!!
+    }
+
+    fun getTextSize(): Float {
+        return size
+    }
+
     fun increaseSize(diff: Float) {
         size += diff
     }

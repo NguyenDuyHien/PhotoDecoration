@@ -12,6 +12,8 @@ class TextLayer(
         font = Font()
     }
 
+
+
     override fun getMaxScale(): Float {
         return Limits.MAX_SCALE
     }

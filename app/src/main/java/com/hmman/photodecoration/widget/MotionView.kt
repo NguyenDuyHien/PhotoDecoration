@@ -423,12 +423,18 @@ class MotionView : FrameLayout {
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
                         var lastIndexOf = -1
+                        println("entity old ")
+                        println(moveUndoEntities[moveUndoEntities.size - 1].layer.scale)
+
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
                                 lastIndexOf = index
                             }
                         }
+
                         if (lastIndexOf != -1) {
+                            println("entity sap bi xoa")
+                            println(entities[lastIndexOf].layer.scale)
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
                             entities.add(moveUndoEntities.pop())
@@ -436,14 +442,16 @@ class MotionView : FrameLayout {
                         }
                     }
                     else -> {
-                        val entity = removeEntities.pop()
+                        if (removeEntities.size > 0) {
+                            val entity = removeEntities.pop()
 
-                        entities.add(
-                            indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1],
-                            entity
-                        )
-                        indexRedoRemoveEntities.push(indexUndoRemoveEntities.pop())
-                        selectEntity(entity, true)
+                            entities.add(
+                                indexUndoRemoveEntities[indexUndoRemoveEntities.size - 1],
+                                entity
+                            )
+                            indexRedoRemoveEntities.push(indexUndoRemoveEntities.pop())
+                            selectEntity(entity, true)
+                        }
                     }
                 }
                 redoActionEntities.push(undoActionEntities.pop())
@@ -555,6 +563,11 @@ class MotionView : FrameLayout {
                 redrawTextEntityOnScaleEnd()
             }
             if (entity != null) {
+                println("Entity after move")
+                println(entity!!.layer.x)
+                println(entity!!.layer.y)
+                println(entity!!.layer.scale)
+                println(entity!!.layer.rotationInDegrees)
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
                 redoActionEntities.clear()
@@ -575,8 +588,7 @@ class MotionView : FrameLayout {
 
         override fun onRotateBegin(detector: RotateGestureDetector?): Boolean {
             if (entities.indexOf(selectedEntity) != -1) {
-                entity = entities[entities.indexOf(selectedEntity!!)].clone()
-
+                entity = selectedEntity!!.clone()
             }
             return true
         }

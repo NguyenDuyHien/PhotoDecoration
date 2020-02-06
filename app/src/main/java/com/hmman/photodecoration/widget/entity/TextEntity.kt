@@ -40,6 +40,10 @@ class TextEntity(
         updateRealEntity(false)
     }
 
+    private fun setBitmap() : Bitmap {
+       return this.bitmap!!
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     fun updateEntity(moveToPreviousCenter: Boolean) { // save previous center
         val oldCenter = absoluteCenter()
@@ -113,14 +117,12 @@ class TextEntity(
             textPaint.textSize.toInt()
         )
         val boundsWidth: Int = textWidth
-
         // Set initial scale for Text
         val initialScale = if (boundsWidth.toFloat() / canvasWidth > TextLayer.Limits.MIN_SCALE) {
             boundsWidth.toFloat() / canvasWidth
         } else {
             TextLayer.Limits.MIN_SCALE
         }
-
         textLayer.setInitialScale(initialScale)
 
         val sl = StaticLayout.Builder.obtain(
@@ -189,7 +191,7 @@ class TextEntity(
         cloneTextLayer.x = textLayer.x
         cloneTextLayer.y = textLayer.y
         cloneTextLayer.rotationInDegrees = textLayer.rotationInDegrees
-        cloneTextLayer.scale = textLayer.initialScale()
+        cloneTextLayer.scale = textLayer.scale
 
         val entity = TextEntity(
             cloneTextLayer,
@@ -206,7 +208,15 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
+
         updateEntity()
+        println("Entity after clone")
+        println(entity.getLayer().x)
+        println(entity.getLayer().y)
+        println(entity.getLayer().scale)
+        println(entity.getLayer().font!!.getColor())
+        println(entity.getLayer().font!!.getTextSize())
+        println(entity.getLayer().rotationInDegrees)
         return entity
     }
 
@@ -222,31 +232,6 @@ class TextEntity(
             if (textPaint.measureText(i) > maxLength) maxLength = textPaint.measureText(i)
         }
         return maxLength.toInt()
-    }
-
-//    private fun getLongestLine(text:String): String {
-//        var longestLine = ""
-//        val textWidth = textPaint.measureText(text)
-//        when {
-//            canvasWidth > textWidth -> {
-//                longestLine = text
-//            }
-//            else -> {
-//                longestLine = text.substring(0, numOfCharInOneLine(text))
-//            }
-//        }
-//        return longestLine
-//    }
-
-    fun numOfCharInOneLine(text: String): Int {
-        var numOfChar: Int = 0
-        for (i in 0..text.length) {
-            if (textPaint.measureText(text.substring(0, i)).toInt() > canvasWidth) {
-                numOfChar = i
-                break
-            }
-        }
-        return numOfChar
     }
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
