@@ -488,12 +488,13 @@ class MainActivity : AppCompatActivity(),
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onDone(text: String, colorCode: Int) {
+                motionView.moveUndoEntities.add(textEntity.clone())
+                motionView.undoActionEntities.push("MOVE")
+                motionView.redoActionEntities.clear()
                 textEntity.getLayer().text = text
                 textEntity.getLayer().font!!.color = colorCode
                 textEntity.updateEntity(true)
-                motionView.moveUndoEntities.add(textEntity)
-                motionView.undoActionEntities.push("MOVE")
-                motionView.redoActionEntities.clear()
+
                 motionView.invalidate()
             }
         })
