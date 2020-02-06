@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorSlider">
+        <attr name="cs_colors" format="reference" />
+        <attr name="cs_hex_colors" format="reference" />
+        <attr name="cs_from_color" format="color" />
+        <attr name="cs_to_color" format="color" />
+        <attr name="cs_steps" format="integer" />
+        <attr name="cs_selector_color" format="color" />
+        <attr name="cornerRadius" format="dimension"/>
+    </declare-styleable>
+</resources>

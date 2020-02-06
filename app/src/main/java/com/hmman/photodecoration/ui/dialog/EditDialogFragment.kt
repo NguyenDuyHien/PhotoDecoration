@@ -23,8 +23,10 @@ import com.hmman.photodecoration.R
 import com.hmman.photodecoration.util.Constants
 import kotlinx.android.synthetic.main.edit_dialog.*
 
-class EditDialogFragment : DialogFragment() {
+class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
+    private var isChanging:Boolean= false
+    private lateinit var colorDialog: DialogColor
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,7 +69,8 @@ class EditDialogFragment : DialogFragment() {
         btnColor.setBackgroundColor(mColorCode!!)
 
         btnColor.setOnClickListener {
-            changeTextEntityColor(mColorCode!!)
+            colorDialog = DialogColor(context!!, this)
+            colorDialog.show()
         }
 
         btnDone.setOnClickListener {
@@ -247,24 +250,42 @@ class EditDialogFragment : DialogFragment() {
         }
     }
 
-    private fun changeTextEntityColor(initialColor: Int) {
+    private fun changeTextEntityColor() {
         ColorPickerDialogBuilder
             .with(context)
             .setTitle(Constants.TITLE_CHANGE_COLOR)
-            .initialColor(initialColor)
             .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
             .density(17)
             .setPositiveButton(Constants.DEFAULT_OK_BUTTON)
             { _, lastSelectedColor, _ ->
+                isChanging = false
                 mColorCode = lastSelectedColor
                 edtContent.setTextColor(lastSelectedColor)
                 btnColor.setBackgroundColor(lastSelectedColor)
             }
-            .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ -> }
+            .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ ->
+                isChanging = false
+            }
+
             .build()
             .show()
+
     }
 
+    override fun onColorSelected(color: Int) {
+        if( color == 0){
+            if(!isChanging){
+                isChanging= true
+                changeTextEntityColor()
+            }
+        }
+        else {
+            isChanging= false
+            mColorCode= color
+            edtContent.setTextColor(color)
+            btnColor.setBackgroundColor(color)
+        }
+    }
 
     fun setOnDoneListener(textEditor: TextEditor) {
         mTextEditor = textEditor
