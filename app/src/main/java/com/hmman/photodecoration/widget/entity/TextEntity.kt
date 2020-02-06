@@ -105,8 +105,8 @@ class TextEntity(
         textPaint.color = textLayer.font?.color!!
 
         //In case Text only on character: Paint.MeasureText return wrong size
-        val textWidth = max(textPaint.measureText(textLayer.text).toInt(), textPaint.textSize.toInt())
-        val boundsWidth: Int = min(canvasWidth, textWidth)
+        val textWidth = max(textPaint.measureText(getMaxText(textLayer.text!!)).toInt(), textPaint.textSize.toInt())
+        val boundsWidth: Int = textWidth
 
         // Set initial scale for Text
         val initialScale = if (boundsWidth*1f/canvasWidth > TextLayer.Limits.MIN_SCALE) {
@@ -184,6 +184,42 @@ class TextEntity(
     fun updateEntity() {
         updateEntity(true)
         updateRealEntity(true)
+    }
+
+    private fun getMaxText(text:String): String {
+//        val a = text.split("\r\n|\r|\n")
+        val a =text.lines()
+        var maxLength = ""
+        for (i in a) {
+            if(i.length > maxLength.length) maxLength = i
+        }
+        return maxLength
+    }
+
+
+//    private fun getLongestLine(text:String): String {
+//        var longestLine = ""
+//        val textWidth = textPaint.measureText(text)
+//        when {
+//            canvasWidth > textWidth -> {
+//                longestLine = text
+//            }
+//            else -> {
+//                longestLine = text.substring(0, numOfCharInOneLine(text))
+//            }
+//        }
+//        return longestLine
+//    }
+
+    fun numOfCharInOneLine(text: String): Int {
+        var numOfChar: Int = 0
+        for (i in 0..text.length){
+            if (textPaint.measureText(text.substring(0, i)).toInt() > canvasWidth){
+                numOfChar = i
+                break
+            }
+        }
+        return numOfChar
     }
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0
