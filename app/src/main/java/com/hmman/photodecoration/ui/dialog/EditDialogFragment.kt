@@ -76,7 +76,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             mInputMethodManager!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
             mContent = edtContent.text.toString()
             if (!TextUtils.isEmpty(mContent)) {
-                mContent = fitString(edtContent, edtContent.text.toString())
+                //mContent = fitString(edtContent, edtContent.text.toString())
                 mTextEditor!!.onDone(mContent!!, mColorCode!!)
             }
         }
