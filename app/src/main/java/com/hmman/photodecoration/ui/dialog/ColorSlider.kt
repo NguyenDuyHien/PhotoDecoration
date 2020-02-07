@@ -15,6 +15,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.core.content.ContextCompat
+import android.graphics.RectF
+
+
 
 class ColorSlider @JvmOverloads constructor(
     context: Context, @Nullable attrs: AttributeSet? = null,
@@ -29,13 +32,12 @@ class ColorSlider @JvmOverloads constructor(
     private var mPaint: Paint? = null
     @Nullable
     private var mSelectorPaint: Paint? = null
-    var selectedItem = 0
-        private set
+    private var selectedItem = 0
     @Nullable
     private var mListener: OnColorSelectedListener? =
         null
     var isLockMode = false
-
+    private var radius: Float = 0.toFloat()
     fun setSelectorColor(@ColorInt color: Int) {
         if (mSelectorPaint != null) {
             mSelectorPaint!!.color = color
@@ -108,6 +110,7 @@ class ColorSlider @JvmOverloads constructor(
             0
         )
     }
+
     private fun processTouch(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) return true else if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_UP) {
             updateView(event.x, event.y)
@@ -150,7 +153,7 @@ class ColorSlider @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (mColorRects.size > 0) {
+        if (mColorRects.isNotEmpty()) {
             drawSlider(canvas)
         }
     }
@@ -159,13 +162,38 @@ class ColorSlider @JvmOverloads constructor(
         if (mPaint != null) {
             for (i in mColorRects.indices) {
                 mPaint!!.color = mColors[i]
-                if (i == selectedItem) {
-                    canvas.drawRect(mColorFullRects[i]!!, mPaint!!)
+//                mColorRects[i]?.let { canvas.drawRect(it, this.mPaint!!) }
+                if (i == selectedItem && i != 0 && i != this.mColorRects.size - 1) {
+                    canvas.drawRect(mColorRects[i]!!, mPaint!!)
                     if (mSelectorPaint != null) {
-                        canvas.drawRect(mColorFullRects[i]!!, mSelectorPaint!!)
+//                        canvas.drawRect(mColorFullRects[i]!!, mSelectorPaint!!)
+                        canvas.drawCircle(
+                            ((this.mColorFullRects[i]!!.left + this.mColorFullRects[i + 1]!!.left) / 2).toFloat(),
+                            radius,
+                            radius *0.9f,
+                            this.mPaint!!
+                        )
                     }
                 } else {
-                    canvas.drawRect(mColorRects[i]!!, mPaint!!)
+                    when (i) {
+                        0 -> {
+                            canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint!!)
+                            canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
+                                mColorRects[i]!!.top.toFloat(),
+                                mColorRects[i]!!.right.toFloat(),
+                                mColorRects[i]!!.bottom.toFloat(), mPaint!!
+                            )
+                        }
+                        this.mColorRects.size - 2 -> {
+                            canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint!!)
+                            canvas.drawRect( mColorRects[i]!!.left.toFloat(),
+                                mColorRects[i]!!.top.toFloat(),
+                                (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
+                                mColorRects[i]!!.bottom.toFloat(), mPaint!!)
+                        }
+                        else -> canvas.drawRect(mColorRects[i]!!, mPaint!!)
+                    }
+
                 }
             }
         }
@@ -185,13 +213,14 @@ class ColorSlider @JvmOverloads constructor(
         val itemWidth = width / mColors.size.toFloat()
         mColorRects = arrayOfNulls(mColors.size)
         mColorFullRects = arrayOfNulls(mColors.size)
-        val margin = height * 0.1f
+        val margin = height * 0.70f
+        radius = height * 0.70f / 2
         for (i in mColors.indices) {
             mColorRects[i] = Rect(
                 (itemWidth * i).toInt(),
                 margin.toInt(),
                 (itemWidth * (i + 1)).toInt(),
-                (height - margin).toInt()
+                (height - (margin *0.2) ).toInt()
             )
             mColorFullRects[i] = Rect(
                 (itemWidth * i).toInt(),

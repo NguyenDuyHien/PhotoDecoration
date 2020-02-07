@@ -6,19 +6,20 @@
     android:background="@color/editDialogBackground"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:background="@color/white"
-        android:id="@+id/btnColor"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
+    <TextView
+
+        android:id="@+id/txtDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="20dp"
         android:padding="10dp"
         android:textAllCaps="false"
+        android:text="Done"
         android:textColor="@color/white"
-        android:textSize="15sp" />
+        android:textSize="24sp" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:textColor="@color/white"
@@ -26,8 +27,7 @@
         style="@style/EditText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btnColor"
-        android:layout_above="@id/btnDone"
+        android:layout_below="@+id/txtDone"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_20sdp"
         android:background="@null"
@@ -35,17 +35,18 @@
         android:inputType="textMultiLine"
         android:textSize="40sp" />
 
-    <Button
-        android:text="Done"
-        android:elevation="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
-        android:id="@+id/btnDone"
+    <com.hmman.photodecoration.ui.dialog.ColorSlider
+        android:id="@+id/color_slider"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_alignBottom="@+id/edtContent"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"/>
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+      />
+
+
 
 </RelativeLayout>

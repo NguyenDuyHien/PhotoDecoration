@@ -65,14 +65,13 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         edtContent.setTextColor(mColorCode!!)
         edtContent.setText(mContent)
         edtContent.setSelection(edtContent.getText()!!.length)
-        btnColor.setBackgroundColor(mColorCode!!)
+//        btnColor.setBackgroundColor(mColorCode!!)
 
-        btnColor.setOnClickListener {
-            colorDialog = DialogColor(context!!, this)
-            colorDialog.show()
-        }
+        color_slider.setSelectorColor(Color.TRANSPARENT)
+        color_slider.setListener(mListener)
 
-        btnDone.setOnClickListener {
+
+        txtDone.setOnClickListener {
             dismiss()
             mInputMethodManager!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
             mContent = edtContent.text.toString()
@@ -82,6 +81,14 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             }
         }
     }
+
+    private val mListener: ColorSlider.OnColorSelectedListener =
+        object : ColorSlider.OnColorSelectedListener {
+            override fun onColorChanged(position: Int, color: Int) {
+                onColorSelected(color)
+
+            }
+        }
 
     val metrics = DisplayMetrics()
 //    activity!!.windowManager.defaultDisplay.getMetrics(metrics)
@@ -259,7 +266,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             { _, lastSelectedColor, _ ->
                 mColorCode = lastSelectedColor
                 edtContent.setTextColor(lastSelectedColor)
-                btnColor.setBackgroundColor(lastSelectedColor)
+//                btnColor.setBackgroundColor(lastSelectedColor)
             }
             .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ ->
             }
@@ -275,7 +282,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         else {
             mColorCode= color
             edtContent.setTextColor(color)
-            btnColor.setBackgroundColor(color)
+//            btnColor.setBackgroundColor(color)
         }
     }
 
