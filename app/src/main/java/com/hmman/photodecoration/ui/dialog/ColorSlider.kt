@@ -118,7 +118,7 @@ class ColorSlider @JvmOverloads constructor(
 
     private fun processTouch(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
-            return if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+            return if (isTouchInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
                 invalidate()
                 notifyChanged()
                 true
@@ -134,13 +134,13 @@ class ColorSlider @JvmOverloads constructor(
                 return true
             }
         }
-        return false
+        return true
     }
 
     private fun updateView(x: Float, y: Float) {
         var changed = false
-        for (i in mColorFullRects.indices) {
-            val rect = mColorFullRects[i]
+        for (i in mColorRects.indices) {
+            val rect = mColorRects[i]
             if (rect != null) {
                 if (isInRange(rect, x.toInt(), y.toInt()) && i != selectedItem) {
                     selectedItem = i
@@ -163,6 +163,10 @@ class ColorSlider @JvmOverloads constructor(
         }
     }
 
+    private fun isTouchInRange(@NonNull rect: Rect, x: Int, y: Int): Boolean {
+        return rect.contains(x, y)
+    }
+
     private fun notifyChanged() {
         if (mListener != null) {
             mListener!!.onColorChanged(selectedItem, mColors[selectedItem])
@@ -177,20 +181,32 @@ class ColorSlider @JvmOverloads constructor(
     }
 
     private fun drawSlider(canvas: Canvas) {
+        val colors = resources.getIntArray(R.array.gradient_colors)
+
         mPaint?.let {mPaint ->
             for (i in mColorRects.indices) {
-//                mColorRects[i]?.let { canvas.drawRect(it, this.mPaint!!) }
-                if (i == selectedItem && i != 0 && i != this.mColorRects.size - 1) {
-                    mPaint.color = mColors[i]
-                    canvas.drawRect(mColorRects[i]!!, mPaint)
-                    if (mSelectorPaint != null) {
-//                        canvas.drawRect(mColorFullRects[i]!!, mSelectorPaint!!)
+                if (i == selectedItem ) {
+                    if (mSelectorPaint != null && i != mColorRects.size - 1) {
+                        mPaint.color = mColors[i]
+                        canvas.drawRect(mColorRects[i]!!, mPaint)
+
                         canvas.drawCircle(
-                            ((this.mColorFullRects[i]!!.left + this.mColorFullRects[i + 1]!!.left) / 2).toFloat(),
+                            (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
                             radius,
                             radius *0.9f,
                             this.mPaint!!
                         )
+                    } else {
+                        mPaint.shader = drawRectWithGradient(mColorFullRects[i]!!.width(), mColorFullRects[i]!!.height(), colors)
+                        canvas.drawRect(mColorRects[i]!!, mPaint)
+
+                        canvas.drawCircle(
+                            (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
+                            radius,
+                            radius *0.9f,
+                            this.mPaint!!
+                        )
+                        mPaint.shader = null
                     }
                 } else {
                     when (i) {
@@ -205,8 +221,6 @@ class ColorSlider @JvmOverloads constructor(
                         }
                         this.mColorRects.size - 1 -> {
                             // Draw gradient and half circle
-                            val colors = IntArray(mColors.size - 1)
-                            System.arraycopy(mColors, 0, colors, 0, mColors.size - 1)
                             mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
                             canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
                             canvas.drawRect( mColorRects[i]!!.left.toFloat(),
@@ -234,24 +248,14 @@ class ColorSlider @JvmOverloads constructor(
     ): Shader? {
         val gradientDrawable = GradientDrawable()
         val shader: Shader
-            gradientDrawable.setColors(colors)
-            gradientDrawable.cornerRadii = floatArrayOf(
-                0f,
-                0f,
-                0f,
-                0f,
-                0f,
-                0f,
-                0f,
-                0f
-            )
-            val mutableBitmap =
-                Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            val _canvas = Canvas(mutableBitmap)
-            gradientDrawable.setBounds(0, 0, width, height)
-            gradientDrawable.draw(_canvas)
-            shader = BitmapShader(mutableBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
-            return shader
+        gradientDrawable.colors = colors
+        val mutableBitmap =
+            Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val _canvas = Canvas(mutableBitmap)
+        gradientDrawable.setBounds(0, 0, width, height)
+        gradientDrawable.draw(_canvas)
+        shader = BitmapShader(mutableBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
+        return shader
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -275,7 +279,7 @@ class ColorSlider @JvmOverloads constructor(
                 (itemWidth * i).toInt(),
                 margin.toInt(),
                 (itemWidth * (i + 1)).toInt(),
-                (height - (margin *0.2) ).toInt()
+                (height - (margin * 0.15) ).toInt()
             )
             mColorFullRects[i] = Rect(
                 (itemWidth * i).toInt(),
