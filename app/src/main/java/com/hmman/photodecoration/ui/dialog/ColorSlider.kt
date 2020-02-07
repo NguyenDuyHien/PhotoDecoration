@@ -34,6 +34,7 @@ class ColorSlider @JvmOverloads constructor(
     private var mListener: OnColorSelectedListener? =
         null
     var isLockMode = false
+    var changed = false
     private var radius: Float = 0.toFloat()
     fun setSelectorColor(@ColorInt color: Int) {
         if (mSelectorPaint != null) {
@@ -129,21 +130,25 @@ class ColorSlider @JvmOverloads constructor(
             }
             return false
         } else if (event.action == MotionEvent.ACTION_MOVE) {
-            if (!isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
-                updateView(event.x, event.y)
-                return true
-            }
+//            if (!isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+//                updateView(event.x, event.y)
+//                return true
+//            }
+            updateView(event.x, event.y)
+            return true
         } else if (event.action == MotionEvent.ACTION_UP) {
-            if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
-                updateView(event.x, event.y)
-                return true
-            }
+//            if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+//                updateView(event.x, event.y)
+//                return true
+//            }
+            updateView(event.x, event.y)
+            return true
         }
         return true
     }
 
     private fun updateView(x: Float, y: Float) {
-        var changed = false
+
         for (i in mColorRects.indices) {
             val rect = mColorRects[i]
             if (rect != null) {
@@ -158,6 +163,7 @@ class ColorSlider @JvmOverloads constructor(
             invalidate()
             notifyChanged()
         }
+        // changed = false
     }
 
     private fun isInRange(@NonNull rect: Rect, x: Int, y: Int): Boolean {
@@ -181,16 +187,17 @@ class ColorSlider @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (mColorRects.isNotEmpty()) {
-            drawSlider(canvas)
+            drawSlider(canvas, changed)
+            changed = false
         }
     }
 
-    private fun drawSlider(canvas: Canvas) {
+    private fun drawSlider(canvas: Canvas, isDrawSelector: Boolean) {
         val colors = resources.getIntArray(R.array.gradient_colors)
 
         mPaint?.let {mPaint ->
             for (i in mColorRects.indices) {
-                if (i == selectedItem ) {
+                if (i == selectedItem && isDrawSelector) {
                     if (mSelectorPaint != null && i != mColorRects.size - 1) {
                         mPaint.color = mColors[i]
                         canvas.drawRect(mColorRects[i]!!, mPaint)
