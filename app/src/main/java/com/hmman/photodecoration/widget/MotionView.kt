@@ -395,7 +395,7 @@ class MotionView : FrameLayout {
                         }
                     }
                     else -> {
-                        if (indexRedoRemoveEntities.size > 0) {
+                        if (indexRedoRemoveEntities.size > 0 && entities.size > 0) {
                             undoEntities.push(entities.removeAt(indexRedoRemoveEntities[indexRedoRemoveEntities.size - 1]))
                             unSelectEntity()
                             indexUndoRemoveEntities.push(indexRedoRemoveEntities.pop())
