@@ -33,7 +33,7 @@
         android:background="@null"
         android:gravity="center"
         android:inputType="textMultiLine"
-        android:textSize="40sp" />
+        android:textSize="@dimen/_25sdp" />
 
     <com.hmman.photodecoration.ui.dialog.ColorSlider
         android:id="@+id/color_slider"
