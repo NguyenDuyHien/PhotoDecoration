@@ -97,36 +97,20 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
     private fun fitString(edtContent: AppCompatEditText, mContent: String) : String {
         val finalText = StringBuilder()
         return if (isTooLarge(edtContent, mContent)) {
-            Log.i(TAG, "fitString: isTooLarge 1 : " + true)
             val lineList: List<String> = mContent.split("\n")
-            Log.i(TAG, "fitString: stringList$lineList")
             if (lineList.size > 0) {
                 for (i in lineList.indices) {
                     if (!lineList[i].isEmpty()) {
                         if (isTooLarge(edtContent, lineList[i])) {
-                            Log.i(
-                                TAG,
-                                "fitString: isTooLarge 2 : " + lineList[i] + " == " + true
-                            )
-                            val wordList: List<String> = lineList[i].split(" ")
-                            Log.i(TAG, "fitString: wordList$wordList")
+                            val wordList: List<String> = lineList[i].split("\\s+")
                             if (wordList.size > 0) {
-                                Log.i(TAG, "fitString: wordList : " + wordList.size)
                                 val temp = java.lang.StringBuilder()
                                 var lastWord: String? = ""
                                 for (j in wordList.indices) {
                                     if (!wordList[j].isEmpty()) {
                                         if (isTooLarge(edtContent, wordList[j])) {
-                                            Log.i(
-                                                TAG,
-                                                "fitString: isTooLarge 3 : " + wordList[j] + " == " + true
-                                            )
                                             val newString =
                                                 fitCharacter(edtContent, wordList[j])
-                                            Log.i(
-                                                TAG,
-                                                "fitString: fitCharacter == $newString"
-                                            )
                                             if (j == wordList.size - 1 && i == lineList.size - 1) {
                                                 finalText.append(newString)
                                             } else {
@@ -139,37 +123,23 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                                                 " " + wordList[j]
                                             }
                                             temp.append(lastWord)
-                                            Log.i(TAG, "fitString: temp : $temp")
-                                            Log.i(
-                                                TAG,
-                                                "fitString: lastWord : $lastWord"
-                                            )
                                             if (isTooLarge(edtContent, temp.toString())) {
                                                 temp.setLength(0) // clear String Builder,  new StringBuilder()
                                                 temp.append(lastWord)
                                                 if (j == wordList.size - 1 && i != lineList.size - 1) {
-                                                    Log.i(TAG, "fitString: ###### 1")
                                                     finalText.append("\n" + lastWord.trim { it <= ' ' } + "\n")
                                                 } else {
-                                                    Log.i(TAG, "fitString: ###### 2")
                                                     finalText.append("\n" + lastWord.trim { it <= ' ' })
                                                 }
                                             } else {
                                                 if (j == wordList.size - 1 && i != lineList.size - 1) {
-                                                    Log.i(TAG, "fitString: ###### 3")
                                                     finalText.append(lastWord + "\n")
                                                 } else {
-                                                    Log.i(TAG, "fitString: ###### 4")
                                                     finalText.append(lastWord)
                                                 }
                                             }
-                                            Log.i(
-                                                TAG,
-                                                "fitString: finalMessage : $finalText"
-                                            )
                                         }
                                     } else {
-                                        Log.e(TAG, "fitString: Word is Null or Empty.")
                                         finalText.append(" ")
                                     }
                                 }
@@ -177,72 +147,47 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                                 Log.e(TAG, "fitString: wordList is Null or Empty.")
                             }
                         } else {
-                            Log.i(
-                                TAG,
-                                "fitString: isTooLarge 2 : " + lineList[i] + " == " + false
-                            )
                             if (i == lineList.size - 1) {
                                 finalText.append(lineList[i])
                             } else {
-                                finalText.append(lineList[i].toString() + "\n")
+                                finalText.append(lineList[i] + "\n")
                             }
                         }
                     } else {
-                        Log.e(TAG, "fitString: Line is Null or Empty.")
-                        finalText.append(lineList[i].toString() + "\n")
+                        finalText.append(lineList[i] + "\n")
                     }
                 }
             } else {
-                Log.e(TAG, "fitString: stringList is Null or Empty.")
                 finalText.append("")
             }
             finalText.toString()
         } else {
-            Log.i(TAG, "fitString: isTooLarge : " + false)
             mContent
         }
     }
 
     fun fitCharacter(editText: EditText?, message: String): String? {
-        Log.i(TAG, "fitCharacter2: Default Word : $message")
         val finalWord = StringBuilder()
         var startIndex = 0
         var endIndex = 1
         while (true) {
             val tempSplitWord = message.substring(startIndex, endIndex)
-            Log.i(
-                TAG,
-                "fitCharacter2: startIndex : $startIndex endIndex : $endIndex tempSplitWord : $tempSplitWord"
-            )
             if (!isTooLarge(editText, tempSplitWord)) { // isTooLarge
                 if (endIndex < message.length) {
                     endIndex = endIndex + 1
-                    Log.i(
-                        TAG,
-                        "IF fitCharacter2: endIndex < message.length() " + endIndex + " < " + message.length
-                    )
                 } else {
                     val result = finalWord.append(tempSplitWord).toString()
-                    Log.i(TAG, "IF RETURN RESULT : $result")
                     return result
                 }
             } else {
                 endIndex = endIndex - 1
                 val splitWord = message.substring(startIndex, endIndex)
-                Log.i(
-                    TAG,
-                    "ELSE fitCharacter2: startIndex : $startIndex endIndex : $endIndex splitWord : $splitWord"
-                )
                 val isTooLarge = isTooLarge(editText, splitWord)
                 if (!isTooLarge) {
                     finalWord.append(splitWord + "\n")
                 }
                 startIndex = endIndex
                 endIndex = endIndex + 1
-                Log.i(
-                    TAG,
-                    "ELSE fitCharacter2: startIndex : $startIndex endIndex : $endIndex"
-                )
             }
         }
     }
@@ -266,7 +211,6 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             { _, lastSelectedColor, _ ->
                 mColorCode = lastSelectedColor
                 edtContent.setTextColor(lastSelectedColor)
-//                btnColor.setBackgroundColor(lastSelectedColor)
             }
             .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ ->
             }
@@ -276,13 +220,12 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
     }
 
     override fun onColorSelected(color: Int) {
-        if( color == 0){
-                changeTextEntityColor(color)
+        if(color == 0){
+            changeTextEntityColor(color)
         }
         else {
             mColorCode= color
             edtContent.setTextColor(color)
-//            btnColor.setBackgroundColor(color)
         }
     }
 
@@ -311,7 +254,6 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             return fragment
         }
 
-        //show dialog with empty text
         fun show(@NonNull appcompatActivity: AppCompatActivity): EditDialogFragment {
             return show(appcompatActivity, Constants.DEFAULT_TEXT, Color.WHITE)
         }
