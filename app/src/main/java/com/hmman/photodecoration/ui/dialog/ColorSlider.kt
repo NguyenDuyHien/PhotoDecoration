@@ -129,8 +129,10 @@ class ColorSlider @JvmOverloads constructor(
                 return true
             }
         } else if (event.action == MotionEvent.ACTION_UP) {
-            updateView(event.x, event.y)
-            return true
+            if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+                updateView(event.x, event.y)
+                return true
+            }
         }
         return false
     }
