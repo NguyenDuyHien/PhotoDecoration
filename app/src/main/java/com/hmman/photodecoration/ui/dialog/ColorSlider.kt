@@ -117,7 +117,18 @@ class ColorSlider @JvmOverloads constructor(
     }
 
     private fun processTouch(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) return true else if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_UP) {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            return if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+                invalidate()
+                notifyChanged()
+                true
+            } else true
+        } else if (event.action == MotionEvent.ACTION_MOVE) {
+            if (!isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
+                updateView(event.x, event.y)
+                return true
+            }
+        } else if (event.action == MotionEvent.ACTION_UP) {
             updateView(event.x, event.y)
             return true
         }
