@@ -423,9 +423,6 @@ class MotionView : FrameLayout {
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
                         var lastIndexOf = -1
-                        println("entity old ")
-                        println(moveUndoEntities[moveUndoEntities.size - 1].layer.scale)
-
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
                                 lastIndexOf = index
@@ -433,8 +430,6 @@ class MotionView : FrameLayout {
                         }
 
                         if (lastIndexOf != -1) {
-                            println("entity sap bi xoa")
-                            println(entities[lastIndexOf].layer.scale)
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
                             entities.add(moveUndoEntities.pop())
@@ -466,6 +461,9 @@ class MotionView : FrameLayout {
     fun reset() {
         entities.clear()
         selectEntity(null, false)
+        undoEntities.clear()
+        redoActionEntities.clear()
+        undoActionEntities.clear()
         updateUI()
         motionViewCallback!!.onEntityUnselected()
     }
@@ -511,8 +509,11 @@ class MotionView : FrameLayout {
         val currentText = (selectedEntity as TextEntity).getLayer().text
         textLayer.font = font
         textLayer.text = currentText
-//        textLayer.scale = selectedEntity!!.layer.scale
-
+        textLayer.scale = selectedEntity!!.layer.scale
+        textLayer.rotationInDegrees = selectedEntity!!.layer.rotationInDegrees
+        textLayer.x = selectedEntity!!.layer.x
+        textLayer.y = selectedEntity!!.layer.y
+        textLayer.isFlipped = selectedEntity!!.layer.isFlipped
         val textEntity =
             TextEntity(
                 textLayer,
@@ -524,7 +525,7 @@ class MotionView : FrameLayout {
                 this.context
             )
         initEntityBorderAndIconBackground(textEntity)
-        textEntity.layer = selectedEntity!!.layer
+//        textEntity.layer = selectedEntity!!.layer
         entities.remove(selectedEntity!!)
         entities.add(textEntity)
         selectEntity(textEntity, true)
@@ -559,19 +560,14 @@ class MotionView : FrameLayout {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
             super.onScaleEnd(detector)
-            if (selectedEntity is TextEntity) {
-                redrawTextEntityOnScaleEnd()
-            }
             if (entity != null) {
-                println("Entity after move")
-                println(entity!!.layer.x)
-                println(entity!!.layer.y)
-                println(entity!!.layer.scale)
-                println(entity!!.layer.rotationInDegrees)
                 moveUndoEntities.add(entity)
                 undoActionEntities.push("MOVE")
                 redoActionEntities.clear()
                 entity = null
+            }
+            if (selectedEntity is TextEntity) {
+                redrawTextEntityOnScaleEnd()
             }
         }
     }

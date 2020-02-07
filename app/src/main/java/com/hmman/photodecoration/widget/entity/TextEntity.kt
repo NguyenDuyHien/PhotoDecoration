@@ -40,10 +40,6 @@ class TextEntity(
         updateRealEntity(false)
     }
 
-    private fun setBitmap() : Bitmap {
-       return this.bitmap!!
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
     fun updateEntity(moveToPreviousCenter: Boolean) { // save previous center
         val oldCenter = absoluteCenter()
@@ -56,7 +52,6 @@ class TextEntity(
         val width: Float = bitmap!!.width.toFloat()
         val height: Float = bitmap!!.height.toFloat()
         val widthAspect = 1F * canvasWidth / width
-        val heightAspect = 1F * canvasHeight / height
         // for text we always match text width with parent width
 //        holyScale = min(widthAspect, heightAspect)
         holyScale = widthAspect
@@ -134,7 +129,7 @@ class TextEntity(
         )
             .setAlignment(Layout.Alignment.ALIGN_CENTER)
             .setIncludePad(true)
-            .setLineSpacing(0.5f, 1f)
+            .setLineSpacing(1f, 1f)
             .build()
 
         val boundsHeight = sl.height
@@ -208,15 +203,6 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
-
-        updateEntity()
-        println("Entity after clone")
-        println(entity.getLayer().x)
-        println(entity.getLayer().y)
-        println(entity.getLayer().scale)
-        println(entity.getLayer().font!!.getColor())
-        println(entity.getLayer().font!!.getTextSize())
-        println(entity.getLayer().rotationInDegrees)
         return entity
     }
 
