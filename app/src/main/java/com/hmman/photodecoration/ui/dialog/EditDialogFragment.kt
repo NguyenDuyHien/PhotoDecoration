@@ -100,9 +100,9 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             Log.i(TAG, "fitString: isTooLarge 1 : " + true)
             val lineList: List<String> = mContent.split("\n")
             Log.i(TAG, "fitString: stringList$lineList")
-            if (lineList != null && lineList.size > 0) {
+            if (lineList.size > 0) {
                 for (i in lineList.indices) {
-                    if (lineList[i] != null && !lineList[i].isEmpty()) {
+                    if (!lineList[i].isEmpty()) {
                         if (isTooLarge(edtContent, lineList[i])) {
                             Log.i(
                                 TAG,
@@ -110,12 +110,12 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                             )
                             val wordList: List<String> = lineList[i].split(" ")
                             Log.i(TAG, "fitString: wordList$wordList")
-                            if (wordList != null && wordList.size > 0) {
+                            if (wordList.size > 0) {
                                 Log.i(TAG, "fitString: wordList : " + wordList.size)
                                 val temp = java.lang.StringBuilder()
                                 var lastWord: String? = ""
                                 for (j in wordList.indices) {
-                                    if (wordList[j] != null && !wordList[j].isEmpty()) {
+                                    if (!wordList[j].isEmpty()) {
                                         if (isTooLarge(edtContent, wordList[j])) {
                                             Log.i(
                                                 TAG,
@@ -149,10 +149,10 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                                                 temp.append(lastWord)
                                                 if (j == wordList.size - 1 && i != lineList.size - 1) {
                                                     Log.i(TAG, "fitString: ###### 1")
-                                                    finalText.append("\n" + lastWord!!.trim { it <= ' ' } + "\n")
+                                                    finalText.append("\n" + lastWord.trim { it <= ' ' } + "\n")
                                                 } else {
                                                     Log.i(TAG, "fitString: ###### 2")
-                                                    finalText.append("\n" + lastWord!!.trim { it <= ' ' })
+                                                    finalText.append("\n" + lastWord.trim { it <= ' ' })
                                                 }
                                             } else {
                                                 if (j == wordList.size - 1 && i != lineList.size - 1) {
