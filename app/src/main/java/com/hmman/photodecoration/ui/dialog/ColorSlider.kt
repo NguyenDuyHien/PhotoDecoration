@@ -1,22 +1,19 @@
 package com.hmman.photodecoration.ui.dialog
 
-import com.hmman.photodecoration.R
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import android.graphics.RectF
-
+import com.hmman.photodecoration.R
 
 
 class ColorSlider @JvmOverloads constructor(
@@ -62,20 +59,28 @@ class ColorSlider @JvmOverloads constructor(
             R.color.editDialogBackground
         )
         mSelectorPaint!!.strokeWidth = 2f
-        setOnTouchListener { v, event -> processTouch(event) }
+        setOnTouchListener { _, event -> processTouch(event) }
         var selectorColor = 0
         if (attrs != null) {
             val a =
                 context.theme.obtainStyledAttributes(attrs, R.styleable.ColorSlider, 0, 0)
             try {
                 selectorColor = a.getColor(R.styleable.ColorSlider_cs_selector_color, 0)
+                val id = a.getResourceId(R.styleable.ColorSlider_cs_colors, 0)
+                if (id != 0) {
+                    val ids = resources.getIntArray(id)
+                    if (ids.isNotEmpty()) {
+                        mColors = IntArray(ids.size)
+                        System.arraycopy(ids, 0, mColors, 0, ids.size)
+                    }
+                }
             } catch (e: Exception) {
                 Log.d("ColorSlider", "init: " + e.localizedMessage)
             } finally {
                 a.recycle()
             }
         }
-        if (mColors.size == 0) {
+        if (mColors.isEmpty()) {
             initDefaultColors()
         }
         mColorRects = arrayOfNulls(mColors.size)
@@ -159,12 +164,12 @@ class ColorSlider @JvmOverloads constructor(
     }
 
     private fun drawSlider(canvas: Canvas) {
-        if (mPaint != null) {
+        mPaint?.let {mPaint ->
             for (i in mColorRects.indices) {
-                mPaint!!.color = mColors[i]
 //                mColorRects[i]?.let { canvas.drawRect(it, this.mPaint!!) }
                 if (i == selectedItem && i != 0 && i != this.mColorRects.size - 1) {
-                    canvas.drawRect(mColorRects[i]!!, mPaint!!)
+                    mPaint.color = mColors[i]
+                    canvas.drawRect(mColorRects[i]!!, mPaint)
                     if (mSelectorPaint != null) {
 //                        canvas.drawRect(mColorFullRects[i]!!, mSelectorPaint!!)
                         canvas.drawCircle(
@@ -177,26 +182,63 @@ class ColorSlider @JvmOverloads constructor(
                 } else {
                     when (i) {
                         0 -> {
-                            canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint!!)
+                            mPaint.color = mColors[i]
+                            canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
                             canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
                                 mColorRects[i]!!.top.toFloat(),
                                 mColorRects[i]!!.right.toFloat(),
-                                mColorRects[i]!!.bottom.toFloat(), mPaint!!
+                                mColorRects[i]!!.bottom.toFloat(), mPaint
                             )
                         }
-                        this.mColorRects.size - 2 -> {
-                            canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint!!)
+                        this.mColorRects.size - 1 -> {
+                            // Draw gradient and half circle
+                            val colors = IntArray(mColors.size - 1)
+                            System.arraycopy(mColors, 0, colors, 0, mColors.size - 1)
+                            mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
+                            canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
                             canvas.drawRect( mColorRects[i]!!.left.toFloat(),
                                 mColorRects[i]!!.top.toFloat(),
                                 (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-                                mColorRects[i]!!.bottom.toFloat(), mPaint!!)
+                                mColorRects[i]!!.bottom.toFloat(), mPaint)
+                            mPaint!!.shader = null
                         }
-                        else -> canvas.drawRect(mColorRects[i]!!, mPaint!!)
+                        else -> {
+                            mPaint.color = mColors[i]
+                            canvas.drawRect(mColorRects[i]!!, mPaint)
+                        }
                     }
 
                 }
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private fun drawRectWithGradient(
+        width: Int,
+        height: Int,
+        colors: IntArray
+    ): Shader? {
+        val gradientDrawable = GradientDrawable()
+        val shader: Shader
+            gradientDrawable.setColors(colors)
+            gradientDrawable.cornerRadii = floatArrayOf(
+                0f,
+                0f,
+                0f,
+                0f,
+                0f,
+                0f,
+                0f,
+                0f
+            )
+            val mutableBitmap =
+                Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            val _canvas = Canvas(mutableBitmap)
+            gradientDrawable.setBounds(0, 0, width, height)
+            gradientDrawable.draw(_canvas)
+            shader = BitmapShader(mutableBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
+            return shader
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

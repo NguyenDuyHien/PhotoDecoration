@@ -14,4 +14,24 @@
     <color name="stroke_color">#03A9F4</color>
     <color name="editDialogBackground">#B3000000</color>
     <color name="fill_color">#50000000</color>
+
+    <color name="color1">#FFFFFF</color>
+    <color name="color2">#000000</color>
+    <color name="color3">#666666</color>
+    <color name="color4">#808080</color>
+    <color name="color5">#CCCCCC</color>
+    <color name="color6">#D33115</color>
+    <color name="color7">#F44E3B</color>
+    <color name="color8">#F46F3B</color>
+    <color name="color9">#FE9200</color>
+    <color name="color10">#FFC107</color>
+    <color name="color11">#FCDC00</color>
+    <color name="color12">#BAD279</color>
+    <color name="color13">#A4DD00</color>
+    <color name="color14">#16A55F</color>
+    <color name="color15">#73D8FF</color>
+    <color name="color16">#2196F3</color>
+    <color name="color17">#1976D2</color>
+    <color name="color18">#8079D2</color>
+    <color name="color19">#8A40BF</color>
 </resources>
