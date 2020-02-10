@@ -122,9 +122,10 @@ class ColorSlider @JvmOverloads constructor(
 
     fun setLastSelectedColor(@ColorInt color: Int) {
         for (i in mColors.indices) {
-            if (color == mColors[i]) {
+            if (color == mColors[i] || i == mColors.size - 1) {
                 selectedItem = i
                 this.invalidate()
+                break
             }
         }
     }
