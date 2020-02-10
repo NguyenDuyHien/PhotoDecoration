@@ -154,11 +154,21 @@ class ColorSlider @JvmOverloads constructor(
                 }
             }
         }
-        if (isUp) {
-            invalidate()
-        } else if (!isUp && changed){
-            invalidate()
-            notifyChanged()
+
+        if  (selectedItem != mColorFullRects.size - 1) {
+            if (isUp) {
+                invalidate()
+            } else if (!isUp && changed) {
+                invalidate()
+                notifyChanged()
+            }
+        } else {
+            if (isUp) {
+                invalidate()
+                notifyChanged()
+            } else {
+                invalidate()
+            }
         }
     }
 
