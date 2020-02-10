@@ -106,6 +106,7 @@ class TextEntity(
         val boundsWidth = canvasWidth * 2
 
         textPaint.style = Paint.Style.FILL
+        textPaint.typeface = fontProvider.getTypeface(textLayer.font!!.typeface)
         textPaint.textSize = textLayer.font!!.size * canvasWidth * 3
         textPaint.color =  textLayer.font?.color!!
 
