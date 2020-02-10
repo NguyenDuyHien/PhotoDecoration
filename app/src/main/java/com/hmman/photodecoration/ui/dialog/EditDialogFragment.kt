@@ -73,8 +73,8 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         mFontName = arguments!!.getString(Constants.FONT_NAME)
         edtContent.setTextColor(mColorCode!!)
         edtContent.setText(mContent)
-        edtContent.setTypeface(fontProvider.getTypeface(mFontName))
-        edtContent.setSelection(edtContent.getText()!!.length)
+        edtContent.typeface = fontProvider.getTypeface(mFontName)
+        edtContent.setSelection(edtContent.text!!.length)
 //        btnColor.setBackgroundColor(mColorCode!!)
 
         color_slider.setSelectorColor(Color.TRANSPARENT)
@@ -87,17 +87,17 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         spnFont.adapter = fontAdapter
         spnFont.setSelection(fontPosition)
 
-        spnFont.setOnItemSelectedListener(object : OnItemSelectedListener {
+        spnFont.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
-                mFontName = fontList.get(i)
-                edtContent.setTypeface(fontProvider.getTypeface(mFontName))
+                mFontName = fontList[i]
+                edtContent.typeface = fontProvider.getTypeface(mFontName)
                 fontAdapter.setSelection(i)
             }
 
             override fun onNothingSelected(adapterView: AdapterView<*>?) {
 
             }
-        })
+        }
 
         txtDone.setOnClickListener {
             dismiss()
@@ -125,16 +125,16 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         val finalText = StringBuilder()
         return if (isTooLarge(edtContent, mContent)) {
             val lineList: List<String> = mContent.split("\n")
-            if (lineList.size > 0) {
+            if (lineList.isNotEmpty()) {
                 for (i in lineList.indices) {
-                    if (!lineList[i].isEmpty()) {
+                    if (lineList[i].isNotEmpty()) {
                         if (isTooLarge(edtContent, lineList[i])) {
                             val wordList: List<String> = lineList[i].split("\\s+")
-                            if (wordList.size > 0) {
+                            if (wordList.isNotEmpty()) {
                                 val temp = java.lang.StringBuilder()
                                 var lastWord: String? = ""
                                 for (j in wordList.indices) {
-                                    if (!wordList[j].isEmpty()) {
+                                    if (wordList[j].isNotEmpty()) {
                                         if (isTooLarge(edtContent, wordList[j])) {
                                             val newString =
                                                 fitCharacter(edtContent, wordList[j])
@@ -193,7 +193,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         }
     }
 
-    fun fitCharacter(editText: EditText?, message: String): String? {
+    private fun fitCharacter(editText: EditText?, message: String): String? {
         val finalWord = StringBuilder()
         var startIndex = 0
         var endIndex = 1
@@ -201,20 +201,20 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             val tempSplitWord = message.substring(startIndex, endIndex)
             if (!isTooLarge(editText, tempSplitWord)) { // isTooLarge
                 if (endIndex < message.length) {
-                    endIndex = endIndex + 1
+                    endIndex += 1
                 } else {
                     val result = finalWord.append(tempSplitWord).toString()
                     return result
                 }
             } else {
-                endIndex = endIndex - 1
+                endIndex -= 1
                 val splitWord = message.substring(startIndex, endIndex)
                 val isTooLarge = isTooLarge(editText, splitWord)
                 if (!isTooLarge) {
                     finalWord.append(splitWord + "\n")
                 }
                 startIndex = endIndex
-                endIndex = endIndex + 1
+                endIndex += 1
             }
         }
     }

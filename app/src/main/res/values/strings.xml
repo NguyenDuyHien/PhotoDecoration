@@ -6,6 +6,7 @@
     <string name="permission_message">Please allow storage permission to load photo!</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
     <string name="bringToFront">Bring to Front</string>
     <string name="moveToBack">Move to Back</string>
     <string name="deleteEntity">Delete</string>
