@@ -25,22 +25,22 @@ class FontAdater (
         fontProvider = FontProvider(context.resources)
     }
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = super.getDropDownView(position, convertView, parent) as TextView
         view.setTypeface(fontProvider.getTypeface(fontList.get(position)))
 
         when (position){
             selectedItem -> {
-//                view.setTextColor(Color.BLUE)
-//                view.setPaintFlags(view.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
-                view.setBackgroundColor(ContextCompat.getColor(context, R.color.selectedFont))
-                view.setTextColor(Color.WHITE)
+                view.apply {
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.selectedFont))
+                    setTextColor(Color.WHITE)
+                }
             }
             else -> {
-//                view.setTextColor(Color.BLACK)
-//                view.setPaintFlags(0)
-                view.setBackgroundColor(Color.WHITE)
-                view.setTextColor(Color.BLACK)
+                view.apply {
+                    setBackgroundColor(Color.WHITE)
+                    setTextColor(Color.BLACK)
+                }
             }
         }
 
