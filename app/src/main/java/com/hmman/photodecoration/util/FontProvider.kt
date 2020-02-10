@@ -78,7 +78,11 @@ class FontProvider(private val resources: Resources) {
         fontNameToTypefaceFile["Montserrat - Italic"] = "Montserrat-Italic.ttf"
         fontNameToTypefaceFile["Montserrat - Light"] = "Montserrat-Light.ttf"
         fontNameToTypefaceFile["Montserrat - Bold"] = "Montserrat-Bold.ttf"
-        
+
+        fontNameToTypefaceFile["PatrickHand - Regular"] = "PatrickHand-Regular.ttf"
+        fontNameToTypefaceFile["PaytoneOne - Regular"] = "PaytoneOne-Regular.ttf"
+//        fontNameToTypefaceFile["Yellowtail - Regular"] = "Yellowtail-Regular.ttf"
+
         fontNameToTypefaceFile["Helvetica"] = "Helvetica.ttf"
         fontNames = ArrayList(fontNameToTypefaceFile.keys)
     }
