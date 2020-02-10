@@ -27,6 +27,7 @@ import com.hmman.photodecoration.adapter.FontAdater
 import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.FontProvider
 import kotlinx.android.synthetic.main.edit_dialog.*
+import java.util.regex.Pattern
 
 class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
@@ -134,7 +135,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                 for (i in lineList.indices) {
                     if (lineList[i].isNotEmpty()) {
                         if (isTooLarge(edtContent, lineList[i])) {
-                            val wordList: List<String> = lineList[i].split("\\s+")
+                            val wordList: List<String> = lineList[i].split(" ")
                             if (wordList.isNotEmpty()) {
                                 val temp = java.lang.StringBuilder()
                                 var lastWord: String? = ""
