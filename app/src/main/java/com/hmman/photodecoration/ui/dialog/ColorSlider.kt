@@ -35,9 +35,10 @@ class ColorSlider @JvmOverloads constructor(
     private var mListener: OnColorSelectedListener? =
         null
     var isLockMode = false
+    // isUp = true -> draw small circle, isUp = false -> draw big circle
     var isUp = true
-    var isFirstTime = true
     private var radius: Float = 0.toFloat()
+
     fun setSelectorColor(@ColorInt color: Int) {
         if (mSelectorPaint != null) {
             mSelectorPaint!!.color = color
@@ -119,12 +120,22 @@ class ColorSlider @JvmOverloads constructor(
         )
     }
 
+    fun setLastSelectedColor(@ColorInt color: Int) {
+        for (i in mColors.indices) {
+            if (color == mColors[i]) {
+                selectedItem = i
+                this.invalidate()
+            }
+        }
+    }
+
     private fun processTouch(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             for (i in mColorRects.indices) {
                 val rect = mColorRects[i]
                 if (rect != null) {
                     if (isTouchInRange(rect, event.x.toInt(), event.y.toInt())) {
+                        isUp = false
                         updateView(event.x, event.y)
                         return true
                     }
@@ -132,6 +143,7 @@ class ColorSlider @JvmOverloads constructor(
             }
             return false
         } else if (event.action == MotionEvent.ACTION_MOVE) {
+            isUp = false
             updateView(event.x, event.y)
             return true
         } else if (event.action == MotionEvent.ACTION_UP) {
@@ -202,7 +214,7 @@ class ColorSlider @JvmOverloads constructor(
 
         mPaint?.let {mPaint ->
             for (i in mColorRects.indices) {
-                if (i == selectedItem && !isFirstTime) {
+                if (i == selectedItem) {
                     if (mSelectorPaint != null && i == 0) {
                         mPaint.color = mColors[i]
                         canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
@@ -223,7 +235,6 @@ class ColorSlider @JvmOverloads constructor(
                                 radius + (radius *0.8f),
                                 radius *0.1f,
                                 mPaint)
-                            isUp = false
                         }
                     } else if (mSelectorPaint != null && i == mColorRects.size - 1){
                         mPaint.shader = drawRectWithGradient(mColorFullRects[i]!!.width(), mColorFullRects[i]!!.height(), colors)
@@ -244,7 +255,6 @@ class ColorSlider @JvmOverloads constructor(
                                 radius + (radius *0.8f),
                                 radius *0.1f,
                                 mPaint)
-                            isUp = false
                         }
                         mPaint.shader = null
                     } else {
@@ -262,7 +272,6 @@ class ColorSlider @JvmOverloads constructor(
                                 radius + (radius *0.8f),
                                 radius *0.1f,
                                 mPaint)
-                            isUp = false
                         }
                     }
                 } else {
@@ -292,7 +301,6 @@ class ColorSlider @JvmOverloads constructor(
                 }
             }
         }
-        isFirstTime = false
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)

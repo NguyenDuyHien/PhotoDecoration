@@ -79,7 +79,9 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
         color_slider.setSelectorColor(Color.TRANSPARENT)
         color_slider.setListener(mListener)
-
+        mColorCode?.let {
+            color_slider.setLastSelectedColor(it)
+        }
 
         val fontList = fontProvider.getFontNames()
         val fontAdapter = FontAdater(context!!, android.R.layout.simple_spinner_dropdown_item, fontList)
@@ -114,7 +116,6 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         object : ColorSlider.OnColorSelectedListener {
             override fun onColorChanged(position: Int, color: Int) {
                 onColorSelected(color)
-
             }
         }
 
@@ -241,7 +242,6 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             }
             .setNegativeButton(Constants.DEFAULT_CANCEL_BUTTON) { _, _ ->
             }
-
             .build()
             .show()
     }
@@ -251,7 +251,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             changeTextEntityColor(color)
         }
         else {
-            mColorCode= color
+            mColorCode = color
             edtContent.setTextColor(color)
         }
     }
