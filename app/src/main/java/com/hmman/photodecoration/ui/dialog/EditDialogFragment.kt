@@ -89,6 +89,10 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         spnFont.adapter = fontAdapter
         spnFont.setSelection(fontPosition)
 
+        btnShow.setOnClickListener{
+            spnFont.performClick()
+        }
+
         spnFont.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
                 mFontName = fontList[i]

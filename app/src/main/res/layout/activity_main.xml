@@ -132,83 +132,83 @@
         app:layout_constraintBottom_toTopOf="@id/btnPreview"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <LinearLayout
-        app:layout_constraintHorizontal_chainStyle="packed"
-        android:id="@+id/lnTextTool"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_8sdp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toStartOf="@id/actionTool"
-        app:layout_constraintStart_toStartOf="parent">
+<!--    <LinearLayout-->
+<!--        app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--        android:id="@+id/lnTextTool"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="@dimen/_8sdp"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnSave"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/actionTool"-->
+<!--        app:layout_constraintStart_toStartOf="parent">-->
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:tooltipText="@string/decreaseSize"
-            android:id="@+id/btnDecrease"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/decrease" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:tooltipText="@string/decreaseSize"-->
+<!--            android:id="@+id/btnDecrease"-->
+<!--            android:layout_width="@dimen/_20sdp"-->
+<!--            android:layout_height="@dimen/_20sdp"-->
+<!--            android:layout_marginRight="@dimen/_16sdp"-->
+<!--            android:background="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/decrease" />-->
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:tooltipText="@string/increaseSize"
-            android:id="@+id/btnIncrease"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/increase" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:tooltipText="@string/increaseSize"-->
+<!--            android:id="@+id/btnIncrease"-->
+<!--            android:layout_width="@dimen/_20sdp"-->
+<!--            android:layout_height="@dimen/_20sdp"-->
+<!--            android:layout_marginRight="@dimen/_16sdp"-->
+<!--            android:background="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/increase" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
-    <LinearLayout
-        android:id="@+id/actionTool"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_8sdp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toStartOf="@id/btnReset"
-        app:layout_constraintStart_toEndOf="@id/lnTextTool">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/actionTool"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="@dimen/_8sdp"-->
+<!--        android:gravity="center"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/btnSave"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/btnReset"-->
+<!--        app:layout_constraintStart_toEndOf="@id/lnTextTool">-->
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:tooltipText="@string/bringToFront"
-            android:id="@+id/btnBringToFront"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/move_up" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:tooltipText="@string/bringToFront"-->
+<!--            android:id="@+id/btnBringToFront"-->
+<!--            android:layout_width="@dimen/_20sdp"-->
+<!--            android:layout_height="@dimen/_20sdp"-->
+<!--            android:layout_marginRight="@dimen/_16sdp"-->
+<!--            android:background="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/move_up" />-->
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:tooltipText="@string/moveToBack"
-            android:id="@+id/btnMoveToBack"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginRight="@dimen/_16sdp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/move_down" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:tooltipText="@string/moveToBack"-->
+<!--            android:id="@+id/btnMoveToBack"-->
+<!--            android:layout_width="@dimen/_20sdp"-->
+<!--            android:layout_height="@dimen/_20sdp"-->
+<!--            android:layout_marginRight="@dimen/_16sdp"-->
+<!--            android:background="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/move_down" />-->
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:tooltipText="@string/deleteEntity"
-            android:id="@+id/btnDelete"
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/delete" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:tooltipText="@string/deleteEntity"-->
+<!--            android:id="@+id/btnDelete"-->
+<!--            android:layout_width="@dimen/_20sdp"-->
+<!--            android:layout_height="@dimen/_20sdp"-->
+<!--            android:background="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/delete" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
