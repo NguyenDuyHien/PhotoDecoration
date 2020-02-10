@@ -13,6 +13,8 @@ import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
+import com.hmman.photodecoration.R
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
@@ -101,8 +103,8 @@ class TextEntity(
     @RequiresApi(Build.VERSION_CODES.M)
     @NonNull
     private fun createBitmap(@NonNull textLayer: TextLayer, @Nullable reuseBmp: Bitmap?): Bitmap? {
-
         textPaint.style = Paint.Style.FILL
+        textPaint.typeface = fontProvider.getTypeface(textLayer.font!!.typeface)
         textPaint.textSize = textLayer.font!!.size * canvasWidth
         textPaint.color = textLayer.font?.color!!
 

@@ -11,6 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.annotation.ColorInt
 import androidx.annotation.NonNull
@@ -20,7 +23,9 @@ import androidx.fragment.app.DialogFragment
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.hmman.photodecoration.R
+import com.hmman.photodecoration.adapter.FontAdater
 import com.hmman.photodecoration.util.Constants
+import com.hmman.photodecoration.util.FontProvider
 import kotlinx.android.synthetic.main.edit_dialog.*
 
 class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
@@ -49,6 +54,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
 
     private var mTextEditor: TextEditor? = null
     private var mContent: String? = null
+    private var mFontName: String? = null
     private var mInputMethodManager: InputMethodManager? = null
     var mColorCode: Int? = null
 
@@ -59,11 +65,15 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
             activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         edtContent.requestFocus()
 
+        val fontProvider = FontProvider(context!!.resources)
+
         mInputMethodManager!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
         mColorCode = arguments!!.getInt(Constants.COLOR_CODE)
         mContent = arguments!!.getString(Constants.TEXT_CONTENT)
+        mFontName = arguments!!.getString(Constants.FONT_NAME)
         edtContent.setTextColor(mColorCode!!)
         edtContent.setText(mContent)
+        edtContent.setTypeface(fontProvider.getTypeface(mFontName))
         edtContent.setSelection(edtContent.getText()!!.length)
 //        btnColor.setBackgroundColor(mColorCode!!)
 
@@ -71,13 +81,31 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         color_slider.setListener(mListener)
 
 
+        val fontList = fontProvider.getFontNames()
+        val fontAdapter = FontAdater(context!!, android.R.layout.simple_spinner_dropdown_item, fontList)
+        val fontPosition = fontList.indexOf(mFontName)
+        spnFont.adapter = fontAdapter
+        spnFont.setSelection(fontPosition)
+
+        spnFont.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {
+                mFontName = fontList.get(i)
+                edtContent.setTypeface(fontProvider.getTypeface(mFontName))
+                fontAdapter.setSelection(i)
+            }
+
+            override fun onNothingSelected(adapterView: AdapterView<*>?) {
+
+            }
+        })
+
         txtDone.setOnClickListener {
             dismiss()
             mInputMethodManager!!.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
             mContent = edtContent.text.toString()
             if (!TextUtils.isEmpty(mContent)) {
                 mContent = fitString(edtContent, edtContent.text.toString())
-                mTextEditor!!.onDone(mContent!!, mColorCode!!)
+                mTextEditor!!.onDone(mContent!!, mColorCode!!, mFontName!!)
             }
         }
     }
@@ -234,7 +262,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
     }
 
     interface TextEditor {
-        fun onDone(text: String, colorCode: Int)
+        fun onDone(text: String, colorCode: Int, fontName: String)
     }
 
     companion object {
@@ -243,11 +271,13 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         fun show(
             @NonNull appcompatActivity: AppCompatActivity,
             @NonNull inputText: String,
-            @ColorInt colorCode: Int
+            @ColorInt colorCode: Int,
+            @NonNull fontName: String
         ): EditDialogFragment {
             val args = Bundle()
             args.putString(Constants.TEXT_CONTENT, inputText)
             args.putInt(Constants.COLOR_CODE, colorCode)
+            args.putString(Constants.FONT_NAME, fontName)
             val fragment = EditDialogFragment()
             fragment.arguments = args
             fragment.show(appcompatActivity.supportFragmentManager, TAG)
@@ -255,7 +285,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         }
 
         fun show(@NonNull appcompatActivity: AppCompatActivity): EditDialogFragment {
-            return show(appcompatActivity, Constants.DEFAULT_TEXT, Color.WHITE)
+            return show(appcompatActivity, Constants.DEFAULT_TEXT, Color.WHITE, FontProvider.DEFAULT_FONT_NAME)
         }
     }
 }

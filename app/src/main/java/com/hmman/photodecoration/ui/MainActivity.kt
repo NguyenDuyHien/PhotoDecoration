@@ -398,8 +398,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    private fun addText(text: String, colorCode: Int) {
-        val textLayer = createTextLayer(text, colorCode)!!
+    private fun addText(text: String, colorCode: Int, fontName: String) {
+        val textLayer = createTextLayer(text, colorCode, fontName)!!
         val textEntity =
             TextEntity(
                 textLayer,
@@ -483,16 +483,18 @@ class MainActivity : AppCompatActivity(),
         val editDialog = EditDialogFragment.show(
             this,
             textEntity!!.getLayer().text!!,
-            textEntity.getLayer().font!!.color!!
+            textEntity.getLayer().font!!.color!!,
+            textEntity.getLayer().font!!.typeface!!
         )
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
-            override fun onDone(text: String, colorCode: Int) {
-                motionView.moveUndoEntities.add(textEntity.clone())
+            override fun onDone(text: String, colorCode: Int, fontName: String) {
+                motionView.moveUndoEntities.add(textEntity!!.clone())
                 motionView.undoActionEntities.push("MOVE")
                 motionView.redoActionEntities.clear()
                 textEntity.getLayer().text = text
                 textEntity.getLayer().font!!.color = colorCode
+                textEntity.getLayer().font!!.typeface = fontName
                 textEntity.updateEntity(true)
 
                 motionView.invalidate()
@@ -523,18 +525,18 @@ class MainActivity : AppCompatActivity(),
         val editDialog: EditDialogFragment = EditDialogFragment.show(this)
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
-            override fun onDone(text: String, colorCode: Int) {
-                addText(text, colorCode)
+            override fun onDone(text: String, colorCode: Int, fontName: String) {
+                addText(text, colorCode, fontName)
             }
         })
     }
 
-    private fun createTextLayer(text: String, colorCode: Int): TextLayer? {
+    private fun createTextLayer(text: String, colorCode: Int, fontName: String): TextLayer? {
         val textLayer = TextLayer()
         val font = Font()
         font.color = colorCode
         font.size = TextLayer.Limits.INITIAL_FONT_SIZE
-        font.typeface = fontProvider.getDefaultFontName()
+        font.typeface = fontName
         textLayer.font = font
         textLayer.text = text
         return textLayer

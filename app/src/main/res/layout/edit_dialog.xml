@@ -21,6 +21,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:background="@color/white"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:id="@+id/spnFont"
+        app:layout_constraintBottom_toBottomOf="@id/txtDone"
+        app:layout_constraintTop_toTopOf="@id/txtDone"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"/>
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtContent"
         style="@style/EditText"
