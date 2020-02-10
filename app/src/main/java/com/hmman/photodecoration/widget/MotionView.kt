@@ -422,9 +422,7 @@ class MotionView : FrameLayout {
                         unSelectEntity()
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
-                        println("On Move")
                         undoActionEntities.forEach { println(it) }
-                        println(moveUndoEntities.size)
                         var lastIndexOf = -1
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
@@ -433,6 +431,11 @@ class MotionView : FrameLayout {
                         }
 
                         if (lastIndexOf != -1) {
+                            if (moveUndoEntities[moveUndoEntities.size - 1].layer is TextLayer) {
+                                val textLayer =
+                                    moveUndoEntities[moveUndoEntities.size - 1].layer as TextLayer
+                            }
+
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
                             entities.add(moveUndoEntities.pop())
@@ -636,8 +639,6 @@ class MotionView : FrameLayout {
                 moveUndoEntities.forEach {
                     if (checkDuplication(it, entity!!)) checkDuplicate = true
                 }
-                println("kiem tra")
-                println(checkDuplicate)
                 if (!checkDuplicate) {
                     moveUndoEntities.add(entity)
                     undoActionEntities.push("MOVE")
@@ -656,8 +657,19 @@ class MotionView : FrameLayout {
             && entity.layer.scale == preparedEntity.layer.scale
             && entity.layer.rotationInDegrees == preparedEntity.layer.rotationInDegrees
         ) {
+            if (entity.layer is TextLayer && preparedEntity.layer is TextLayer) {
+                val preparedLayer = preparedEntity.layer as TextLayer
+                val textLayer = entity.layer as TextLayer
+                if (textLayer.font!!.color != preparedLayer.font!!.color
+                    || textLayer.font!!.typeface != preparedLayer.font!!.typeface
+                    || textLayer.text != preparedLayer.text
+                ) {
+                    return false
+                }
+            }
             return true
         }
+
         return false
     }
 

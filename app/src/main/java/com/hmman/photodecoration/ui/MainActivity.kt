@@ -496,9 +496,13 @@ class MainActivity : AppCompatActivity(),
                     motionView.undoActionEntities.push("MOVE")
                     motionView.redoActionEntities.clear()
                     textEntity.getLayer().text = text
+                    println("color code")
+                    println(colorCode)
                     textEntity.getLayer().font!!.color = colorCode
                     textEntity.getLayer().font!!.typeface = fontName
                     textEntity.updateEntity(true)
+                    println("after update entity")
+                    println(textEntity.getLayer().font!!.color)
                 }
             }
         })
