@@ -52,7 +52,7 @@ class MotionView : FrameLayout {
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()
     private val removeEntities: Stack<MotionEntity> = Stack()
-
+    private var checkListernerPerAction: Boolean = false
     @Nullable
     var selectedEntity: MotionEntity? = null
         private set
@@ -527,11 +527,7 @@ class MotionView : FrameLayout {
                 BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                 this.context
             )
-
-//        initEntityBorder(textEntity)
-//        initEntityIconBackground(textEntity)
         initEntityBorderAndIconBackground(textEntity)
-        textEntity.layer = selectedEntity!!.layer
         entities.remove(selectedEntity!!)
         entities.add(textEntity)
         selectEntity(textEntity, true)
@@ -567,18 +563,19 @@ class MotionView : FrameLayout {
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
             super.onScaleEnd(detector)
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
             }
             if (selectedEntity is TextEntity) {
                 redrawTextEntityOnScaleEnd()
-            }
-            if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                entity = null
             }
         }
     }
@@ -586,6 +583,7 @@ class MotionView : FrameLayout {
     private inner class RotateListener : RotateGestureDetector.SimpleOnRotateGestureListener() {
         var entity: MotionEntity? = null
         override fun onRotate(detector: RotateGestureDetector?): Boolean {
+            checkListernerPerAction = true
             if (selectedEntity != null) {
                 selectedEntity!!.layer.postRotate(-detector!!.rotationDegreesDelta)
                 updateUI()
@@ -602,10 +600,16 @@ class MotionView : FrameLayout {
 
         override fun onRotateEnd(detector: RotateGestureDetector?) {
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
             }
         }
     }
@@ -628,12 +632,33 @@ class MotionView : FrameLayout {
 
         override fun onMoveEnd(detector: MoveGestureDetector) {
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                println("kiem tra")
+                println(checkDuplicate)
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
+
             }
         }
+
+
+    }
+
+    private fun checkDuplication(entity: MotionEntity, preparedEntity: MotionEntity): Boolean {
+        if (entity.layer.x == preparedEntity.layer.x && entity.layer.y == preparedEntity.layer.y
+            && entity.layer.scale == preparedEntity.layer.scale
+            && entity.layer.rotationInDegrees == preparedEntity.layer.rotationInDegrees
+        ) {
+            return true
+        }
+        return false
     }
 
     companion object {

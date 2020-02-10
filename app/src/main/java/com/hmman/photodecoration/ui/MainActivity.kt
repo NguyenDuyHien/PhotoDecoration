@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
@@ -489,15 +488,18 @@ class MainActivity : AppCompatActivity(),
         editDialog.setOnDoneListener(object : EditDialogFragment.TextEditor {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onDone(text: String, colorCode: Int, fontName: String) {
-                motionView.moveUndoEntities.add(textEntity!!.clone())
-                motionView.undoActionEntities.push("MOVE")
-                motionView.redoActionEntities.clear()
-                textEntity.getLayer().text = text
-                textEntity.getLayer().font!!.color = colorCode
-                textEntity.getLayer().font!!.typeface = fontName
-                textEntity.updateEntity(true)
-
-                motionView.invalidate()
+                if (textEntity.getLayer().text != text
+                    || textEntity.getLayer().font!!.color != colorCode
+                    || textEntity.getLayer().font!!.typeface != fontName
+                ) {
+                    motionView.moveUndoEntities.add(textEntity!!.clone())
+                    motionView.undoActionEntities.push("MOVE")
+                    motionView.redoActionEntities.clear()
+                    textEntity.getLayer().text = text
+                    textEntity.getLayer().font!!.color = colorCode
+                    textEntity.getLayer().font!!.typeface = fontName
+                    textEntity.updateEntity(true)
+                }
             }
         })
     }
