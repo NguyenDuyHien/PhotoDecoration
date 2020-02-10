@@ -14,6 +14,7 @@ import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.hmman.photodecoration.R
+import kotlin.math.abs
 import kotlin.math.round
 
 
@@ -324,9 +325,9 @@ class ColorSlider @JvmOverloads constructor(
             0f
         )
         val mutableBitmap =
-            Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(abs(width), abs(height), Bitmap.Config.ARGB_8888)
         val _canvas = Canvas(mutableBitmap)
-        gradientDrawable.setBounds(0, 0, width, height)
+        gradientDrawable.setBounds(0, 0, abs(width), abs(height))
         gradientDrawable.draw(_canvas)
         shader = BitmapShader(mutableBitmap, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
         return shader
