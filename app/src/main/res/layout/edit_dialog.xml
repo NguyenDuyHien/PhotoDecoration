@@ -21,15 +21,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:background="@color/white"
+    <androidx.cardview.widget.CardView
+        android:alpha="0.7"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/white"
         android:layout_marginStart="@dimen/_8sdp"
-        android:id="@+id/spnFont"
         app:layout_constraintBottom_toBottomOf="@id/txtDone"
         app:layout_constraintTop_toTopOf="@id/txtDone"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"/>
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:background="@android:color/transparent"
+                android:id="@+id/spnFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:background="@null"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/down"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/edtContent"

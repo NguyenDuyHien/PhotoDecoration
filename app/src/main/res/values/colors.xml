@@ -34,4 +34,6 @@
     <color name="color17">#1976D2</color>
     <color name="color18">#8079D2</color>
     <color name="color19">#8A40BF</color>
+
+    <color name="selectedFont">#EC6A45</color>
 </resources>
