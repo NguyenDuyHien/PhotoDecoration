@@ -122,57 +122,42 @@ class ColorSlider @JvmOverloads constructor(
                 val rect = mColorRects[i]
                 if (rect != null) {
                     if (isTouchInRange(rect, event.x.toInt(), event.y.toInt())) {
-                        showCircle = true
-                        notifyChanged = true
                         updateView(event.x, event.y)
                         return true
                     }
                 }
             }
+            return false
         } else if (event.action == MotionEvent.ACTION_MOVE) {
             if (!isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
-                showCircle = true
-                notifyChanged = true
                 updateView(event.x, event.y)
                 return true
             }
         } else if (event.action == MotionEvent.ACTION_UP) {
-//            if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
-//                showCircle = false
-//                Log.d("aaaaaaa", "action up")
-//
-//                updateView(event.x, event.y)
-//                return true
-//            }
             if (isInRange(mColorFullRects[mColorFullRects.size - 1]!!, event.x.toInt(), event.y.toInt())) {
-                notifyChanged = false
+                updateView(event.x, event.y)
+                return true
             }
-            showCircle = false
-            updateView(event.x, event.y)
-            return true
         }
         return true
     }
 
     private fun updateView(x: Float, y: Float) {
-//        var changed = false
+        var changed = false
         for (i in mColorRects.indices) {
             val rect = mColorRects[i]
             if (rect != null) {
                 if (isInRange(rect, x.toInt(), y.toInt()) && i != selectedItem) {
                     selectedItem = i
-//                    changed = true
+                    changed = true
                     break
                 }
             }
         }
-        invalidate()
-        if (notifyChanged)
+        if (changed) {
+            invalidate()
             notifyChanged()
-//        if (changed) {
-//            invalidate()
-//            notifyChanged()
-//        }
+        }
     }
 
     private fun isInRange(@NonNull rect: Rect, x: Int, y: Int): Boolean {
@@ -195,139 +180,67 @@ class ColorSlider @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-//        if (mColorRects.isNotEmpty()) {
-        drawCircleOnTouch(canvas)
-//        }
-        drawSlider(canvas)
-    }
-
-    var showCircle = false
-    var notifyChanged = true
-
-    private fun drawSlider (canvas: Canvas){
-        val colors = resources.getIntArray(R.array.gradient_colors)
-        mPaint?.let { mPaint ->
-            for (i in mColorRects.indices) {
-                when (i) {
-                    0 -> {
-                        mPaint.color = mColors[i]
-                        canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
-                        canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-                            mColorRects[i]!!.top.toFloat(),
-                            mColorRects[i]!!.right.toFloat(),
-                            mColorRects[i]!!.bottom.toFloat(), mPaint
-                        )
-                    }
-                    this.mColorRects.size - 1 -> {
-                        // Draw gradient and half circle
-                        mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
-                        canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
-                        canvas.drawRect( mColorRects[i]!!.left.toFloat(),
-                            mColorRects[i]!!.top.toFloat(),
-                            (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-                            mColorRects[i]!!.bottom.toFloat(), mPaint)
-                        mPaint.shader = null
-                    }
-                    else -> {
-                        mPaint.color = mColors[i]
-                        canvas.drawRect(mColorRects[i]!!, mPaint)
-                    }
-                }
-            }
+        if (mColorRects.isNotEmpty()) {
+            drawSlider(canvas)
         }
     }
 
-    private fun drawCircleOnTouch(canvas: Canvas) {
+    private fun drawSlider(canvas: Canvas) {
         val colors = resources.getIntArray(R.array.gradient_colors)
 
         mPaint?.let {mPaint ->
             for (i in mColorRects.indices) {
-                if (i == selectedItem) {
+                if (i == selectedItem ) {
                     if (mSelectorPaint != null && i != mColorRects.size - 1) {
                         mPaint.color = mColors[i]
+                        canvas.drawRect(mColorRects[i]!!, mPaint)
 
-//                        canvas.drawRect(mColorRects[i]!!, mPaint)
-
-                        if (showCircle){
-                            canvas.drawCircle(
-                                (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
-                                radius,
-                                radius *0.9f,
-                                this.mPaint!!
-                            )
-                        }
-
+                        canvas.drawCircle(
+                            (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
+                            radius,
+                            radius *0.9f,
+                            this.mPaint!!
+                        )
                     } else {
                         mPaint.shader = drawRectWithGradient(mColorFullRects[i]!!.width(), mColorFullRects[i]!!.height(), colors)
+                        canvas.drawRect(mColorRects[i]!!, mPaint)
 
-//                        canvas.drawRect(mColorRects[i]!!, mPaint)
-
-                        if (showCircle){
-                            canvas.drawCircle(
-                                (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
-                                radius,
-                                radius *0.9f,
-                                this.mPaint!!
-                            )
-                        }
-
+                        canvas.drawCircle(
+                            (this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
+                            radius,
+                            radius *0.9f,
+                            this.mPaint!!
+                        )
                         mPaint.shader = null
                     }
+                } else {
+                    when (i) {
+                        0 -> {
+                            mPaint.color = mColors[i]
+                            canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
+                            canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
+                                mColorRects[i]!!.top.toFloat(),
+                                mColorRects[i]!!.right.toFloat(),
+                                mColorRects[i]!!.bottom.toFloat(), mPaint
+                            )
+                        }
+                        this.mColorRects.size - 1 -> {
+                            // Draw gradient and half circle
+                            mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
+                            canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
+                            canvas.drawRect( mColorRects[i]!!.left.toFloat(),
+                                mColorRects[i]!!.top.toFloat(),
+                                (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
+                                mColorRects[i]!!.bottom.toFloat(), mPaint)
+                            mPaint!!.shader = null
+                        }
+                        else -> {
+                            mPaint.color = mColors[i]
+                            canvas.drawRect(mColorRects[i]!!, mPaint)
+                        }
+                    }
+
                 }
-
-//                else {
-//                    when (i) {
-//                        0 -> {
-//                            mPaint.color = mColors[i]
-//                            canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
-//                            canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-//                                mColorRects[i]!!.top.toFloat(),
-//                                mColorRects[i]!!.right.toFloat(),
-//                                mColorRects[i]!!.bottom.toFloat(), mPaint
-//                            )
-//                        }
-//                        this.mColorRects.size - 1 -> {
-//                            // Draw gradient and half circle
-//                            mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
-//                            canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
-//                            canvas.drawRect( mColorRects[i]!!.left.toFloat(),
-//                                mColorRects[i]!!.top.toFloat(),
-//                                (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-//                                mColorRects[i]!!.bottom.toFloat(), mPaint)
-//                            mPaint!!.shader = null
-//                        }
-//                        else -> {
-//                            mPaint.color = mColors[i]
-//                            canvas.drawRect(mColorRects[i]!!, mPaint)
-//                        }
-//                    }
-//                }
-
-//                when (i) {
-//                    0 -> {
-//                        mPaint.color = mColors[i]
-//                        canvas.drawArc(RectF(mColorRects[i]!!),  90F, 180F, true,  mPaint)
-//                        canvas.drawRect((mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-//                            mColorRects[i]!!.top.toFloat(),
-//                            mColorRects[i]!!.right.toFloat(),
-//                            mColorRects[i]!!.bottom.toFloat(), mPaint
-//                        )
-//                    }
-//                    this.mColorRects.size - 1 -> {
-//                        // Draw gradient and half circle
-//                        mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
-//                        canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
-//                        canvas.drawRect( mColorRects[i]!!.left.toFloat(),
-//                            mColorRects[i]!!.top.toFloat(),
-//                            (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
-//                            mColorRects[i]!!.bottom.toFloat(), mPaint)
-//                        mPaint!!.shader = null
-//                    }
-//                    else -> {
-//                        mPaint.color = mColors[i]
-//                        canvas.drawRect(mColorRects[i]!!, mPaint)
-//                    }
-//                }
             }
         }
     }
