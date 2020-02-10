@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         PhotoUtils.getInstance(this)
         initListener()
-        eventActionTools()
-        editTextToolEvent()
+//        eventActionTools()
+//        editTextToolEvent()
         enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
     }
@@ -432,30 +432,30 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun showTextEditTool(show: Boolean) {
-        when (show) {
-            true -> {
-                if (currentTextEntity() != null) {
-                    lnTextTool.visibility = View.VISIBLE
-                } else {
-                    lnTextTool.visibility = View.GONE
-                }
-            }
-            else -> {
-                lnTextTool.visibility = View.GONE
-            }
-        }
-    }
+//    private fun showTextEditTool(show: Boolean) {
+//        when (show) {
+//            true -> {
+//                if (currentTextEntity() != null) {
+//                    lnTextTool.visibility = View.VISIBLE
+//                } else {
+//                    lnTextTool.visibility = View.GONE
+//                }
+//            }
+//            else -> {
+//                lnTextTool.visibility = View.GONE
+//            }
+//        }
+//    }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun editTextToolEvent() {
-        btnDecrease.setOnClickListener {
-            decreaseTextEntitySize()
-        }
-        btnIncrease.setOnClickListener {
-            increaseTextEntitySize()
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.M)
+//    private fun editTextToolEvent() {
+//        btnDecrease.setOnClickListener {
+//            decreaseTextEntitySize()
+//        }
+//        btnIncrease.setOnClickListener {
+//            increaseTextEntitySize()
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun increaseTextEntitySize() {
@@ -542,17 +542,17 @@ class MainActivity : AppCompatActivity(),
         return textLayer
     }
 
-    private fun eventActionTools() {
-        btnBringToFront.setOnClickListener {
-            bringToFront(motionView.selectedEntity!!)
-        }
-        btnMoveToBack.setOnClickListener {
-            moveToBack()
-        }
-        btnDelete.setOnClickListener {
-            deleteEntity()
-        }
-    }
+//    private fun eventActionTools() {
+//        btnBringToFront.setOnClickListener {
+//            bringToFront(motionView.selectedEntity!!)
+//        }
+//        btnMoveToBack.setOnClickListener {
+//            moveToBack()
+//        }
+//        btnDelete.setOnClickListener {
+//            deleteEntity()
+//        }
+//    }
 
     private fun deleteEntity() {
         motionView.deletedSelectedEntity()
@@ -567,8 +567,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onEntitySelected(entity: MotionEntity?) {
-        actionTool.visibility = View.VISIBLE
-        showTextEditTool(true)
+//        actionTool.visibility = View.VISIBLE
+//        showTextEditTool(true)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -579,8 +579,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onEntityUnselected() {
-        actionTool.visibility = View.INVISIBLE
-        showTextEditTool(false)
+//        actionTool.visibility = View.INVISIBLE
+//        showTextEditTool(false)
     }
 
     override fun onStickerSelected(sticker: Int) {

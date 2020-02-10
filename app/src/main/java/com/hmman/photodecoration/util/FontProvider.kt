@@ -49,7 +49,7 @@ class FontProvider(private val resources: Resources) {
         fontNameToTypefaceFile["Baloo Bhai - Regular"] = "BalooBhai-Regular.ttf"
         fontNameToTypefaceFile["Comfortaa VariableFont"] = "Comfortaa-VariableFont.ttf"
         fontNameToTypefaceFile["Didact Gothic - Regular"] = "DidactGothic-Regular.ttf"
-        fontNameToTypefaceFile["Dosis VariableFont - Regular"] = "Dosis-VariableFont.ttf"
+        fontNameToTypefaceFile["Dosis VariableFont"] = "Dosis-VariableFont.ttf"
         fontNameToTypefaceFile["Fredoka One - Regular"] = "FredokaOne-Regular.ttf"
         fontNameToTypefaceFile["Gochihand - Regular"] = "GochiHand-Regular.ttf"
 
@@ -78,7 +78,7 @@ class FontProvider(private val resources: Resources) {
         fontNameToTypefaceFile["Montserrat - Italic"] = "Montserrat-Italic.ttf"
         fontNameToTypefaceFile["Montserrat - Light"] = "Montserrat-Light.ttf"
         fontNameToTypefaceFile["Montserrat - Bold"] = "Montserrat-Bold.ttf"
-
+        
         fontNameToTypefaceFile["Helvetica"] = "Helvetica.ttf"
         fontNames = ArrayList(fontNameToTypefaceFile.keys)
     }
