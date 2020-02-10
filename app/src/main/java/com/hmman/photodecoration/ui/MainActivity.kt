@@ -457,25 +457,25 @@ class MainActivity : AppCompatActivity(),
 //        }
 //    }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun increaseTextEntitySize() {
-        val textEntity = currentTextEntity()
-        if (textEntity != null) {
-            textEntity.getLayer().font!!.increaseSize(TextLayer.Limits.FONT_SIZE_STEP)
-            textEntity.updateEntity(true)
-            motionView.invalidate()
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.M)
+//    private fun increaseTextEntitySize() {
+//        val textEntity = currentTextEntity()
+//        if (textEntity != null) {
+//            textEntity.getLayer().font!!.increaseSize(TextLayer.Limits.FONT_SIZE_STEP)
+//            textEntity.updateEntity(true)
+//            motionView.invalidate()
+//        }
+//    }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun decreaseTextEntitySize() {
-        val textEntity = currentTextEntity()
-        if (textEntity != null) {
-            textEntity.getLayer().font!!.decreaseSize(TextLayer.Limits.FONT_SIZE_STEP)
-            textEntity.updateEntity(true)
-            motionView.invalidate()
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.M)
+//    private fun decreaseTextEntitySize() {
+//        val textEntity = currentTextEntity()
+//        if (textEntity != null) {
+//            textEntity.getLayer().font!!.decreaseSize(TextLayer.Limits.FONT_SIZE_STEP)
+//            textEntity.updateEntity(true)
+//            motionView.invalidate()
+//        }
+//    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun startTextEntityEditing() {
@@ -554,17 +554,17 @@ class MainActivity : AppCompatActivity(),
 //        }
 //    }
 
-    private fun deleteEntity() {
-        motionView.deletedSelectedEntity()
-    }
-
-    private fun bringToFront(entity: MotionEntity) {
-        motionView.bringLayerToFront(entity)
-    }
-
-    private fun moveToBack() {
-        motionView.moveSelectedBack()
-    }
+//    private fun deleteEntity() {
+//        motionView.deletedSelectedEntity()
+//    }
+//
+//    private fun bringToFront(entity: MotionEntity) {
+//        motionView.bringLayerToFront(entity)
+//    }
+//
+//    private fun moveToBack() {
+//        motionView.moveSelectedBack()
+//    }
 
     override fun onEntitySelected(entity: MotionEntity?) {
 //        actionTool.visibility = View.VISIBLE
