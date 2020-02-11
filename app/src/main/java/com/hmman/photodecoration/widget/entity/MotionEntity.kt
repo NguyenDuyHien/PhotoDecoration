@@ -12,7 +12,7 @@ import com.hmman.photodecoration.util.PhotoUtils
 abstract class MotionEntity(
     var layer: Layer,
     protected var canvasWidth: Int, protected var canvasHeight: Int,
-    var deleteIcon: Bitmap,
+
     var name: String
 ) {
 
@@ -230,23 +230,7 @@ abstract class MotionEntity(
         canvas.drawLines(destPoints, 2, 8, borderPaint)
     }
 
-    private fun drawCloseBg(canvas: Canvas) {
-        val destPoints = destPoints
-        val matrix = matrix
-        val imageEntity = this
-        matrix.reset()
 
-        matrix.postTranslate(
-            destPoints[2] - imageEntity.deleteIcon.width / 2,
-            destPoints[3] - imageEntity.deleteIcon.height / 2
-        )
-        canvas.drawCircle(destPoints[2], destPoints[3], Constants.RADIUS_DELETE_ICON, borderPaint)
-        canvas.drawCircle(destPoints[0], destPoints[1], Constants.RADIUS_ICON, borderPaint)
-
-        canvas.drawCircle(destPoints[4], destPoints[5], Constants.RADIUS_ICON, borderPaint)
-        canvas.drawCircle(destPoints[6], destPoints[7], Constants.RADIUS_ICON, borderPaint)
-        canvas.drawBitmap(imageEntity.deleteIcon, matrix, borderPaint)
-    }
 
     private fun drawIcons(canvas: Canvas, icons: MutableList<IconEntity>) {
         var x = 0f

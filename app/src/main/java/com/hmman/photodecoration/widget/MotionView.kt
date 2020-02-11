@@ -527,7 +527,6 @@ class MotionView : FrameLayout {
                 this.height,
                 fontProvider,
                 currentText!!,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                 this.context
             )
         initEntityBorderAndIconBackground(textEntity)
