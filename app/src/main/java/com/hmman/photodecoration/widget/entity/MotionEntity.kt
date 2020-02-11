@@ -12,7 +12,7 @@ import com.hmman.photodecoration.util.PhotoUtils
 abstract class MotionEntity(
     var layer: Layer,
     protected var canvasWidth: Int, protected var canvasHeight: Int,
-    var deleteIcon: Bitmap,
+
     var name: String
 ) {
 
@@ -129,6 +129,7 @@ abstract class MotionEntity(
                 || MathUtils.pointInTriangle(point, pA, pD, pC)
 
     }
+
     fun pointInLayerRectIcon(point: PointF, iconEntity: IconEntity): Boolean {
         iconEntity.pA.x = iconEntity.destPoints[0]
         iconEntity.pA.y = iconEntity.destPoints[1]
@@ -138,13 +139,10 @@ abstract class MotionEntity(
         iconEntity.pC.y = iconEntity.destPoints[5]
         iconEntity.pD.x = iconEntity.destPoints[6]
         iconEntity.pD.y = iconEntity.destPoints[7]
-        return MathUtils.pointInTriangle(point, iconEntity.pA, iconEntity.pB, iconEntity.pC) || MathUtils.pointInTriangle(
-            point,
-            iconEntity.pA,
-            iconEntity.pD,
-            iconEntity.pC
-        )
+        return MathUtils.pointInTriangle(point, iconEntity.pA, iconEntity.pB, iconEntity.pC) ||
+                MathUtils.pointInTriangle(point, iconEntity.pA, iconEntity.pD, iconEntity.pC)
     }
+
     fun pointClose(point: PointF): Boolean {
         updateMatrix()
         // map rect vertices
@@ -157,6 +155,7 @@ abstract class MotionEntity(
 
 
     }
+
     fun pointGesture(point: PointF): Boolean {
         updateMatrix()
         // map rect vertices
@@ -231,23 +230,7 @@ abstract class MotionEntity(
         canvas.drawLines(destPoints, 2, 8, borderPaint)
     }
 
-    private fun drawCloseBg(canvas: Canvas) {
-        val destPoints = destPoints
-        val matrix = matrix
-        val imageEntity = this
-        matrix.reset()
 
-        matrix.postTranslate(
-            destPoints[2] - imageEntity.deleteIcon.width / 2,
-            destPoints[3] - imageEntity.deleteIcon.height / 2
-        )
-        canvas.drawCircle(destPoints[2], destPoints[3], Constants.RADIUS_DELETE_ICON, borderPaint)
-        canvas.drawCircle(destPoints[0], destPoints[1], Constants.RADIUS_ICON, borderPaint)
-
-        canvas.drawCircle(destPoints[4], destPoints[5], Constants.RADIUS_ICON, borderPaint)
-        canvas.drawCircle(destPoints[6], destPoints[7], Constants.RADIUS_ICON, borderPaint)
-        canvas.drawBitmap(imageEntity.deleteIcon, matrix, borderPaint)
-    }
 
     private fun drawIcons(canvas: Canvas, icons: MutableList<IconEntity>) {
         var x = 0f
@@ -259,8 +242,7 @@ abstract class MotionEntity(
             } else if (iconEntity.gravity == IconEntity.RIGHT_BOTTOM) {
                 x = destPoints[4]
                 y = destPoints[5]
-            }
-            else if (iconEntity.gravity == IconEntity.RIGHT_TOP) {
+            } else if (iconEntity.gravity == IconEntity.RIGHT_TOP) {
                 x = destPoints[2]
                 y = destPoints[3]
             }
@@ -275,6 +257,7 @@ abstract class MotionEntity(
         iconEntity.matrix.postTranslate(x - iconEntity.width / 2, y - iconEntity.height / 2)
         iconEntity.matrix.mapPoints(iconEntity.destPoints, iconEntity.srcPoints)
     }
+
     fun setBorderPaint(@NonNull borderPaint: Paint) {
         this.borderPaint = borderPaint
     }
@@ -282,6 +265,7 @@ abstract class MotionEntity(
     fun setClosePaint(@NonNull closePaint: Paint) {
         this.closePaint = closePaint
     }
+
     fun setIconBackground(iconBackground: Paint) {
         this.iconBackgroundPaint = iconBackground
     }
@@ -290,7 +274,7 @@ abstract class MotionEntity(
     protected abstract fun drawRealContent(@NonNull canvas: Canvas, @Nullable drawingPaint: Paint?)
     abstract val width: Int
     abstract val height: Int
-    abstract fun clone() : MotionEntity
+    abstract fun clone(): MotionEntity
     open fun release() {
 
     }

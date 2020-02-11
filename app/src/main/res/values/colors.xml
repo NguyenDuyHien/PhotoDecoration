@@ -10,9 +10,10 @@
     <color name="mainBackground">#BADFF0</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="darkGray">#272727</color>
     <color name="gray">#646464</color>
     <color name="stroke_color">#03A9F4</color>
-    <color name="editDialogBackground">#B3E4DADA</color>
+    <color name="editDialogBackground">#B3D1E7F0</color>
     <color name="fill_color">#50000000</color>
 
     <color name="color1">#FFFFFF</color>

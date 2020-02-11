@@ -52,7 +52,7 @@ class MotionView : FrameLayout {
     private val indexUndoRemoveEntities = Stack<Int>()
     private val indexRedoRemoveEntities = Stack<Int>()
     private val removeEntities: Stack<MotionEntity> = Stack()
-
+    private var checkListernerPerAction: Boolean = false
     @Nullable
     var selectedEntity: MotionEntity? = null
         private set
@@ -422,9 +422,7 @@ class MotionView : FrameLayout {
                         unSelectEntity()
                     }
                     undoActionEntities[undoActionEntities.size - 1] == "MOVE" -> {
-                        println("On Move")
                         undoActionEntities.forEach { println(it) }
-                        println(moveUndoEntities.size)
                         var lastIndexOf = -1
                         entities.forEachIndexed { index, motionEntity ->
                             if (motionEntity.name == moveUndoEntities[moveUndoEntities.size - 1].name) {
@@ -433,6 +431,11 @@ class MotionView : FrameLayout {
                         }
 
                         if (lastIndexOf != -1) {
+                            if (moveUndoEntities[moveUndoEntities.size - 1].layer is TextLayer) {
+                                val textLayer =
+                                    moveUndoEntities[moveUndoEntities.size - 1].layer as TextLayer
+                            }
+
                             moveRedoEntities.push(entities[lastIndexOf])
                             entities.removeAt(lastIndexOf)
                             entities.add(moveUndoEntities.pop())
@@ -524,14 +527,9 @@ class MotionView : FrameLayout {
                 this.height,
                 fontProvider,
                 currentText!!,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                 this.context
             )
-
-//        initEntityBorder(textEntity)
-//        initEntityIconBackground(textEntity)
         initEntityBorderAndIconBackground(textEntity)
-        textEntity.layer = selectedEntity!!.layer
         entities.remove(selectedEntity!!)
         entities.add(textEntity)
         selectEntity(textEntity, true)
@@ -567,25 +565,27 @@ class MotionView : FrameLayout {
         override fun onScaleEnd(detector: ScaleGestureDetector?) {
             super.onScaleEnd(detector)
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
             }
 //            if (selectedEntity is TextEntity) {
 //                redrawTextEntityOnScaleEnd()
 //            }
-            if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                entity = null
-            }
         }
     }
 
     private inner class RotateListener : RotateGestureDetector.SimpleOnRotateGestureListener() {
         var entity: MotionEntity? = null
         override fun onRotate(detector: RotateGestureDetector?): Boolean {
+            checkListernerPerAction = true
             if (selectedEntity != null) {
                 selectedEntity!!.layer.postRotate(-detector!!.rotationDegreesDelta)
                 updateUI()
@@ -602,10 +602,16 @@ class MotionView : FrameLayout {
 
         override fun onRotateEnd(detector: RotateGestureDetector?) {
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
             }
         }
     }
@@ -628,12 +634,40 @@ class MotionView : FrameLayout {
 
         override fun onMoveEnd(detector: MoveGestureDetector) {
             if (entity != null) {
-                moveUndoEntities.add(entity)
-                undoActionEntities.push("MOVE")
-                redoActionEntities.clear()
-                entity = null
+                var checkDuplicate = false
+                moveUndoEntities.forEach {
+                    if (checkDuplication(it, entity!!)) checkDuplicate = true
+                }
+                if (!checkDuplicate) {
+                    moveUndoEntities.add(entity)
+                    undoActionEntities.push("MOVE")
+                    redoActionEntities.clear()
+                    entity = null
+                }
+
             }
         }
+    }
+
+    private fun checkDuplication(entity: MotionEntity, preparedEntity: MotionEntity): Boolean {
+        if (entity.layer.x == preparedEntity.layer.x && entity.layer.y == preparedEntity.layer.y
+            && entity.layer.scale == preparedEntity.layer.scale
+            && entity.layer.rotationInDegrees == preparedEntity.layer.rotationInDegrees
+        ) {
+            if (entity.layer is TextLayer && preparedEntity.layer is TextLayer) {
+                val preparedLayer = preparedEntity.layer as TextLayer
+                val textLayer = entity.layer as TextLayer
+                if (textLayer.font!!.color != preparedLayer.font!!.color
+                    || textLayer.font!!.typeface != preparedLayer.font!!.typeface
+                    || textLayer.text != preparedLayer.text
+                ) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        return false
     }
 
     companion object {

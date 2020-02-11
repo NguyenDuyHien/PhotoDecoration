@@ -13,6 +13,8 @@ import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
+import com.hmman.photodecoration.R
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
@@ -26,9 +28,8 @@ class TextEntity(
     @IntRange(from = 1) canvasHeight: Int,
     @NonNull val fontProvider: FontProvider,
     name: String,
-    deleteIcon: Bitmap,
     context: Context
-) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon, name) {
+) : MotionEntity(textLayer, canvasWidth, canvasHeight, name) {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private var bitmap: Bitmap? = null
@@ -173,7 +174,7 @@ class TextEntity(
         cloneTextLayer.x = textLayer.x
         cloneTextLayer.y = textLayer.y
         cloneTextLayer.rotationInDegrees = textLayer.rotationInDegrees
-        cloneTextLayer.scale = textLayer.scale
+        cloneTextLayer.scale = textLayer.initialScale()
 
         val entity = TextEntity(
             cloneTextLayer,
@@ -181,7 +182,6 @@ class TextEntity(
             canvasHeight,
             fontProvider.clone(),
             name,
-            deleteIcon,
             context
         )
         BorderUtil.initEntityBorder(entity, context)
@@ -190,6 +190,7 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
+//        updateEntity()2
         return entity
     }
 

@@ -239,26 +239,31 @@ class ColorSlider @JvmOverloads constructor(
                                 mPaint)
                         }
                     } else if (mSelectorPaint != null && i == mColorRects.size - 1){
-                        mPaint.shader = drawRectWithGradient(mColorFullRects[i]!!.width(), mColorFullRects[i]!!.height(), colors)
+                        mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(), mColorRects[i]!!.height(), colors)
                         canvas.drawArc(RectF(mColorRects[i]!!),  270F, 180F, true,  mPaint)
                         canvas.drawRect( mColorRects[i]!!.left.toFloat(),
                             mColorRects[i]!!.top.toFloat(),
                             (mColorRects[i]!!.left +(mColorRects[i]!!.right - mColorRects[i]!!.left)/2).toFloat(),
                             mColorRects[i]!!.bottom.toFloat(), mPaint)
+                        mPaint.shader = null
 
                         if (!isUp) {
+                            mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(),(radius* 2).toInt(), colors)
                             canvas.drawCircle(
                                 (this.mColorFullRects[i]!!.left + (this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
                                 radius,
                                 radius * 0.9f,
                                 mPaint)
+                            mPaint.shader = null
                         } else {
+                            mPaint.shader = drawRectWithGradient(mColorRects[i]!!.width(),(radius + (radius *0.8f)).toInt(), colors)
                             canvas.drawCircle((this.mColorFullRects[i]!!.left +(this.mColorFullRects[i]!!.right - this.mColorFullRects[i]!!.left) / 2).toFloat(),
                                 radius + (radius *0.8f),
                                 radius *0.1f,
                                 mPaint)
+                            mPaint.shader = null
                         }
-                        mPaint.shader = null
+
                     } else {
                         mPaint.color = mColors[i]
                         canvas.drawRect(mColorRects[i]!!, mPaint)
