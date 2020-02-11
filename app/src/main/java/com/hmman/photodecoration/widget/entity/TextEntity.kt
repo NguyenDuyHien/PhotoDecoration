@@ -1,14 +1,12 @@
 package com.hmman.photodecoration.widget.entity
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.util.Log
 import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -113,11 +111,11 @@ class TextEntity(
 //            getMaxText(textLayer.text!!),
 //            textPaint.textSize.toInt()
 //        )
-        var boundsWidth = getMaxText(textLayer.text!!)
+        var boundsWidth = getMaxLength(textLayer.text!!)
 
-        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
-            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
-        }
+//        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
+//            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
+//        }
 
 //         Set initial scale for Text
 //        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
@@ -144,6 +142,7 @@ class TextEntity(
             TextLayer.Limits.MIN_BITMAP_HEIGHT,
             1.0f * boundsHeight / canvasHeight
         )).toInt()
+//        val bmpHeight = boundsHeight
 
         val bmp: Bitmap
         if (reuseBmp != null && reuseBmp.width == boundsWidth && reuseBmp.height == bmpHeight) {
@@ -210,7 +209,7 @@ class TextEntity(
             entity.moveToCanvasCenter()
             entity.layer.scale = entity.layer.initialScale()
         }
-//        updateEntity()2
+//        updateEntity()
         return entity
     }
 
@@ -218,11 +217,11 @@ class TextEntity(
         updateEntity(true)
         updateRealEntity(true)
     }
-    
-    private fun getMaxText(text:String): Int {
-        val a = text.lines()
+
+    private fun getMaxLength(text:String): Int {
+        val lines = text.lines()
         var maxLength = textPaint.measureText("")
-        for (i in a) {
+        for (i in lines) {
             if (textPaint.measureText(i) > maxLength) maxLength = textPaint.measureText(i)
         }
         return maxLength.toInt()

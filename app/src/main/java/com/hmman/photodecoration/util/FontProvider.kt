@@ -48,10 +48,7 @@ class FontProvider(private val resources: Resources) {
 
         fontNameToTypefaceFile["Baloo Bhai - Regular"] = "BalooBhai-Regular.ttf"
         fontNameToTypefaceFile["Comfortaa VariableFont"] = "Comfortaa-VariableFont.ttf"
-        fontNameToTypefaceFile["Didact Gothic - Regular"] = "DidactGothic-Regular.ttf"
         fontNameToTypefaceFile["Dosis VariableFont"] = "Dosis-VariableFont.ttf"
-        fontNameToTypefaceFile["Fredoka One - Regular"] = "FredokaOne-Regular.ttf"
-        fontNameToTypefaceFile["Gochihand - Regular"] = "GochiHand-Regular.ttf"
 
         fontNameToTypefaceFile["JosefinSans - BoldItalic"] = "JosefinSans-BoldItalic.ttf"
         fontNameToTypefaceFile["JosefinSans - Italic"] = "JosefinSans-Italic.ttf"
@@ -81,7 +78,34 @@ class FontProvider(private val resources: Resources) {
 
         fontNameToTypefaceFile["PatrickHand - Regular"] = "PatrickHand-Regular.ttf"
         fontNameToTypefaceFile["PaytoneOne - Regular"] = "PaytoneOne-Regular.ttf"
-//        fontNameToTypefaceFile["Yellowtail - Regular"] = "Yellowtail-Regular.ttf"
+
+        fontNameToTypefaceFile["AlegreyaSansSC - Regular"] = "AlegreyaSansSC-Regular.ttf"
+        fontNameToTypefaceFile["AlegreyaSansSC - Bold"] = "AlegreyaSansSC-Bold.ttf"
+        fontNameToTypefaceFile["AlegreyaSansSC - Italic"] = "AlegreyaSansSC-Italic.ttf"
+        fontNameToTypefaceFile["AlegreyaSansSC - Light"] = "AlegreyaSansSC-Light.ttf"
+
+        fontNameToTypefaceFile["Baloo - Regular"] = "Baloo-Regular.ttf"
+        fontNameToTypefaceFile["Bangers - Regular"] = "Bangers-Regular.ttf"
+
+        fontNameToTypefaceFile["Cabin - Regular"] = "Cabin-Regular.ttf"
+        fontNameToTypefaceFile["Cabin - Bold"] = "Cabin-Bold.ttf"
+        fontNameToTypefaceFile["Cabin - Italic"] = "Cabin-Italic.ttf"
+
+        fontNameToTypefaceFile["Calistoga - Regular"] = "Calistoga-Regular.ttf"
+        fontNameToTypefaceFile["Chonburi - Regular"] = "Chonburi-Regular.ttf"
+        fontNameToTypefaceFile["Itim - Regular"] = "Itim-Regular.ttf"
+
+        fontNameToTypefaceFile["Jura - Regular"] = "Jura-Regular.ttf"
+        fontNameToTypefaceFile["Jura - Light"] = "Jura-Light.ttf"
+        fontNameToTypefaceFile["Jura - Bold"] = "Jura-Bold.ttf"
+
+        fontNameToTypefaceFile["Kanit - Regular"] = "Kanit-Regular.ttf"
+        fontNameToTypefaceFile["Kanit - Italic"] = "Kanit-Italic.ttf"
+        fontNameToTypefaceFile["Kanit - Bold"] = "Kanit-Bold.ttf"
+
+        fontNameToTypefaceFile["Lemonada - Regular"] = "Lemonada-Regular.ttf"
+        fontNameToTypefaceFile["Lemonada - Light"] = "Lemonada-Light.ttf"
+        fontNameToTypefaceFile["Lemonada - Bold"] = "Lemonada-Bold.ttf"
 
         fontNameToTypefaceFile["Helvetica"] = "Helvetica.ttf"
         fontNames = ArrayList(fontNameToTypefaceFile.keys)
