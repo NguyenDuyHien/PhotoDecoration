@@ -28,9 +28,8 @@ class TextEntity(
     @IntRange(from = 1) canvasHeight: Int,
     @NonNull val fontProvider: FontProvider,
     name: String,
-    deleteIcon: Bitmap,
     context: Context
-) : MotionEntity(textLayer, canvasWidth, canvasHeight, deleteIcon, name) {
+) : MotionEntity(textLayer, canvasWidth, canvasHeight, name) {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private var bitmap: Bitmap? = null
@@ -201,7 +200,6 @@ class TextEntity(
             canvasHeight,
             fontProvider.clone(),
             name,
-            deleteIcon,
             context
         )
         BorderUtil.initEntityBorder(entity, context)

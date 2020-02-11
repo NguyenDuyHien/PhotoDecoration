@@ -406,7 +406,6 @@ class MainActivity : AppCompatActivity(),
                 motionView.height,
                 fontProvider,
                 text,
-                BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                 this
             )
 
@@ -424,7 +423,6 @@ class MainActivity : AppCompatActivity(),
                     motionView.width,
                     motionView.height,
                     stickerResId.toString(),
-                    BitmapFactory.decodeResource(resources, R.drawable.ic_delete),
                     this
                 )
             motionView.addEntityAndPosition(entity)

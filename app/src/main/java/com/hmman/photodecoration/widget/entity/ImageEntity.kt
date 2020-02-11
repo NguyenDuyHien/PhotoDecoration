@@ -17,9 +17,8 @@ class ImageEntity(
     @IntRange(from = 1) canvasWidth: Int,
     @IntRange(from = 1) canvasHeight: Int,
     name: String,
-    deleteIcon: Bitmap,
     context: Context
-) : MotionEntity(layer, canvasWidth, canvasHeight, deleteIcon, name) {
+) : MotionEntity(layer, canvasWidth, canvasHeight,name) {
 
     val context = context
 
@@ -63,7 +62,7 @@ class ImageEntity(
 
     override fun clone(): MotionEntity {
         var entity =
-            ImageEntity(layer.clone(), bitmap, canvasWidth, canvasHeight, name, deleteIcon, context)
+            ImageEntity(layer.clone(), bitmap, canvasWidth, canvasHeight, name, context)
         BorderUtil.initEntityBorder(entity, context)
         BorderUtil.initEntityIconBackground(entity, context)
         return entity
