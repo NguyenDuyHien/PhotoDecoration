@@ -112,9 +112,9 @@ class TextEntity(
 //        )
         var boundsWidth = getMaxLength(textLayer.text!!)
 
-//        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
-//            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
-//        }
+        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
+            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
+        }
 
 //         Set initial scale for Text
 //        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
