@@ -26,7 +26,7 @@ data class Font(
 
     private interface Limits {
         companion object {
-            const val MIN_FONT_SIZE = 0.01f
+            const val MIN_FONT_SIZE = 0.0075f
         }
     }
 

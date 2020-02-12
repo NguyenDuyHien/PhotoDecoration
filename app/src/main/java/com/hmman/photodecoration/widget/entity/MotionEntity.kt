@@ -1,11 +1,13 @@
 package com.hmman.photodecoration.widget.entity
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.PointF
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import com.hmman.photodecoration.model.Layer
-import com.hmman.photodecoration.util.Constants
 import com.hmman.photodecoration.util.MathUtils
 import com.hmman.photodecoration.util.PhotoUtils
 
@@ -229,7 +231,6 @@ abstract class MotionEntity(
         canvas.drawLines(destPoints, 0, 8, borderPaint)
         canvas.drawLines(destPoints, 2, 8, borderPaint)
     }
-
 
 
     private fun drawIcons(canvas: Canvas, icons: MutableList<IconEntity>) {

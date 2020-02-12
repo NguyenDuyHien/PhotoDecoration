@@ -11,13 +11,12 @@ import androidx.annotation.IntRange
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
-import androidx.core.content.res.ResourcesCompat
-import com.hmman.photodecoration.R
 import com.hmman.photodecoration.model.TextLayer
 import com.hmman.photodecoration.util.BorderUtil
 import com.hmman.photodecoration.util.FontProvider
 import com.hmman.photodecoration.util.PhotoUtils
 import kotlin.math.max
+import kotlin.math.min
 
 @RequiresApi(Build.VERSION_CODES.M)
 class TextEntity(
@@ -33,8 +32,11 @@ class TextEntity(
     private var bitmap: Bitmap? = null
     private val textLayer = textLayer
     private val context = context
+    private var singleText = false
+    private var init = false
 
     init {
+        init = true
         updateEntity(false)
         updateRealEntity(false)
     }
@@ -51,9 +53,10 @@ class TextEntity(
         val width: Float = bitmap!!.width.toFloat()
         val height: Float = bitmap!!.height.toFloat()
         val widthAspect = 1F * canvasWidth / width
+        val heightAspect = 1f * canvasHeight / height
         // for text we always match text width with parent width
-//        holyScale = min(widthAspect, heightAspect)
-        holyScale = widthAspect
+        holyScale = min(widthAspect, heightAspect)
+//        holyScale = widthAspect
         // initial position of the entity
         srcPoints[0] = 0f
         srcPoints[1] = 0f
@@ -67,6 +70,7 @@ class TextEntity(
 
         if (moveToPreviousCenter) { // move to previous center
             moveCenterTo(oldCenter)
+//            moveToCanvasCenter()
         }
     }
 
@@ -77,9 +81,9 @@ class TextEntity(
         val width = bitmap!!.width.toFloat()
         val height = bitmap!!.height.toFloat()
         val widthAspect: Float = 1.0f * PhotoUtils.getInstance(null).width / width
-
+        val heightAspect: Float = 1f * PhotoUtils.getInstance(null).height / height
         // for text we always match text width with parent width
-        realHolyScale = widthAspect
+        realHolyScale = min(heightAspect, widthAspect)
 
         // initial position of the entity
         srcPoints[0] = 0f
@@ -102,7 +106,10 @@ class TextEntity(
     private fun createBitmap(@NonNull textLayer: TextLayer, @Nullable reuseBmp: Bitmap?): Bitmap? {
         textPaint.style = Paint.Style.FILL
         textPaint.typeface = fontProvider.getTypeface(textLayer.font!!.typeface)
-        textPaint.textSize = textLayer.font!!.size * canvasWidth
+        textPaint.textSize =
+            textLayer.font!!.size * max(canvasHeight, canvasWidth) + 20
+
+
         textPaint.color = textLayer.font?.color!!
 
         //In case Text only on character: Paint.MeasureText return wrong size
@@ -110,19 +117,22 @@ class TextEntity(
 //            getMaxText(textLayer.text!!),
 //            textPaint.textSize.toInt()
 //        )
-        var boundsWidth = getMaxLength(textLayer.text!!)
+        var boundsWidth = getMaxText(textLayer.text!!)
+        if (boundsWidth.toFloat() / max(canvasHeight, canvasWidth) < TextLayer.Limits.MIN_SCALE) {
+            textLayer.setInitialScale(TextLayer.Limits.MIN_SCALE)
+        } else {
+            textLayer.setInitialScale(boundsWidth.toFloat() / max(canvasHeight, canvasWidth))
+            if (init) {
+                textLayer.dynamicMinScale =
+                    boundsWidth.toFloat() / max(canvasHeight, canvasWidth) / 2
+                textLayer.dynamicMaxScale =
+                    boundsWidth.toFloat() / max(canvasHeight, canvasWidth) * 3
+            }
+        }
 
-//        if (boundsWidth.toFloat() / canvasWidth < TextLayer.Limits.MIN_SCALE){
-//            boundsWidth = (TextLayer.Limits.MIN_SCALE * canvasWidth).toInt()
-//        }
-
-//         Set initial scale for Text
-//        val initialScale = if (boundsWidth * 1f / canvasWidth > TextLayer.Limits.MIN_SCALE) {
-//            boundsWidth * 1f / canvasWidth
-//        } else {
-//            TextLayer.Limits.MIN_SCALE
-//        }
-        textLayer.setInitialScale(boundsWidth.toFloat() / canvasWidth)
+        if (singleText) {
+            boundsWidth *= 2
+        }
 
         val sl = StaticLayout.Builder.obtain(
             textLayer.text.toString(),
@@ -132,10 +142,8 @@ class TextEntity(
             boundsWidth
         )
             .setAlignment(Layout.Alignment.ALIGN_CENTER)
-            .setIncludePad(true)
-            .setLineSpacing(1f, 1f)
+            .setLineSpacing(0f, 1f)
             .build()
-
         val boundsHeight = sl.height
         val bmpHeight = (canvasHeight * max(
             TextLayer.Limits.MIN_BITMAP_HEIGHT,
@@ -154,7 +162,7 @@ class TextEntity(
         canvas.save()
 
         if (boundsHeight < bmpHeight) {
-            val textYCoordinate = (bmpHeight - boundsHeight) / 2.toFloat()
+            val textYCoordinate = ((bmpHeight - boundsHeight) / 2).toFloat()
             canvas.translate(0f, textYCoordinate)
         }
 
@@ -216,13 +224,20 @@ class TextEntity(
         updateRealEntity(true)
     }
 
-    private fun getMaxLength(text:String): Int {
+    private fun getMaxText(text: String): Int {
         val lines = text.lines()
+        if (text.count() == 1) {
+            singleText = true
+        }
         var maxLength = textPaint.measureText("")
         for (i in lines) {
             if (textPaint.measureText(i) > maxLength) maxLength = textPaint.measureText(i)
         }
-        return maxLength.toInt()
+        return (maxLength.toInt())
+    }
+
+    fun pxToDp(px: Int): Int {
+        return (px / context.resources.displayMetrics.density).toInt()
     }
 
     override val width: Int = if (bitmap != null) bitmap!!.width else 0

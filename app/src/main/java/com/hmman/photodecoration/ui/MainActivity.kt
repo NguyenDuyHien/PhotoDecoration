@@ -494,14 +494,23 @@ class MainActivity : AppCompatActivity(),
                     motionView.undoActionEntities.push("MOVE")
                     motionView.redoActionEntities.clear()
                     textEntity.getLayer().text = text
-                    println("color code")
-                    println(colorCode)
                     textEntity.getLayer().font!!.color = colorCode
                     textEntity.getLayer().font!!.typeface = fontName
-                    textEntity.updateEntity(true)
-                    println("after update entity")
-                    println(textEntity.getLayer().font!!.color)
+
+
+                    textEntity.getLayer().scale = textEntity.getLayer().scale
+                    textEntity.getLayer().rotationInDegrees = textEntity.getLayer().rotationInDegrees
+                    textEntity.getLayer().x = textEntity.getLayer().x
+                    textEntity.getLayer().y = textEntity.getLayer().y
+                    textEntity.getLayer().isFlipped = textEntity.getLayer().isFlipped
+
+                    val newTextEntity = textEntity.clone()
+
+                    motionView.deletedSelectedEntity()
+                    motionView.addEntity(newTextEntity)
+//                    textEntity.updateEntity(true)
                 }
+
             }
         })
     }

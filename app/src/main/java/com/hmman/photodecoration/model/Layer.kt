@@ -16,9 +16,9 @@ open class Layer(
         y = 0.0f
     }
 
-    fun postScale(scaleDiff: Float) {
+    open fun postScale(scaleDiff: Float) {
         val newVal = scale + scaleDiff
-        if (newVal >= getMinScale() && newVal <= getMaxScale()) {
+        if (newVal in getMinScale()..getMaxScale()) {
             scale = newVal
         }
     }

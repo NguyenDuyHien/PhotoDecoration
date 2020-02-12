@@ -141,6 +141,18 @@ class MotionView : FrameLayout {
 
     fun addEntityAndPosition(@Nullable entity: MotionEntity?) {
         if (entity != null) {
+            entity.moveToCanvasCenter()
+            initEntityBorderAndIconBackground(entity)
+            initialTranslateAndScale(entity)
+            entities.add(entity)
+            undoActionEntities.push("ADD")
+            redoActionEntities.clear()
+            selectEntity(entity, true)
+        }
+    }
+
+    fun addEntity(@Nullable entity: MotionEntity?) {
+        if (entity != null) {
             initEntityBorderAndIconBackground(entity)
             initialTranslateAndScale(entity)
             entities.add(entity)
@@ -237,7 +249,6 @@ class MotionView : FrameLayout {
     }
 
     private fun initialTranslateAndScale(@NonNull entity: MotionEntity) {
-        entity.moveToCanvasCenter()
         entity.layer.scale = entity.layer.initialScale()
     }
 
@@ -510,8 +521,9 @@ class MotionView : FrameLayout {
         val fontProvider = FontProvider(resources)
         val textLayer = TextLayer()
         val font = (selectedEntity as TextEntity).getLayer().font
+        var textE = selectedEntity as TextEntity
         font!!.size =
-            TextLayer.Limits.INITIAL_FONT_SIZE * selectedEntity!!.layer.scale / TextLayer.Limits.MIN_SCALE
+            TextLayer.Limits.INITIAL_FONT_SIZE * selectedEntity!!.layer.scale / textE.getLayer().dynamicMinScale
         val currentText = (selectedEntity as TextEntity).getLayer().text
         textLayer.font = font
         textLayer.text = currentText
