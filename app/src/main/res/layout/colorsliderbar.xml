@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/layout">
 
-    <com.hmman.photodecoration.ui.dialog.ColorSlider
+    <com.hien.photodecoration.ui.dialog.ColorSlider
         android:id="@+id/color_slider"
         android:layout_width="match_parent"
         android:layout_height="50dp"

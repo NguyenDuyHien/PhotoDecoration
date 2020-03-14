@@ -73,7 +73,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtDone" />
 
-    <com.hmman.photodecoration.ui.dialog.ColorSlider
+    <com.hien.photodecoration.ui.dialog.ColorSlider
         android:id="@+id/color_slider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_72sdp"

@@ -27,7 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.hmman.photodecoration.widget.MotionView
+        <com.hien.photodecoration.widget.MotionView
             android:id="@+id/motionView"
             android:layout_width="0dp"
             android:layout_height="0dp"
