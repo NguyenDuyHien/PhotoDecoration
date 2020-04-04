@@ -76,7 +76,7 @@
     <com.hien.photodecoration.ui.dialog.ColorSlider
         android:id="@+id/color_slider"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_72sdp"
+        android:layout_height="90dp"
         android:layout_gravity="center_vertical"
         app:cs_colors="@array/colors"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -74,9 +74,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
         edtContent.setText(mContent)
         edtContent.typeface = fontProvider.getTypeface(mFontName)
         edtContent.setSelection(edtContent.text!!.length)
-//        btnColor.setBackgroundColor(mColorCode!!)
 
-        color_slider.setSelectorColor(Color.TRANSPARENT)
         color_slider.setListener(mListener)
         mColorCode?.let {
             color_slider.setLastSelectedColor(it)
@@ -136,7 +134,7 @@ class EditDialogFragment : DialogFragment(), DialogColor.onColorSelected  {
                             val wordList: List<String> = lineList[i].split(" ")
                             if (wordList.isNotEmpty()) {
                                 val temp = java.lang.StringBuilder()
-                                var lastWord: String? = ""
+                                var lastWord = ""
                                 for (j in wordList.indices) {
                                     if (wordList[j].isNotEmpty()) {
                                         if (isTooLarge(edtContent, wordList[j])) {

@@ -29,7 +29,6 @@ class DialogColor(
             )
             setGravity(Gravity.BOTTOM)
         }
-        color_slider.setSelectorColor(Color.TRANSPARENT)
         color_slider.setListener(mListener)
     }
     private val mListener: ColorSlider.OnColorSelectedListener =
