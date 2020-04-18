@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
@@ -77,6 +78,14 @@ class MainActivity : AppCompatActivity(),
 //        editTextToolEvent()
         enableEditMode(false)
         stickerDialog = DialogSticker(this, this)
+        dummyView.setOnTouchListener { v, event ->
+            v.setBackgroundColor(Color.WHITE)
+            true
+        }
+
+        motionView.setOnTouchListener { v, event ->
+            false
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
